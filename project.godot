@@ -20,6 +20,7 @@ InputSetup="*res://autoload/input_setup.gd"
 UIManager="*res://autoload/ui_manager.gd"
 NetworkManager="*res://autoload/network_manager.gd"
 GamepadCursor="*res://autoload/gamepad_cursor.gd"
+AudioManager="*res://autoload/audio_manager.gd"
 
 [display]
 

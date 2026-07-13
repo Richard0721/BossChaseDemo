@@ -66,6 +66,8 @@ const PREVIEW_LARGE := Rect2(-824.0, 148.0, 784.0, 441.0)
 
 func _ready() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+	AudioManager.play_deployment_music()
+	AudioManager.connect_button_tree(self)
 	_create_boss_showcase()
 	_create_map_showcase()
 	_create_character_showcase()
@@ -228,6 +230,7 @@ func _build_map_page() -> void:
 func _change_map(direction: int) -> void:
 	if stage != Stage.MAP or MAP_NAMES.is_empty():
 		return
+	AudioManager.play_ui_confirm()
 	selected_map = wrapi(selected_map + direction, 0, MAP_NAMES.size())
 	_build_map_page()
 	_update_map_showcase()
@@ -257,6 +260,7 @@ func _clear_cards() -> void:
 
 
 func _on_card_selected(index: int) -> void:
+	AudioManager.play_ui_confirm()
 	match stage:
 		Stage.BOSS:
 			selected_boss = index
@@ -285,6 +289,8 @@ func _refresh_card_selection(selected_index: int) -> void:
 func _on_character_hovered(index: int, hovered: bool) -> void:
 	if stage != Stage.CHARACTER or index >= _character_spotlights.size():
 		return
+	if hovered:
+		AudioManager.play_ui_hover()
 	_character_spotlights[index].visible = hovered
 
 
@@ -331,6 +337,7 @@ func _on_viewport_size_changed() -> void:
 
 
 func _on_next_pressed() -> void:
+	AudioManager.play_ui_confirm()
 	match stage:
 		Stage.BOSS:
 			_show_stage(Stage.MAP)
@@ -345,6 +352,7 @@ func _on_next_pressed() -> void:
 
 
 func _on_back_pressed() -> void:
+	AudioManager.play_ui_back()
 	match stage:
 		Stage.BOSS:
 			var ui_manager := get_node_or_null("/root/UIManager")
