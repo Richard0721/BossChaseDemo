@@ -35,6 +35,8 @@ var _display_character_index := 0
 
 func _ready() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+	AudioManager.play_menu_music()
+	AudioManager.connect_button_tree(self)
 	_display_character_index = randi_range(0, CHARACTER_NAMES.size() - 1)
 	_load_character_showcase(_display_character_index)
 	_populate_selection_options()
@@ -63,6 +65,7 @@ func _process(delta: float) -> void:
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_cancel") or event.is_action_pressed("controller_back"):
+		AudioManager.play_ui_back()
 		_show_main_panel()
 
 
@@ -136,6 +139,7 @@ func _show_settings_panel() -> void:
 
 
 func _on_character_selected(index: int) -> void:
+	AudioManager.play_ui_confirm()
 	_display_character_index = index
 	_load_character_showcase(index)
 

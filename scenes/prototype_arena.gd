@@ -48,6 +48,7 @@ var spectator_target_index := 0
 
 
 func _ready() -> void:
+	AudioManager.play_combat_music()
 	death_ui.visible = false
 	player_respawn_time = -1.0
 	_create_arena_geometry()
@@ -92,6 +93,7 @@ func _process(delta: float) -> void:
 		if match_time <= 0.0:
 			match_finished = true
 			status_label.text = "TIME UP - DEFEAT"
+			AudioManager.play_defeat_music()
 	if is_instance_valid(boss) and not match_finished:
 		status_label.text = "Boss: %s | HP %.0f / %.0f" % [boss.get_state_name(), boss.health, boss.max_health]
 	var minutes := int(match_time) / 60
@@ -144,6 +146,7 @@ func _on_boss_died() -> void:
 	match_finished = true
 	status_label.text = "BOSS DEFEATED - VICTORY"
 	boss_bar.value = 0.0
+	AudioManager.play_victory_music()
 	_start_victory_sequence()
 
 
@@ -407,6 +410,7 @@ func _on_party_member_died(_member: Node3D) -> void:
 	if _all_party_members_dead():
 		match_finished = true
 		status_label.text = "ALL TEAM MEMBERS DOWN - DEFEAT"
+		AudioManager.play_defeat_music()
 		death_ui.visible = true
 		death_status.text = "全队阵亡\n任务失败"
 		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
