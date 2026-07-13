@@ -1,0 +1,9 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://assets/audio/gameplay_bgm/gameplay_bgm.gd" id="1_script"]
+[ext_resource type="AudioStream" path="res://assets/audio/gameplay_bgm/gameplay_bgm.ogg" id="2_bgm"]
+
+[node name="GameplayBGM" type="AudioStreamPlayer"]
+process_mode = 3
+stream = ExtResource("2_bgm")
+script = ExtResource("1_script")

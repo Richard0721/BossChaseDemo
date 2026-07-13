@@ -16,6 +16,10 @@ const BACKGROUND_SCENES: Array[PackedScene] = [
 @onready var camera: Camera3D = $MenuCamera
 @onready var display_character: Node3D = $DisplayCharacter
 @onready var character_head: Node3D = $DisplayCharacter/HeadPivot
+@onready var happy_student: HappyStudentModel = $DisplayCharacter/HappyStudent
+@onready var fashi: FashiModel = $DisplayCharacter/Fashi
+@onready var lulu: LuluModel = $DisplayCharacter/Lulu
+@onready var doumaoren: DoumaorenModel = $DisplayCharacter/Doumaoren
 @onready var background_slot: Node3D = $BackgroundSlot
 @onready var character_name_label: Label = $MainMenuUI/CharacterName
 
@@ -72,6 +76,28 @@ func _load_character_showcase(character_index: int) -> void:
 	var background := BACKGROUND_SCENES[character_index].instantiate()
 	background_slot.add_child(background)
 	character_name_label.text = CHARACTER_NAMES[character_index]
+	var is_happy_student := character_index == 1
+	var is_fashi := character_index == 0
+	var is_lulu := character_index == 3
+	var is_doumaoren := character_index == 2
+	$DisplayCharacter/Body.visible = not is_happy_student and not is_fashi and not is_lulu and not is_doumaoren
+	$DisplayCharacter/HeadPivot.visible = not is_happy_student and not is_fashi and not is_lulu and not is_doumaoren
+	happy_student.visible = is_happy_student
+	fashi.visible = is_fashi
+	lulu.visible = is_lulu
+	doumaoren.visible = is_doumaoren
+	if is_happy_student:
+		happy_student.set_weapon_visible(false)
+		happy_student.play_animation(&"idle")
+	elif is_fashi:
+		fashi.set_weapon_visible(false)
+		fashi.play_animation(&"idle")
+	elif is_lulu:
+		lulu.set_weapon_visible(false)
+		lulu.play_animation(&"idle")
+	elif is_doumaoren:
+		doumaoren.set_weapon_visible(false)
+		doumaoren.play_animation(&"idle")
 	var character_colors := [
 		Color(0.1, 0.85, 0.65, 1),
 		Color(1.0, 0.58, 0.12, 1),
@@ -87,7 +113,7 @@ func _load_character_showcase(character_index: int) -> void:
 
 
 func _populate_selection_options() -> void:
-	boss_option.add_item("赤色追猎者")
+	boss_option.add_item("追猎者")
 	map_option.add_item("高地试验场")
 	for character_name in CHARACTER_NAMES:
 		character_option.add_item(character_name)

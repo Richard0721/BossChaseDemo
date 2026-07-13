@@ -26,12 +26,16 @@ var tumble_time := 0.0
 @onready var collision_shape: CollisionShape3D = $CollisionShape3D
 @onready var muzzle: Marker3D = $Visuals/Muzzle
 @onready var name_label: Label3D = $NameLabel
+@onready var happy_student: HappyStudentModel = $Visuals/HappyStudent
+@onready var fashi: FashiModel = $Visuals/Fashi
+@onready var lulu: LuluModel = $Visuals/Lulu
+@onready var doumaoren: DoumaorenModel = $Visuals/Doumaoren
 
 
 func setup(new_character_name: String, new_spawn_position: Vector3) -> void:
 	character_name = new_character_name
 	spawn_position = new_spawn_position
-	global_position = new_spawn_position
+	position = new_spawn_position
 	if character_name == "快乐的本科生":
 		max_health = 150.0
 	if character_name == "潇洒的男子 Lulu":
@@ -52,6 +56,7 @@ func _physics_process(delta: float) -> void:
 		return
 	invincible_remaining = maxf(0.0, invincible_remaining - delta)
 	_attack_cooldown = maxf(0.0, _attack_cooldown - delta)
+	_update_character_animation()
 	if not is_on_floor():
 		velocity.y -= gravity * delta
 	_update_tumble(delta)
@@ -92,12 +97,13 @@ func _find_boss() -> Node3D:
 func _fire_at_boss(boss: Node3D) -> void:
 	var direction := (boss.global_position + Vector3.UP * 0.5 - muzzle.global_position).normalized()
 	var projectile: CombatProjectile = PROJECTILE_SCENE.instantiate()
-	projectile.configure(direction, projectile_speed, 1.0, self, Color(0.35, 0.9, 1.0, 1), 0.9)
+	projectile.configure(direction, projectile_speed, 1.0, self, Color(0.35, 0.9, 1.0, 1), 0.9, 1.0, false, character_name == "快乐的本科生", character_name == "头疼的符文大师", character_name == "潇洒的男子 Lulu", character_name == "神秘兜帽人")
+	var scene_root := get_tree().current_scene if get_tree().current_scene != null else get_tree().root
+	scene_root.add_child(projectile)
 	projectile.global_position = muzzle.global_position + direction * 0.6
-	get_tree().current_scene.add_child(projectile)
 
 
-func apply_damage(amount: float, _stun := false) -> void:
+func apply_damage(amount: float, _source: Node = null) -> void:
 	if is_dead or invincible_remaining > 0.0:
 		return
 	health = maxf(0.0, health - amount)
@@ -137,7 +143,19 @@ func heal(amount: float) -> void:
 func _die() -> void:
 	is_dead = true
 	velocity = Vector3.ZERO
-	visuals.visible = false
+	visuals.visible = true
+	if happy_student.visible:
+		happy_student.play_animation(&"death", 0.08, 1.0, true)
+	elif fashi.visible:
+		fashi.play_animation(&"death", 0.08, 1.0, true)
+	elif lulu.visible:
+		lulu.play_animation(&"death", 0.08, 1.0, true)
+	elif doumaoren.visible:
+		doumaoren.play_animation(&"death", 0.08, 1.0, true)
+	else:
+		var death_tween := create_tween().set_parallel(true)
+		death_tween.tween_property(visuals, "rotation_degrees:z", 88.0, 0.45).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+		death_tween.tween_property(visuals, "position:y", -0.65, 0.45).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 	name_label.visible = false
 	collision_shape.set_deferred("disabled", true)
 	died.emit(self)
@@ -150,6 +168,16 @@ func respawn() -> void:
 	is_dead = false
 	invincible_remaining = 3.0
 	visuals.visible = true
+	visuals.position = Vector3.ZERO
+	visuals.rotation = Vector3.ZERO
+	if happy_student.visible:
+		happy_student.play_animation(&"standing", 0.0, 1.0, true)
+	elif fashi.visible:
+		fashi.play_animation(&"standing", 0.0, 1.0, true)
+	elif lulu.visible:
+		lulu.play_animation(&"standing", 0.0, 1.0, true)
+	elif doumaoren.visible:
+		doumaoren.play_animation(&"standing", 0.0, 1.0, true)
 	name_label.visible = true
 	collision_shape.set_deferred("disabled", false)
 	health_changed.emit(health, max_health)
@@ -196,3 +224,34 @@ func _apply_appearance() -> void:
 	material.roughness = 0.42
 	$Visuals/Body.material_override = material
 	$Visuals/Head.material_override = material
+	var is_happy_student := character_name == "快乐的本科生"
+	var is_fashi := character_name == "头疼的符文大师"
+	var is_lulu := character_name == "潇洒的男子 Lulu"
+	var is_doumaoren := character_name == "神秘兜帽人"
+	$Visuals/Body.visible = not is_happy_student and not is_fashi and not is_lulu and not is_doumaoren
+	$Visuals/Head.visible = not is_happy_student and not is_fashi and not is_lulu and not is_doumaoren
+	$Visuals/Gun.visible = not is_happy_student and not is_fashi and not is_lulu and not is_doumaoren
+	happy_student.visible = is_happy_student
+	fashi.visible = is_fashi
+	lulu.visible = is_lulu
+	doumaoren.visible = is_doumaoren
+	if is_happy_student:
+		happy_student.play_animation(&"standing")
+	elif is_fashi:
+		fashi.play_animation(&"standing")
+	elif is_lulu:
+		lulu.play_animation(&"standing")
+	elif is_doumaoren:
+		doumaoren.play_animation(&"standing")
+
+
+func _update_character_animation() -> void:
+	var horizontal_speed := Vector2(velocity.x, velocity.z).length()
+	if happy_student.visible:
+		happy_student.play_animation(&"walk_rifle" if horizontal_speed > 0.35 else &"standing", 0.14, clampf(horizontal_speed / maxf(move_speed, 0.01), 0.75, 2.0))
+	elif fashi.visible:
+		fashi.play_animation(&"walk_rifle" if horizontal_speed > 0.35 else &"standing", 0.14, clampf(horizontal_speed / maxf(move_speed, 0.01), 0.75, 2.0))
+	elif lulu.visible:
+		lulu.play_animation(&"walk_rifle" if horizontal_speed > 0.35 else &"standing", 0.14, clampf(horizontal_speed / maxf(move_speed, 0.01), 0.75, 2.0))
+	elif doumaoren.visible:
+		doumaoren.play_animation(&"walk_rifle" if horizontal_speed > 0.35 else &"standing", 0.14, clampf(horizontal_speed / maxf(move_speed, 0.01), 0.75, 2.0))

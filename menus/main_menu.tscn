@@ -1,6 +1,10 @@
-[gd_scene load_steps=11 format=3]
+[gd_scene load_steps=12 format=3]
 
 [ext_resource type="Script" path="res://menus/main_menu.gd" id="1_menu"]
+[ext_resource type="PackedScene" path="res://assets/characters/happy_student/happy_student_model.tscn" id="2_happy_student"]
+[ext_resource type="PackedScene" path="res://assets/characters/fashi/fashi_model.tscn" id="3_fashi"]
+[ext_resource type="PackedScene" path="res://assets/characters/lulu/lulu_model.tscn" id="4_lulu"]
+[ext_resource type="PackedScene" path="res://assets/characters/doumaoren/doumaoren_model.tscn" id="5_doumaoren"]
 
 [sub_resource type="Environment" id="MenuEnvironment"]
 background_mode = 1
@@ -97,6 +101,30 @@ fov = 55.0
 
 [node name="DisplayCharacter" type="Node3D" parent="."]
 position = Vector3(2.2, 1.45, 0)
+
+[node name="HappyStudent" parent="DisplayCharacter" instance=ExtResource("2_happy_student")]
+visible = false
+position = Vector3(0, -1.45, 0)
+scale = Vector3(1.75, 1.75, 1.75)
+show_weapon = false
+
+[node name="Fashi" parent="DisplayCharacter" instance=ExtResource("3_fashi")]
+visible = false
+position = Vector3(0, -1.45, 0)
+scale = Vector3(1.75, 1.75, 1.75)
+show_weapon = false
+
+[node name="Lulu" parent="DisplayCharacter" instance=ExtResource("4_lulu")]
+visible = false
+position = Vector3(0, -1.45, 0)
+scale = Vector3(1.75, 1.75, 1.75)
+show_weapon = false
+
+[node name="Doumaoren" parent="DisplayCharacter" instance=ExtResource("5_doumaoren")]
+visible = false
+position = Vector3(0, -1.45, 0)
+scale = Vector3(1.75, 1.75, 1.75)
+show_weapon = false
 
 [node name="Body" type="MeshInstance3D" parent="DisplayCharacter"]
 mesh = SubResource("CharacterBodyMesh")

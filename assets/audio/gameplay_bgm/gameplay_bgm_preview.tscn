@@ -1,0 +1,123 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://assets/audio/gameplay_bgm/gameplay_bgm_preview.gd" id="1_preview"]
+[ext_resource type="PackedScene" path="res://assets/audio/gameplay_bgm/gameplay_bgm.tscn" id="2_bgm"]
+
+[sub_resource type="StyleBoxFlat" id="PanelStyle"]
+bg_color = Color(0.025, 0.045, 0.08, 0.96)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.16, 0.58, 0.95, 0.9)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+
+[sub_resource type="StyleBoxFlat" id="Background"]
+bg_color = Color(0.01, 0.018, 0.035, 1)
+
+[node name="GameplayBGMPreview" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_preview")
+
+[node name="Background" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("Background")
+
+[node name="GameplayBGM" parent="." instance=ExtResource("2_bgm")]
+
+[node name="Panel" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -300.0
+offset_top = -190.0
+offset_right = 300.0
+offset_bottom = 190.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("PanelStyle")
+
+[node name="Margin" type="MarginContainer" parent="Panel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 34.0
+offset_top = 30.0
+offset_right = -34.0
+offset_bottom = -30.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Content" type="VBoxContainer" parent="Panel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 22
+
+[node name="Title" type="Label" parent="Panel/Margin/Content"]
+layout_mode = 2
+text = "游戏 BGM 音量测试"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 30
+
+[node name="Description" type="Label" parent="Panel/Margin/Content"]
+layout_mode = 2
+text = "拖动滑块实时试听，数值会自动保存并用于正式游戏。"
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="VolumeValue" type="Label" parent="Panel/Margin/Content"]
+layout_mode = 2
+text = "当前音量：-10.0 dB"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 22
+
+[node name="VolumeSlider" type="HSlider" parent="Panel/Margin/Content"]
+custom_minimum_size = Vector2(0, 46)
+layout_mode = 2
+min_value = -40.0
+max_value = 0.0
+step = 0.5
+value = -10.0
+
+[node name="Buttons" type="HBoxContainer" parent="Panel/Margin/Content"]
+layout_mode = 2
+alignment = 1
+theme_override_constants/separation = 18
+
+[node name="PlayPause" type="Button" parent="Panel/Margin/Content/Buttons"]
+custom_minimum_size = Vector2(180, 54)
+layout_mode = 2
+text = "暂停"
+
+[node name="Restart" type="Button" parent="Panel/Margin/Content/Buttons"]
+custom_minimum_size = Vector2(180, 54)
+layout_mode = 2
+text = "从头播放"
+
+[node name="SaveStatus" type="Label" parent="Panel/Margin/Content"]
+layout_mode = 2
+text = "当前设置已载入"
+horizontal_alignment = 1
+theme_override_colors/font_color = Color(0.35, 0.85, 1, 1)
+
+[node name="Hint" type="Label" parent="Panel/Margin/Content"]
+layout_mode = 2
+text = "按 Esc 关闭测试窗口"
+horizontal_alignment = 1
+theme_override_colors/font_color = Color(0.62, 0.7, 0.82, 1)

@@ -1,8 +1,12 @@
-[gd_scene load_steps=11 format=3]
+[gd_scene load_steps=12 format=3]
 
 [ext_resource type="Script" path="res://actors/player/player.gd" id="1_player"]
 [ext_resource type="Script" path="res://characters/character_special.gd" id="2_character"]
 [ext_resource type="Script" path="res://runes/buff_component.gd" id="3_buff"]
+[ext_resource type="PackedScene" path="res://assets/characters/happy_student/happy_student_model.tscn" id="4_happy_student"]
+[ext_resource type="PackedScene" path="res://assets/characters/fashi/fashi_model.tscn" id="5_fashi"]
+[ext_resource type="PackedScene" path="res://assets/characters/lulu/lulu_model.tscn" id="6_lulu"]
+[ext_resource type="PackedScene" path="res://assets/characters/doumaoren/doumaoren_model.tscn" id="7_doumaoren"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape_player"]
 radius = 0.45
@@ -45,6 +49,22 @@ script = ExtResource("3_buff")
 shape = SubResource("CapsuleShape_player")
 
 [node name="Visuals" type="Node3D" parent="."]
+
+[node name="HappyStudent" parent="Visuals" instance=ExtResource("4_happy_student")]
+visible = false
+position = Vector3(0, -0.9, 0)
+
+[node name="Fashi" parent="Visuals" instance=ExtResource("5_fashi")]
+visible = false
+position = Vector3(0, -0.9, 0)
+
+[node name="Lulu" parent="Visuals" instance=ExtResource("6_lulu")]
+visible = false
+position = Vector3(0, -0.9, 0)
+
+[node name="Doumaoren" parent="Visuals" instance=ExtResource("7_doumaoren")]
+visible = false
+position = Vector3(0, -0.9, 0)
 
 [node name="Body" type="MeshInstance3D" parent="Visuals"]
 mesh = SubResource("CapsuleMesh_player")

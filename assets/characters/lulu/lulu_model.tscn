@@ -1,0 +1,51 @@
+[gd_scene format=3 uid="uid://g0xrhxxwbo4t"]
+
+[ext_resource type="Script" uid="uid://c8qv7e02gta6i" path="res://assets/characters/lulu/lulu_model.gd" id="1_script"]
+[ext_resource type="PackedScene" uid="uid://b5v6juogkm7ro" path="res://assets/characters/lulu/source/Person/Lulu Idle.fbx" id="2_rig"]
+[ext_resource type="PackedScene" uid="uid://52cb3l4paqs6" path="res://assets/characters/lulu/source/Weapon/Weapon3.fbx" id="3_weapon"]
+
+[node name="LuluModel" type="Node3D" unique_id=1501507199]
+script = ExtResource("1_script")
+
+[node name="Rig" parent="." unique_id=2089656064 instance=ExtResource("2_rig")]
+
+[node name="Skeleton3D" parent="Rig" index="0" unique_id=1207623007]
+bones/0/position = Vector3(0.006722683, 0.5622032, -0.0036201582)
+bones/0/rotation = Quaternion(-0.112184145, -0.45322436, -0.09986241, 0.87865245)
+bones/1/rotation = Quaternion(0.087190896, 0.0030859315, 0.043764085, 0.99522513)
+bones/2/rotation = Quaternion(0.10424333, 0.009849357, 0.04835106, 0.9933271)
+bones/3/rotation = Quaternion(0.14616065, 0.016456123, 0.0343849, 0.9885262)
+bones/4/rotation = Quaternion(0.05592476, 0.048634097, 0.0010856094, 0.9972492)
+bones/5/rotation = Quaternion(-0.00081233855, 0.31937853, -0.05402865, 0.9460854)
+bones/7/rotation = Quaternion(0.68380266, 0.3772923, -0.37966555, 0.49590182)
+bones/8/rotation = Quaternion(0.36813468, -0.398823, 0.021279804, 0.8396215)
+bones/9/rotation = Quaternion(0.736867, -0.3876346, 0.46947715, 0.2938668)
+bones/10/rotation = Quaternion(-0.23608258, -0.3158187, 0.17761578, 0.901652)
+bones/11/rotation = Quaternion(0.18015133, 0.078497425, -0.014368776, 0.9803965)
+bones/12/rotation = Quaternion(0.24054651, 0.031479944, -0.16533455, 0.9559346)
+bones/13/rotation = Quaternion(0.14631255, 0.04330394, -0.042507578, 0.98737556)
+bones/15/rotation = Quaternion(0.60216933, -0.5034767, 0.36805373, 0.4984375)
+bones/16/rotation = Quaternion(0.21977806, -0.011218407, -0.35500428, 0.90859437)
+bones/17/rotation = Quaternion(0.19881885, 0.18328159, -0.87701494, 0.3971446)
+bones/18/rotation = Quaternion(-0.14214888, 0.0776129, 0.09417926, 0.98229337)
+bones/19/rotation = Quaternion(0.06721634, -0.872844, -0.009935454, 0.4832461)
+bones/20/rotation = Quaternion(0.20077485, -0.021291329, -0.06479617, 0.97726035)
+bones/21/rotation = Quaternion(-0.024383204, -0.13830645, -0.21133672, 0.9672712)
+bones/23/rotation = Quaternion(0.13016671, 0.108268596, 0.96893865, -0.18025668)
+bones/24/rotation = Quaternion(-0.3166207, -0.09956024, 0.05560593, 0.9416725)
+bones/25/rotation = Quaternion(0.4429376, -0.16206165, -0.02806044, 0.8813371)
+bones/26/rotation = Quaternion(0.32573912, -0.108566076, 0.03837912, 0.93842137)
+bones/28/rotation = Quaternion(-0.215003, -0.00964419, 0.96954083, 0.11692436)
+bones/29/rotation = Quaternion(-0.29044217, 0.002330039, -0.043820594, 0.9558858)
+bones/30/rotation = Quaternion(0.5093046, 0.15961918, 0.04355205, 0.8445317)
+bones/31/rotation = Quaternion(0.3081531, 0.11026335, -0.014301481, 0.94481707)
+
+[node name="WeaponAttachment" type="BoneAttachment3D" parent="Rig/Skeleton3D" index="1" unique_id=442349321]
+transform = Transform3D(-0.24990754, 0.046333402, 0.9671605, 0.92194676, 0.31663877, 0.2230553, -0.29590562, 0.94741386, -0.12184745, -0.1503463, 0.87760293, 0.025018811)
+bone_name = "mixamorig_RightHand"
+bone_idx = 18
+
+[node name="Weapon" parent="Rig/Skeleton3D/WeaponAttachment" unique_id=1190657823 instance=ExtResource("3_weapon")]
+transform = Transform3D(-0.08516975, 0.22845672, 0.05525984, 0.23454641, 0.086433, 0.0041631972, -0.015300656, 0.053262305, -0.24378067, 0.029528618, 0.2323044, -0.009806834)
+
+[editable path="Rig"]

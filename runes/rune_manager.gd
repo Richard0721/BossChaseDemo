@@ -37,8 +37,9 @@ func spawn_round() -> void:
 		var point: Marker3D = points[point_indices[selection]]
 		var rune: RunePickup = RUNE_SCENE.instantiate()
 		rune.configure(RUNE_TYPES.pick_random(), rune_lifetime)
+		var scene_root := get_tree().current_scene if get_tree().current_scene != null else get_tree().root
+		scene_root.add_child(rune)
 		rune.global_position = point.global_position
-		get_tree().current_scene.add_child(rune)
 	round_number += 1
 	time_to_next_round = refresh_interval
 	round_spawned.emit(round_number)

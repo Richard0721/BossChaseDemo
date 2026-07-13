@@ -50,6 +50,7 @@ func _drop_pickup(at_position: Vector3) -> void:
 		return
 	_landed = true
 	var pickup: Area3D = HAMMER_PICKUP_SCENE.instantiate()
+	var scene_root := get_tree().current_scene if get_tree().current_scene != null else get_tree().root
+	scene_root.add_child(pickup)
 	pickup.global_position = at_position + Vector3.UP * 0.7
-	get_tree().current_scene.add_child(pickup)
 	queue_free()

@@ -1,0 +1,78 @@
+@tool
+class_name HappyStudentModel
+extends Node3D
+
+const ANIMATION_SOURCES := {
+	"idle": "res://assets/characters/happy_student/source/Happy Student Idle.fbx",
+	"standing": "res://assets/characters/happy_student/source/Happy Student standing.fbx",
+	"pointing": "res://assets/characters/happy_student/source/Happy Student Pointing.fbx",
+	"walk_rifle": "res://assets/characters/happy_student/source/Happy Student Walk With Rifle.fbx",
+	"jump_down": "res://assets/characters/happy_student/source/Happy Student Jump Down.fbx",
+	"death": "res://assets/characters/happy_student/source/Happy Student Death From Right.fbx",
+}
+const LOOPING_ANIMATIONS := [&"idle", &"standing", &"pointing", &"walk_rifle"]
+@export var starting_animation: StringName = &"idle"
+@export var show_weapon := true
+@export var editor_preview_animation: StringName = &"standing"
+@export_category("Shot Sound")
+@export_range(-30.0, 6.0, 0.5) var shot_volume_db := -4.0
+@export_range(0.8, 1.2, 0.01) var shot_pitch_min := 0.96
+@export_range(0.8, 1.2, 0.01) var shot_pitch_max := 1.04
+
+@onready var rig: Node3D = $Rig
+@onready var skeleton: Skeleton3D = $Rig/Skeleton3D
+@onready var animation_player: AnimationPlayer = $Rig/AnimationPlayer
+@onready var _weapon: Node3D = $Rig/Skeleton3D/WeaponAttachment/Weapon
+@onready var _shot_sfx: AudioStreamPlayer3D = $ShotSFX
+
+
+func _ready() -> void:
+	_install_animation_library()
+	_weapon.visible = show_weapon
+	_shot_sfx.volume_db = shot_volume_db
+	play_animation(editor_preview_animation if Engine.is_editor_hint() else starting_animation)
+
+
+func _install_animation_library() -> void:
+	var library := animation_player.get_animation_library("")
+	if library == null:
+		library = AnimationLibrary.new()
+		animation_player.add_animation_library("", library)
+	for animation_name: String in ANIMATION_SOURCES:
+		var source_scene := load(ANIMATION_SOURCES[animation_name]) as PackedScene
+		if source_scene == null:
+			push_warning("无法载入快乐的大学生动画：%s" % ANIMATION_SOURCES[animation_name])
+			continue
+		var source_instance := source_scene.instantiate()
+		var source_player := source_instance.get_node_or_null("AnimationPlayer") as AnimationPlayer
+		if source_player == null or not source_player.has_animation("mixamo_com"):
+			source_instance.queue_free()
+			continue
+		var animation := source_player.get_animation("mixamo_com").duplicate(true) as Animation
+		animation.loop_mode = Animation.LOOP_LINEAR if StringName(animation_name) in LOOPING_ANIMATIONS else Animation.LOOP_NONE
+		if library.has_animation(animation_name):
+			library.remove_animation(animation_name)
+		library.add_animation(animation_name, animation)
+		source_instance.free()
+
+
+func play_animation(animation_name: StringName, blend := 0.16, speed := 1.0, restart := false) -> void:
+	if not is_node_ready() or not animation_player.has_animation(animation_name):
+		return
+	if not restart and animation_player.current_animation == animation_name and animation_player.is_playing():
+		return
+	animation_player.play(animation_name, blend, speed)
+
+
+func set_weapon_visible(is_visible: bool) -> void:
+	show_weapon = is_visible
+	if is_instance_valid(_weapon):
+		_weapon.visible = is_visible
+
+
+func play_shot_sound() -> void:
+	if not is_instance_valid(_shot_sfx):
+		return
+	_shot_sfx.volume_db = shot_volume_db
+	_shot_sfx.pitch_scale = randf_range(minf(shot_pitch_min, shot_pitch_max), maxf(shot_pitch_min, shot_pitch_max))
+	_shot_sfx.play()

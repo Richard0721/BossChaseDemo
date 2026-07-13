@@ -17,6 +17,7 @@ enum State {
 	CHARGED_ATTACK,
 	CHARGE_WINDUP,
 	CHARGING,
+	CHARGE_RECOVER,
 	LASER_WINDUP,
 	LASER_SWEEP,
 	RETREAT,
@@ -38,6 +39,9 @@ enum Difficulty { EASY, NORMAL, HARD }
 @export var charged_projectile_speed := 20.8
 @export var attack_speed_multiplier := 1.5
 
+@export_category("AI Frequency")
+@export_range(0.5, 5.0, 0.1) var jump_cooldown_multiplier := 2.0
+
 @export_category("Movement")
 @export var wander_speed := 3.2
 @export var combat_move_speed := 5.0
@@ -52,7 +56,8 @@ enum Difficulty { EASY, NORMAL, HARD }
 @export var ranged_distance := 18.0
 
 @onready var boss_label: Label3D = $BossLabel
-@onready var body_mesh: MeshInstance3D = $Body
+@onready var boss_model: BossModel = $BossModel
+@onready var collision_shape: CollisionShape3D = $CollisionShape3D
 
 var health := 200.0
 var state := State.TAUNT
@@ -61,7 +66,7 @@ var _stun_remaining := 0.0
 var _close_time := 0.0
 var _not_close_time := 0.0
 var _ranged_cooldown := 1.0
-var _jump_cooldown := 5.0
+var _jump_cooldown := 10.0
 var _wander_time := 0.0
 var _wander_direction := Vector3.ZERO
 var _retreat_direction := Vector3.ZERO
@@ -86,6 +91,7 @@ func _ready() -> void:
 	add_to_group("lock_targets")
 	health = max_health
 	health_changed.emit(health, max_health)
+	_play_state_animation(state)
 	_update_state_label()
 
 
@@ -107,6 +113,7 @@ func _physics_process(delta: float) -> void:
 		_clear_laser_visual()
 		_stun_remaining -= delta
 		state = State.STUNNED
+		_play_state_animation(State.STUNNED)
 		_stop_horizontal(delta)
 		_update_state_label(_stun_remaining)
 		_finish_frame()
@@ -114,6 +121,7 @@ func _physics_process(delta: float) -> void:
 	if explosion_knockback_time > 0.0:
 		explosion_knockback_time = maxf(0.0, explosion_knockback_time - delta)
 		state = State.STUNNED
+		_play_state_animation(State.STUNNED)
 		_update_state_label(explosion_knockback_time)
 		_finish_frame()
 		return
@@ -233,6 +241,13 @@ func _process_committed_state(target: Node3D, delta: float) -> bool:
 				velocity.x = 0.0
 				velocity.z = 0.0
 				_charge_cooldown = 6.0
+				_begin_timed_state(State.CHARGE_RECOVER, 0.65)
+			return true
+		State.CHARGE_RECOVER:
+			_state_time -= delta
+			_stop_horizontal(delta)
+			_update_state_label(_state_time)
+			if _state_time <= 0.0:
 				_set_state(State.WANDER)
 			return true
 		State.LASER_WINDUP:
@@ -344,10 +359,10 @@ func _fire_remote_attack(target: Node3D, damage: float, charged: bool) -> void:
 	var projectile: CombatProjectile = PROJECTILE_SCENE.instantiate()
 	var projectile_speed := charged_projectile_speed if charged else ranged_projectile_speed
 	var projectile_color := Color(1.0, 0.05, 0.12, 1.0) if charged else Color(1.0, 0.35, 0.08, 1.0)
-	projectile.configure(projectile_direction, projectile_speed, damage * damage_multiplier, self, projectile_color, 8.8 if charged else 5.4, ai_damage_multiplier, charged)
+	projectile.configure(projectile_direction, projectile_speed, damage * damage_multiplier, self, projectile_color, 8.8 if charged else 5.4, ai_damage_multiplier, charged, false, false, false, false, true)
+	var scene_root := get_tree().current_scene if get_tree().current_scene != null else get_tree().root
+	scene_root.add_child(projectile)
 	projectile.global_position = spawn_position + projectile_direction * 1.25
-	get_tree().current_scene.add_child(projectile)
-	_spawn_attack_flash(projectile_color, 1.7 if charged else 0.8)
 
 
 func _spawn_attack_flash(color: Color, radius: float) -> void:
@@ -363,8 +378,9 @@ func _spawn_attack_flash(color: Color, radius: float) -> void:
 	var flash := MeshInstance3D.new()
 	flash.mesh = sphere_mesh
 	flash.material_override = material
+	var scene_root := get_tree().current_scene if get_tree().current_scene != null else get_tree().root
+	scene_root.add_child(flash)
 	flash.global_position = global_position
-	get_tree().current_scene.add_child(flash)
 	get_tree().create_timer(0.14).timeout.connect(flash.queue_free)
 
 
@@ -449,7 +465,7 @@ func _update_laser_visual(direction: Vector3) -> void:
 		_laser_visual = MeshInstance3D.new()
 		_laser_visual.mesh = mesh
 		_laser_visual.material_override = material
-		get_tree().current_scene.add_child(_laser_visual)
+		(get_tree().current_scene if get_tree().current_scene != null else get_tree().root).add_child(_laser_visual)
 	var start := global_position + Vector3.UP * 0.7
 	_laser_visual.global_transform = Transform3D(_basis_with_y_axis(direction), start + direction * 55.0)
 
@@ -508,13 +524,35 @@ func _stop_horizontal(delta: float) -> void:
 func _begin_timed_state(next_state: State, duration: float) -> void:
 	state = next_state
 	_state_time = duration
+	_play_state_animation(next_state)
 	_update_state_label(duration)
 
 
 func _set_state(next_state: State) -> void:
 	if state != next_state:
 		state = next_state
+		_play_state_animation(next_state)
 		_update_state_label()
+
+
+func _play_state_animation(next_state: State) -> void:
+	match next_state:
+		State.TAUNT:
+			boss_model.play_animation(&"taunt")
+		State.WANDER, State.MOVE_RANGED, State.RETREAT:
+			boss_model.play_animation(&"walk")
+		State.RANGED_CHARGE, State.TRIPLE_BURST, State.CHARGED_ATTACK, State.LASER_WINDUP, State.LASER_SWEEP, State.JUMP_CHARGE:
+			boss_model.play_animation(&"taunt")
+		State.MELEE_CHARGE:
+			boss_model.play_animation(&"melee", 0.1, 1.0, true)
+		State.CHARGE_WINDUP, State.CHARGING:
+			boss_model.play_animation(&"charge")
+		State.CHARGE_RECOVER:
+			boss_model.play_animation(&"charge_impact", 0.08, 1.0, true)
+		State.JUMP_REPOSITION:
+			boss_model.play_animation(&"jump", 0.1, 1.0, true)
+		State.STUNNED:
+			boss_model.play_animation(&"stunned")
 
 
 func _finish_frame() -> void:
@@ -536,8 +574,11 @@ func apply_damage(amount: float, source: Node = null) -> void:
 		_clear_laser_visual()
 		state = State.DEAD
 		velocity = Vector3.ZERO
+		collision_shape.set_deferred("disabled", true)
+		boss_label.visible = false
+		boss_model.play_animation(&"death", 0.08, 1.0, true)
 		died.emit()
-		queue_free()
+		get_tree().create_timer(boss_model.get_animation_length(&"death") + 0.1).timeout.connect(queue_free)
 
 
 func apply_blast_effect(amount: float, origin: Vector3, horizontal_force: float, vertical_force: float, duration: float, source: Node = null) -> void:
@@ -585,11 +626,11 @@ func apply_tumble(duration: float) -> void:
 func _update_tumble(delta: float) -> void:
 	if tumble_time > 0.0:
 		tumble_time -= delta
-		body_mesh.rotation.x += delta * 11.0
-		body_mesh.rotation.z += delta * 7.0
+		boss_model.rotation.x += delta * 11.0
+		boss_model.rotation.z += delta * 7.0
 	else:
-		body_mesh.rotation.x = lerp_angle(body_mesh.rotation.x, 0.0, 10.0 * delta)
-		body_mesh.rotation.z = lerp_angle(body_mesh.rotation.z, 0.0, 10.0 * delta)
+		boss_model.rotation.x = lerp_angle(boss_model.rotation.x, 0.0, 10.0 * delta)
+		boss_model.rotation.z = lerp_angle(boss_model.rotation.z, 0.0, 10.0 * delta)
 
 
 func configure_for_match(party_size: int, selected_difficulty: int) -> void:
@@ -600,15 +641,15 @@ func configure_for_match(party_size: int, selected_difficulty: int) -> void:
 		Difficulty.EASY:
 			damage_multiplier = 0.6
 			ai_damage_multiplier = 1.0
-			_jump_cooldown = 8.0
+			_jump_cooldown = 8.0 * jump_cooldown_multiplier
 		Difficulty.NORMAL:
 			damage_multiplier = 0.8
 			ai_damage_multiplier = 1.5
-			_jump_cooldown = 5.0
+			_jump_cooldown = 5.0 * jump_cooldown_multiplier
 		Difficulty.HARD:
 			damage_multiplier = 1.0
 			ai_damage_multiplier = 2.0
-			_jump_cooldown = 3.0
+			_jump_cooldown = 3.0 * jump_cooldown_multiplier
 	health = max_health
 	health_changed.emit(health, max_health)
 
@@ -627,11 +668,11 @@ func _damage_for_target(target: Node, base_damage: float) -> float:
 func _next_jump_cooldown() -> float:
 	match difficulty:
 		Difficulty.EASY:
-			return randf_range(8.0, 10.0)
+			return randf_range(8.0, 10.0) * jump_cooldown_multiplier
 		Difficulty.NORMAL:
-			return randf_range(5.0, 7.0)
+			return randf_range(5.0, 7.0) * jump_cooldown_multiplier
 		_:
-			return randf_range(3.0, 4.5)
+			return randf_range(3.0, 4.5) * jump_cooldown_multiplier
 
 
 func _jump_vertical_velocity() -> float:

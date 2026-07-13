@@ -54,6 +54,10 @@ const LANDMINE_SCENE := preload("res://items/landmine/landmine.tscn")
 @onready var held_item_visual: MeshInstance3D = $Visuals/HeldItem
 @onready var left_hand_visual: MeshInstance3D = $Visuals/LeftHand
 @onready var right_hand_visual: MeshInstance3D = $Visuals/RightHand
+@onready var happy_student: HappyStudentModel = $Visuals/HappyStudent
+@onready var fashi: FashiModel = $Visuals/Fashi
+@onready var lulu: LuluModel = $Visuals/Lulu
+@onready var doumaoren: DoumaorenModel = $Visuals/Doumaoren
 
 var health := 100.0
 var _pitch := -0.18
@@ -82,6 +86,10 @@ var _jumps_remaining := 1
 var is_dead := false
 var invincible_remaining := 0.0
 var spawn_position := Vector3.ZERO
+var _happy_action_time := 0.0
+var _fashi_action_time := 0.0
+var _lulu_action_time := 0.0
+var _doumaoren_action_time := 0.0
 
 
 func _ready() -> void:
@@ -116,6 +124,24 @@ func _apply_selected_character_appearance() -> void:
 	material.roughness = 0.42
 	$Visuals/Body.material_override = material
 	$Visuals/Head.material_override = material
+	var is_happy_student := get_character_name() == "快乐的本科生"
+	var is_fashi := get_character_name() == "头疼的符文大师"
+	var is_lulu := get_character_name() == "潇洒的男子 Lulu"
+	var is_doumaoren := get_character_name() == "神秘兜帽人"
+	$Visuals/Body.visible = not is_happy_student and not is_fashi and not is_lulu and not is_doumaoren
+	$Visuals/Head.visible = not is_happy_student and not is_fashi and not is_lulu and not is_doumaoren
+	happy_student.visible = is_happy_student
+	fashi.visible = is_fashi
+	lulu.visible = is_lulu
+	doumaoren.visible = is_doumaoren
+	if is_happy_student:
+		happy_student.play_animation(&"standing")
+	elif is_fashi:
+		fashi.play_animation(&"standing")
+	elif is_lulu:
+		lulu.play_animation(&"standing")
+	elif is_doumaoren:
+		doumaoren.play_animation(&"standing")
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -150,6 +176,10 @@ func _physics_process(delta: float) -> void:
 	_update_movement(delta)
 	_update_combat()
 	move_and_slide()
+	_update_happy_student_animation(delta)
+	_update_fashi_animation(delta)
+	_update_lulu_animation(delta)
+	_update_doumaoren_animation(delta)
 
 
 func _update_aim_camera(delta: float) -> void:
@@ -210,11 +240,11 @@ func _update_movement(delta: float) -> void:
 	velocity.x = move_toward(velocity.x, target_velocity.x, current_acceleration * delta)
 	velocity.z = move_toward(velocity.z, target_velocity.z, current_acceleration * delta)
 
-	if direction.length_squared() > 0.01:
-		# Rotate only the visible character. Rotating the CharacterBody would also
-		# rotate its child camera rig and feed the new camera direction back into
-		# movement, which makes held WASD input spiral in circles.
-		visuals.rotation.y = lerp_angle(visuals.rotation.y, atan2(direction.x, direction.z), 10.0 * delta)
+	# The character keeps facing the camera's aim direction while strafing or
+	# retreating. Only the visible model rotates, so the camera rig stays stable.
+	var facing_direction := camera_forward.normalized()
+	if facing_direction.length_squared() > 0.01:
+		visuals.rotation.y = lerp_angle(visuals.rotation.y, atan2(facing_direction.x, facing_direction.z), 10.0 * delta)
 
 
 func _update_combat() -> void:
@@ -264,10 +294,33 @@ func _fire_projectile(base_damage: float) -> void:
 		aim_position = hit["position"]
 	var projectile: CombatProjectile = PROJECTILE_SCENE.instantiate()
 	var projectile_direction := (aim_position - muzzle.global_position).normalized()
-	projectile.configure(projectile_direction, projectile_speed, base_damage * buff_component.get_attack_multiplier(), self, Color(1.0, 0.76, 0.12, 1.0), 1.0)
+	var uses_student_projectile := happy_student.visible
+	var uses_fashi_projectile := fashi.visible
+	var uses_lulu_projectile := lulu.visible
+	var uses_doumaoren_projectile := doumaoren.visible
+	var shot_color := Color(0.48, 0.74, 1.0, 1.0) if uses_student_projectile else (Color(0.48, 0.28, 1.0, 1.0) if uses_fashi_projectile else (Color(1.0, 0.12, 0.08, 1.0) if uses_lulu_projectile else (Color(0.08, 1.0, 0.3, 1.0) if uses_doumaoren_projectile else Color(1.0, 0.76, 0.12, 1.0))))
+	projectile.configure(projectile_direction, projectile_speed, base_damage * buff_component.get_attack_multiplier(), self, shot_color, 1.0, 1.0, false, uses_student_projectile, uses_fashi_projectile, uses_lulu_projectile, uses_doumaoren_projectile)
+	(get_tree().current_scene if get_tree().current_scene != null else get_tree().root).add_child(projectile)
 	projectile.global_position = muzzle.global_position + projectile_direction * 0.55
-	get_tree().current_scene.add_child(projectile)
-	_spawn_muzzle_flash()
+	if not uses_student_projectile and not uses_fashi_projectile and not uses_lulu_projectile and not uses_doumaoren_projectile:
+		_spawn_muzzle_flash(shot_color)
+	if happy_student.visible:
+		_happy_action_time = 0.38
+		happy_student.set_weapon_visible(true)
+		happy_student.play_animation(&"standing")
+		happy_student.play_shot_sound()
+	elif fashi.visible:
+		_fashi_action_time = 0.38
+		fashi.set_weapon_visible(true)
+		fashi.play_animation(&"standing")
+	elif lulu.visible:
+		_lulu_action_time = 0.38
+		lulu.set_weapon_visible(true)
+		lulu.play_animation(&"standing")
+	elif doumaoren.visible:
+		_doumaoren_action_time = 0.38
+		doumaoren.set_weapon_visible(true)
+		doumaoren.play_animation(&"standing")
 	_pitch = clampf(_pitch - 0.018, -1.15, 0.65)
 	camera_pivot.rotation.x = _pitch
 
@@ -300,18 +353,18 @@ func _spawn_basic_melee_feedback(direction: Vector3) -> void:
 	var slash := MeshInstance3D.new()
 	slash.mesh = mesh
 	slash.material_override = material
-	slash.global_position = global_position + Vector3.UP * 0.55 + direction * 1.4
 	slash.rotation.y = atan2(direction.x, direction.z)
-	get_tree().current_scene.add_child(slash)
+	(get_tree().current_scene if get_tree().current_scene != null else get_tree().root).add_child(slash)
+	slash.global_position = global_position + Vector3.UP * 0.55 + direction * 1.4
 	get_tree().create_timer(0.1).timeout.connect(slash.queue_free)
 
 
-func _spawn_muzzle_flash() -> void:
+func _spawn_muzzle_flash(flash_color := Color(1.0, 0.82, 0.2, 1.0)) -> void:
 	var tracer_material := StandardMaterial3D.new()
 	tracer_material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-	tracer_material.albedo_color = Color(1.0, 0.82, 0.2, 1.0)
+	tracer_material.albedo_color = flash_color
 	tracer_material.emission_enabled = true
-	tracer_material.emission = Color(1.0, 0.45, 0.03, 1.0)
+	tracer_material.emission = flash_color
 
 	var flash_mesh := SphereMesh.new()
 	flash_mesh.radius = 0.11
@@ -319,8 +372,8 @@ func _spawn_muzzle_flash() -> void:
 	var flash := MeshInstance3D.new()
 	flash.mesh = flash_mesh
 	flash.material_override = tracer_material
+	(get_tree().current_scene if get_tree().current_scene != null else get_tree().root).add_child(flash)
 	flash.global_position = muzzle.global_position
-	get_tree().current_scene.add_child(flash)
 	get_tree().create_timer(0.055).timeout.connect(flash.queue_free)
 
 
@@ -364,8 +417,8 @@ func _spawn_hammer_slam_feedback(radius: float) -> void:
 	var effect := MeshInstance3D.new()
 	effect.mesh = sphere_mesh
 	effect.material_override = material
+	(get_tree().current_scene if get_tree().current_scene != null else get_tree().root).add_child(effect)
 	effect.global_position = global_position
-	get_tree().current_scene.add_child(effect)
 	get_tree().create_timer(0.16).timeout.connect(effect.queue_free)
 
 
@@ -373,8 +426,8 @@ func _throw_hammer() -> void:
 	var throw_direction := -camera.global_basis.z
 	var hammer: ThrownHammer = HAMMER_PROJECTILE_SCENE.instantiate()
 	hammer.configure(throw_direction, self, 0.0)
+	(get_tree().current_scene if get_tree().current_scene != null else get_tree().root).add_child(hammer)
 	hammer.global_position = global_position + Vector3.UP * 0.65 + throw_direction * 1.1
-	get_tree().current_scene.add_child(hammer)
 	_remove_hammer()
 
 
@@ -473,10 +526,10 @@ func _use_inventory_item(active_mode: String) -> void:
 			var mine := LANDMINE_SCENE.instantiate()
 			var forward := -camera.global_basis.z
 			forward.y = 0.0
-			mine.global_position = global_position + forward.normalized() * 1.8 + Vector3.UP * 0.15
 			if mine.has_method("set_source_owner"):
 				mine.set_source_owner(self)
-			get_tree().current_scene.add_child(mine)
+			(get_tree().current_scene if get_tree().current_scene != null else get_tree().root).add_child(mine)
+			mine.global_position = global_position + forward.normalized() * 1.8 + Vector3.UP * 0.15
 			_remove_inventory_item()
 		"Shield":
 			pass
@@ -538,7 +591,15 @@ func _update_equipment_visual() -> void:
 	if not is_node_ready():
 		return
 	var active_mode := get_active_item_name()
-	gun_visual.visible = active_mode in ["Ranged", "RapidGun"]
+	var using_happy_student := happy_student.visible
+	var using_fashi := fashi.visible
+	var using_lulu := lulu.visible
+	var using_doumaoren := doumaoren.visible
+	gun_visual.visible = active_mode in ["Ranged", "RapidGun"] and not using_happy_student and not using_fashi and not using_lulu and not using_doumaoren
+	happy_student.set_weapon_visible(using_happy_student and active_mode in ["Ranged", "RapidGun"])
+	fashi.set_weapon_visible(using_fashi and active_mode in ["Ranged", "RapidGun"])
+	lulu.set_weapon_visible(using_lulu and active_mode in ["Ranged", "RapidGun"])
+	doumaoren.set_weapon_visible(using_doumaoren and active_mode in ["Ranged", "RapidGun"])
 	var holding_item := active_mode not in ["Ranged", "RapidGun"]
 	held_item_visual.visible = holding_item
 	left_hand_visual.visible = holding_item
@@ -554,6 +615,66 @@ func _update_equipment_visual() -> void:
 		material.albedo_color = colors.get(active_mode, Color(0.5, 0.7, 1, 1))
 		material.metallic = 0.45
 		held_item_visual.material_override = material
+
+
+func _update_happy_student_animation(delta: float) -> void:
+	if not happy_student.visible or is_dead:
+		return
+	_happy_action_time = maxf(0.0, _happy_action_time - delta)
+	if _happy_action_time > 0.0:
+		return
+	var horizontal_speed := Vector2(velocity.x, velocity.z).length()
+	if not is_on_floor():
+		happy_student.play_animation(&"jump_down")
+	elif horizontal_speed > 0.35:
+		happy_student.play_animation(&"walk_rifle", 0.14, clampf(horizontal_speed / walk_speed, 0.75, 2.0))
+	else:
+		happy_student.play_animation(&"standing")
+
+
+func _update_fashi_animation(delta: float) -> void:
+	if not fashi.visible or is_dead:
+		return
+	_fashi_action_time = maxf(0.0, _fashi_action_time - delta)
+	if _fashi_action_time > 0.0:
+		return
+	var horizontal_speed := Vector2(velocity.x, velocity.z).length()
+	if not is_on_floor():
+		fashi.play_animation(&"jump_down")
+	elif horizontal_speed > 0.35:
+		fashi.play_animation(&"walk_rifle", 0.14, clampf(horizontal_speed / walk_speed, 0.75, 2.0))
+	else:
+		fashi.play_animation(&"standing")
+
+
+func _update_lulu_animation(delta: float) -> void:
+	if not lulu.visible or is_dead:
+		return
+	_lulu_action_time = maxf(0.0, _lulu_action_time - delta)
+	if _lulu_action_time > 0.0:
+		return
+	var horizontal_speed := Vector2(velocity.x, velocity.z).length()
+	if not is_on_floor():
+		lulu.play_animation(&"jump_down")
+	elif horizontal_speed > 0.35:
+		lulu.play_animation(&"walk_rifle", 0.14, clampf(horizontal_speed / walk_speed, 0.75, 2.0))
+	else:
+		lulu.play_animation(&"standing")
+
+
+func _update_doumaoren_animation(delta: float) -> void:
+	if not doumaoren.visible or is_dead:
+		return
+	_doumaoren_action_time = maxf(0.0, _doumaoren_action_time - delta)
+	if _doumaoren_action_time > 0.0:
+		return
+	var horizontal_speed := Vector2(velocity.x, velocity.z).length()
+	if not is_on_floor():
+		doumaoren.play_animation(&"jump_down")
+	elif horizontal_speed > 0.35:
+		doumaoren.play_animation(&"walk_rifle", 0.14, clampf(horizontal_speed / walk_speed, 0.75, 2.0))
+	else:
+		doumaoren.play_animation(&"standing")
 
 
 func get_active_item_name() -> String:
@@ -593,7 +714,7 @@ func _update_camera_lock(delta: float) -> void:
 	camera_pivot.rotation.x = _pitch
 
 
-func apply_damage(amount: float, _stun := false) -> void:
+func apply_damage(amount: float, _source: Node = null) -> void:
 	if is_dead or invincible_remaining > 0.0:
 		return
 	if buff_component.try_block_damage():
@@ -687,7 +808,19 @@ func _die() -> void:
 		return
 	is_dead = true
 	velocity = Vector3.ZERO
-	visuals.visible = false
+	visuals.visible = true
+	if happy_student.visible:
+		happy_student.play_animation(&"death", 0.08, 1.0, true)
+	elif fashi.visible:
+		fashi.play_animation(&"death", 0.08, 1.0, true)
+	elif lulu.visible:
+		lulu.play_animation(&"death", 0.08, 1.0, true)
+	elif doumaoren.visible:
+		doumaoren.play_animation(&"death", 0.08, 1.0, true)
+	else:
+		var death_tween := create_tween().set_parallel(true)
+		death_tween.tween_property(visuals, "rotation_degrees:z", 88.0, 0.45).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+		death_tween.tween_property(visuals, "position:y", -0.65, 0.45).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 	collision_shape.set_deferred("disabled", true)
 	died.emit(self)
 
@@ -699,6 +832,16 @@ func respawn() -> void:
 	is_dead = false
 	invincible_remaining = 3.0
 	visuals.visible = true
+	visuals.position = Vector3.ZERO
+	visuals.rotation = Vector3.ZERO
+	if happy_student.visible:
+		happy_student.play_animation(&"standing", 0.0, 1.0, true)
+	elif fashi.visible:
+		fashi.play_animation(&"standing", 0.0, 1.0, true)
+	elif lulu.visible:
+		lulu.play_animation(&"standing", 0.0, 1.0, true)
+	elif doumaoren.visible:
+		doumaoren.play_animation(&"standing", 0.0, 1.0, true)
 	collision_shape.set_deferred("disabled", false)
 	health_changed.emit(health, max_health)
 	set_camera_active(true)

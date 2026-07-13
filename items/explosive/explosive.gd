@@ -114,8 +114,9 @@ func _spawn_explosion_visual() -> void:
 	var visual := MeshInstance3D.new()
 	visual.mesh = mesh
 	visual.material_override = material
+	var scene_root := get_tree().current_scene if get_tree().current_scene != null else get_tree().root
+	scene_root.add_child(visual)
 	visual.global_position = global_position
-	get_tree().current_scene.add_child(visual)
 	var tween := visual.create_tween()
 	tween.tween_property(visual, "scale", Vector3.ONE * 1.25, 0.18)
 	tween.parallel().tween_property(material, "albedo_color", Color(explosive_color.r, explosive_color.g, explosive_color.b, 0.0), 0.18)

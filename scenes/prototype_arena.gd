@@ -93,7 +93,7 @@ func _process(delta: float) -> void:
 			match_finished = true
 			status_label.text = "TIME UP - DEFEAT"
 	if is_instance_valid(boss) and not match_finished:
-		status_label.text = "Boss: %s | HP %.0f / %.0f" % [boss.get_state_name(), boss.health, boss.max_health]
+		status_label.text = "追猎者：%s | HP %.0f / %.0f" % [boss.get_state_name(), boss.health, boss.max_health]
 	var minutes := int(match_time) / 60
 	var seconds := int(match_time) % 60
 	timer_label.text = "%02d:%02d" % [minutes, seconds]
@@ -142,7 +142,7 @@ func _on_boss_damaged(amount: float, source: Node) -> void:
 
 func _on_boss_died() -> void:
 	match_finished = true
-	status_label.text = "BOSS DEFEATED - VICTORY"
+	status_label.text = "追猎者已击败 - 胜利"
 	boss_bar.value = 0.0
 	_start_victory_sequence()
 
@@ -373,7 +373,7 @@ func _show_victory_result() -> void:
 	result_ui.visible = true
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	var sorted_ids := _get_sorted_score_ids()
-	var lines: Array[String] = ["BOSS DEFEATED", "", "MVP: %s" % _leader_name(), "", "FINAL SCORE"]
+	var lines: Array[String] = ["追猎者已击败", "", "MVP: %s" % _leader_name(), "", "FINAL SCORE"]
 	for rank in sorted_ids.size():
 		var actor_id := sorted_ids[rank]
 		lines.append("%d. %s  %d" % [rank + 1, String(name_by_id[actor_id]), roundi(float(score_by_id[actor_id]))])

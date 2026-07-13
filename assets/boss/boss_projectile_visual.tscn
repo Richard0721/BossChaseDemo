@@ -1,0 +1,8 @@
+[gd_scene format=3 uid="uid://4v4pd2glbw65"]
+
+[ext_resource type="PackedScene" uid="uid://83urv6eprxyj" path="res://assets/boss/source/Zidan/Zidan02.fbx" id="1_projectile_model"]
+
+[node name="BossProjectileVisual" type="Node3D" unique_id=958681344]
+
+[node name="ProjectileModel" parent="." unique_id=1702367653 instance=ExtResource("1_projectile_model")]
+transform = Transform3D(1.5285484e-16, -3.496911e-09, 0.08, -0.08, -3.496911e-09, 0, 3.496911e-09, -0.08, -3.496911e-09, 0, 0, 0)

@@ -41,5 +41,6 @@ func interact(player: Node3D) -> void:
 func _spawn_bomb() -> void:
 	var bomb: AreaExplosive = EXPLOSIVE_SCENE.instantiate()
 	bomb.configure(2.0, 50.0, 6.0, Color(1.0, 0.05, 0.02, 1), 26.0, 5.5, 0.0)
+	var scene_root := get_tree().current_scene if get_tree().current_scene != null else get_tree().root
+	scene_root.add_child(bomb)
 	bomb.global_position = global_position + Vector3.UP * 0.6
-	get_tree().current_scene.add_child(bomb)

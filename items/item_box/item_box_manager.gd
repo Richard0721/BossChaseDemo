@@ -44,8 +44,9 @@ func _spawn_box(point_index: int) -> void:
 	var point := get_child(point_index) as Marker3D
 	var box: ItemBox = ITEM_BOX_SCENE.instantiate()
 	box.spawn_index = point_index
+	var scene_root := get_tree().current_scene if get_tree().current_scene != null else get_tree().root
+	scene_root.add_child(box)
 	box.global_position = point.global_position
-	get_tree().current_scene.add_child(box)
 
 
 func _is_host_or_single_player() -> bool:

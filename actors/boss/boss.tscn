@@ -1,35 +1,39 @@
-[gd_scene load_steps=5 format=3]
+[gd_scene format=3 uid="uid://c61m8n2d6ref5"]
 
-[ext_resource type="Script" path="res://actors/boss/boss.gd" id="1_boss"]
+[ext_resource type="Script" uid="uid://brufx6ohq4l7s" path="res://actors/boss/boss.gd" id="1_boss"]
+[ext_resource type="PackedScene" uid="uid://cffoa8o1prj74" path="res://assets/boss/boss_model.tscn" id="2_boss_model"]
 
 [sub_resource type="CapsuleShape3D" id="BossShape"]
 radius = 0.8
 height = 2.6
 
+[sub_resource type="StandardMaterial3D" id="BossMaterial"]
+albedo_color = Color(0.95, 0.18, 0.25, 1)
+roughness = 0.32
+emission_enabled = true
+emission = Color(0.22, 0.01, 0.02, 1)
+
 [sub_resource type="CapsuleMesh" id="BossMesh"]
 radius = 0.8
 height = 2.6
 
-[sub_resource type="StandardMaterial3D" id="BossMaterial"]
-albedo_color = Color(0.95, 0.18, 0.25, 1)
-emission_enabled = true
-emission = Color(0.22, 0.01, 0.02, 1)
-roughness = 0.32
-
-[node name="Boss" type="CharacterBody3D"]
+[node name="Boss" type="CharacterBody3D" unique_id=400121658]
 script = ExtResource("1_boss")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1456883696]
 shape = SubResource("BossShape")
 
-[node name="Body" type="MeshInstance3D" parent="."]
-mesh = SubResource("BossMesh")
+[node name="Body" type="MeshInstance3D" parent="." unique_id=974241728]
+visible = false
 material_override = SubResource("BossMaterial")
+mesh = SubResource("BossMesh")
 
-[node name="BossLabel" type="Label3D" parent="."]
-position = Vector3(0, 1.8, 0)
-text = "BOSS"
+[node name="BossModel" parent="." unique_id=1151443085 instance=ExtResource("2_boss_model")]
+transform = Transform3D(3.5, 0, 0, 0, 3.5, 0, 0, 0, 3.5, 0, -1.3, 0)
+
+[node name="BossLabel" type="Label3D" parent="." unique_id=508874512]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.6, 0)
+billboard = 1
+text = "追猎者"
 font_size = 48
 outline_size = 10
-billboard = 1
-

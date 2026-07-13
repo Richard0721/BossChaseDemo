@@ -1,0 +1,58 @@
+[gd_scene format=3 uid="uid://blciu2a8g6l5w"]
+
+[ext_resource type="Script" uid="uid://dulue6ojindei" path="res://assets/characters/happy_student/happy_student_model.gd" id="1_script"]
+[ext_resource type="PackedScene" uid="uid://yph32ukdkerb" path="res://assets/characters/happy_student/source/Happy Student Idle.fbx" id="2_rig"]
+[ext_resource type="PackedScene" uid="uid://pb43b0u00xd" path="res://assets/characters/happy_student/source/Weapon/Weapon.fbx" id="3_weapon"]
+[ext_resource type="AudioStream" path="res://assets/audio/happy_student/happy_student_rifle_shot.wav" id="4_shot_sfx"]
+
+[node name="HappyStudentModel" type="Node3D" unique_id=1614217931]
+script = ExtResource("1_script")
+
+[node name="Rig" parent="." unique_id=2143975647 instance=ExtResource("2_rig")]
+
+[node name="Skeleton3D" parent="Rig" index="0" unique_id=2084146944]
+bones/0/position = Vector3(0.004712309, 0.56237215, -0.0020699576)
+bones/0/rotation = Quaternion(-0.09959566, -0.4533308, -0.09323124, 0.8808404)
+bones/1/rotation = Quaternion(0.06981749, 0.0007208665, 0.04575836, 0.9965095)
+bones/2/rotation = Quaternion(0.09558563, 0.0072760833, 0.042471305, 0.9944881)
+bones/3/rotation = Quaternion(0.12684707, 0.011312164, 0.04024727, 0.9910409)
+bones/4/rotation = Quaternion(0.05592476, 0.0486341, 0.0010856095, 0.9972492)
+bones/5/rotation = Quaternion(-0.00081233855, 0.31937853, -0.05402865, 0.9460854)
+bones/7/rotation = Quaternion(-0.66882217, -0.39214668, 0.38194615, -0.50300604)
+bones/8/rotation = Quaternion(0.40115604, -0.35069767, -0.0030660338, 0.8462125)
+bones/9/rotation = Quaternion(0.7351828, -0.38614193, 0.4763578, 0.2889358)
+bones/10/rotation = Quaternion(-0.21720232, -0.31762758, 0.18477586, 0.9043196)
+bones/11/rotation = Quaternion(0.18015136, 0.07849742, -0.014368773, 0.9803965)
+bones/12/rotation = Quaternion(0.24054651, 0.031479944, -0.16533455, 0.9559346)
+bones/13/rotation = Quaternion(0.14631255, 0.04330394, -0.042507578, 0.98737556)
+bones/15/rotation = Quaternion(0.59876263, -0.48824117, 0.3540854, 0.5269986)
+bones/16/rotation = Quaternion(0.25282463, -0.035874013, -0.3211229, 0.91196096)
+bones/17/rotation = Quaternion(0.19081748, 0.16791914, -0.8829183, 0.39477485)
+bones/18/rotation = Quaternion(-0.145411, 0.098711655, 0.09600875, 0.9797419)
+bones/19/rotation = Quaternion(-0.06721633, 0.8728439, 0.009935468, -0.48324606)
+bones/20/rotation = Quaternion(0.20077485, -0.021291329, -0.06479617, 0.97726035)
+bones/21/rotation = Quaternion(-0.024383204, -0.13830645, -0.21133672, 0.9672712)
+bones/23/rotation = Quaternion(0.13014077, 0.122049876, 0.9676679, -0.17828698)
+bones/24/rotation = Quaternion(-0.3189137, -0.10005235, 0.05578298, 0.94083583)
+bones/25/rotation = Quaternion(0.44544843, -0.16301228, -0.029789653, 0.8798383)
+bones/26/rotation = Quaternion(0.3257391, -0.10856607, 0.03837913, 0.93842125)
+bones/28/rotation = Quaternion(-0.2142579, 0.0011080325, 0.97015727, 0.11352201)
+bones/29/rotation = Quaternion(-0.28993973, 0.005363635, -0.045287583, 0.9559578)
+bones/30/rotation = Quaternion(0.5100787, 0.16054021, 0.0455518, 0.84378415)
+bones/31/rotation = Quaternion(0.3081531, 0.110263355, -0.014301482, 0.944817)
+
+[node name="WeaponAttachment" type="BoneAttachment3D" parent="Rig/Skeleton3D" index="1" unique_id=1340200853]
+transform = Transform3D(-0.2420726, 0.05131325, 0.9689002, 0.92451286, 0.3152073, 0.21428932, -0.29440862, 0.9476346, -0.12374288, -0.17352134, 0.84069717, 0.07057901)
+bone_name = "mixamorig_RightHand"
+bone_idx = 18
+
+[node name="Weapon" parent="Rig/Skeleton3D/WeaponAttachment" unique_id=1018407436 instance=ExtResource("3_weapon")]
+transform = Transform3D(0.11551367, 0.37205917, -0.090711415, -0.38214016, 0.1181749, -0.0019221362, 0.025011674, 0.0872163, 0.38957387, 0.038286567, 0.30704984, 0.040400773)
+
+[node name="ShotSFX" type="AudioStreamPlayer3D" parent="."]
+stream = ExtResource("4_shot_sfx")
+unit_size = 4.0
+max_distance = 55.0
+max_polyphony = 4
+
+[editable path="Rig"]

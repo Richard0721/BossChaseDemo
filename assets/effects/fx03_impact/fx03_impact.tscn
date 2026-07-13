@@ -1,0 +1,26 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://assets/effects/fx03_impact/fx03_impact.gd" id="1_script"]
+
+[node name="Fx03Impact" type="Node3D"]
+script = ExtResource("1_script")
+
+[node name="Burst1" type="Sprite3D" parent="."]
+billboard = 1
+shaded = false
+double_sided = true
+
+[node name="Burst2" type="Sprite3D" parent="."]
+billboard = 1
+shaded = false
+double_sided = true
+
+[node name="Burst3" type="Sprite3D" parent="."]
+billboard = 1
+shaded = false
+double_sided = true
+
+[node name="Burst4" type="Sprite3D" parent="."]
+billboard = 1
+shaded = false
+double_sided = true

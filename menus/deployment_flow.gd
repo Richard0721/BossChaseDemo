@@ -2,7 +2,7 @@ extends Node3D
 
 enum Stage { BOSS, MAP, CHARACTER, POSE }
 
-const BOSS_NAMES: Array[String] = ["赤色追猎者"]
+const BOSS_NAMES: Array[String] = ["追猎者"]
 const MAP_NAMES: Array[String] = ["高地试验场", "峡谷回廊"]
 const CHARACTER_NAMES: Array[String] = [
 	"头疼的符文大师",
@@ -22,6 +22,12 @@ const CHARACTER_COLORS: Array[Color] = [
 	Color(0.48, 0.16, 0.9, 1),
 	Color(0.05, 0.58, 1.0, 1),
 ]
+const HAPPY_STUDENT_SCENE := preload("res://assets/characters/happy_student/happy_student_model.tscn")
+const FASHI_SCENE := preload("res://assets/characters/fashi/fashi_model.tscn")
+const LULU_SCENE := preload("res://assets/characters/lulu/lulu_model.tscn")
+const DOUMAOREN_SCENE := preload("res://assets/characters/doumaoren/doumaoren_model.tscn")
+const BOSS_LOBBY_SHOWCASE_SCENE := preload("res://assets/boss/boss_lobby_showcase.tscn")
+const BOSS_SELECTION_CARD_SCENE := preload("res://menus/boss_selection_card.tscn")
 
 @onready var boss_showcase: Node3D = $BossShowcase
 @onready var map_showcase: Node3D = $MapShowcase
@@ -31,6 +37,7 @@ const CHARACTER_COLORS: Array[Color] = [
 @onready var title_label: Label = $UI/Title
 @onready var instruction_label: Label = $UI/Instruction
 @onready var cards: HBoxContainer = $UI/CardContainer
+@onready var boss_card_title: Label = $UI/BossCardTitle
 @onready var map_previous_button: Button = $UI/MapPrevious
 @onready var map_next_button: Button = $UI/MapNext
 @onready var preview_frame: Panel = $UI/MapPreview
@@ -84,6 +91,8 @@ func _process(delta: float) -> void:
 		video_placeholder.color = Color(0.025, 0.09 + sin(Time.get_ticks_msec() * 0.0015) * 0.018, 0.15, 0.9)
 	if stage == Stage.POSE and selected_character < _character_models.size():
 		var actor := _character_models[selected_character]
+		if selected_character in [0, 1, 2, 3]:
+			return
 		var time := Time.get_ticks_msec() * 0.001
 		actor.position.y = sin(time * 3.2) * 0.08
 		actor.rotation.y = sin(time * 1.9) * 0.24
@@ -118,6 +127,7 @@ func _show_stage(next_stage: Stage) -> void:
 	difficulty_option.visible = false
 	map_previous_button.visible = false
 	map_next_button.visible = false
+	boss_card_title.visible = false
 	cards.offset_left = 140.0
 	cards.offset_right = -140.0
 	boss_showcase.visible = false
@@ -129,6 +139,8 @@ func _show_stage(next_stage: Stage) -> void:
 			title_label.text = "选择 Boss"
 			instruction_label.text = "确认本次追击目标"
 			boss_showcase.visible = true
+			boss_card_title.text = BOSS_NAMES[selected_boss]
+			boss_card_title.visible = true
 			party_size_label.visible = true
 			party_size_option.visible = true
 			difficulty_label.visible = true
@@ -174,9 +186,16 @@ func _show_stage(next_stage: Stage) -> void:
 func _build_cards(names: Array[String], selected_index: int, character_cards := false) -> void:
 	_clear_cards()
 	for index in names.size():
-		var button := Button.new()
-		button.custom_minimum_size = Vector2(230, 285 if character_cards else 120)
-		button.text = names[index]
+		var button: Button
+		var card_item: Control
+		if stage == Stage.BOSS and not character_cards:
+			card_item = BOSS_SELECTION_CARD_SCENE.instantiate() as Control
+			button = card_item.get_node("Button") as Button
+		else:
+			button = Button.new()
+			card_item = button
+			button.custom_minimum_size = Vector2(230, 285 if character_cards else 120)
+			button.text = names[index]
 		button.vertical_icon_alignment = VERTICAL_ALIGNMENT_BOTTOM
 		button.add_theme_font_size_override("font_size", 18)
 		button.add_theme_stylebox_override("normal", _make_card_style(Color(0.025, 0.06, 0.11, 0.22), Color(0.1, 0.38, 0.62, 0.7), 1))
@@ -186,7 +205,7 @@ func _build_cards(names: Array[String], selected_index: int, character_cards := 
 		if character_cards:
 			button.mouse_entered.connect(_on_character_hovered.bind(index, true))
 			button.mouse_exited.connect(_on_character_hovered.bind(index, false))
-		cards.add_child(button)
+		cards.add_child(card_item)
 		_card_buttons.append(button)
 	_refresh_card_selection(selected_index)
 	if character_cards:
@@ -241,6 +260,7 @@ func _on_card_selected(index: int) -> void:
 	match stage:
 		Stage.BOSS:
 			selected_boss = index
+			boss_card_title.text = BOSS_NAMES[selected_boss]
 		Stage.MAP:
 			selected_map = index
 		Stage.CHARACTER:
@@ -251,8 +271,15 @@ func _on_card_selected(index: int) -> void:
 func _refresh_card_selection(selected_index: int) -> void:
 	for index in _card_buttons.size():
 		var selected := index == selected_index
-		_card_buttons[index].modulate = Color(1.0, 0.86, 0.45, 1.0) if selected else Color(0.68, 0.78, 0.88, 0.8)
-		_card_buttons[index].scale = Vector2(1.025, 1.025) if selected else Vector2.ONE
+		var button := _card_buttons[index]
+		if button.get_parent().name == "BossSelectionCard":
+			button.modulate = Color.WHITE
+			var card_background := Color(0.035, 0.12, 0.15, 0.34) if selected else Color(0.025, 0.06, 0.11, 0.22)
+			var card_border := Color(0.12, 1.0, 0.58, 1.0) if selected else Color(0.1, 0.38, 0.62, 0.7)
+			button.add_theme_stylebox_override("normal", _make_card_style(card_background, card_border, 3 if selected else 1))
+		else:
+			button.modulate = Color(1.0, 0.86, 0.45, 1.0) if selected else Color(0.68, 0.78, 0.88, 0.8)
+		button.scale = Vector2(1.025, 1.025) if selected else Vector2.ONE
 
 
 func _on_character_hovered(index: int, hovered: bool) -> void:
@@ -332,15 +359,9 @@ func _on_back_pressed() -> void:
 
 
 func _create_boss_showcase() -> void:
-	var boss := _create_actor(boss_showcase, Vector3(0, 0, 0), Color(0.92, 0.08, 0.12, 1), 1.65)
-	boss.name = "RedChaserBoss"
-	var label := Label3D.new()
-	label.position = Vector3(0, 4.9, 0)
-	label.text = "赤色追猎者"
-	label.font_size = 44
-	label.outline_size = 10
-	label.billboard = BaseMaterial3D.BILLBOARD_ENABLED
-	boss.add_child(label)
+	var boss_display := BOSS_LOBBY_SHOWCASE_SCENE.instantiate() as Node3D
+	boss_display.name = "ChaserBossDisplay"
+	boss_showcase.add_child(boss_display)
 
 
 func _create_map_showcase() -> void:
@@ -358,7 +379,17 @@ func _create_map_showcase() -> void:
 func _create_character_showcase() -> void:
 	var x_positions := [-4.35, -1.45, 1.45, 4.35]
 	for index in CHARACTER_NAMES.size():
-		var actor := _create_actor(character_showcase, Vector3(x_positions[index], 0, 0), CHARACTER_COLORS[index], 0.82)
+		var actor: Node3D
+		if index == 0:
+			actor = _create_fashi_actor(character_showcase, Vector3(x_positions[index], 0, 0), 0.82)
+		elif index == 1:
+			actor = _create_happy_student_actor(character_showcase, Vector3(x_positions[index], 0, 0), 0.82)
+		elif index == 2:
+			actor = _create_doumaoren_actor(character_showcase, Vector3(x_positions[index], 0, 0), 0.82)
+		elif index == 3:
+			actor = _create_lulu_actor(character_showcase, Vector3(x_positions[index], 0, 0), 0.82)
+		else:
+			actor = _create_actor(character_showcase, Vector3(x_positions[index], 0, 0), CHARACTER_COLORS[index], 0.82)
 		actor.name = "Character%d" % (index + 1)
 		_character_models.append(actor)
 		_character_start_positions.append(actor.position)
@@ -373,6 +404,70 @@ func _create_character_showcase() -> void:
 		spotlight.visible = false
 		actor.add_child(spotlight)
 		_character_spotlights.append(spotlight)
+
+
+func _create_happy_student_actor(parent: Node3D, actor_position: Vector3, size_scale: float) -> Node3D:
+	var actor := Node3D.new()
+	actor.position = actor_position
+	actor.scale = Vector3.ONE * size_scale
+	parent.add_child(actor)
+	var head_pivot := Node3D.new()
+	head_pivot.name = "HeadPivot"
+	actor.add_child(head_pivot)
+	var model := HAPPY_STUDENT_SCENE.instantiate() as HappyStudentModel
+	model.name = "HappyStudentModel"
+	model.scale = Vector3.ONE * 2.2
+	model.show_weapon = false
+	actor.add_child(model)
+	return actor
+
+
+func _create_fashi_actor(parent: Node3D, actor_position: Vector3, size_scale: float) -> Node3D:
+	var actor := Node3D.new()
+	actor.position = actor_position
+	actor.scale = Vector3.ONE * size_scale
+	parent.add_child(actor)
+	var head_pivot := Node3D.new()
+	head_pivot.name = "HeadPivot"
+	actor.add_child(head_pivot)
+	var model := FASHI_SCENE.instantiate() as FashiModel
+	model.name = "FashiModel"
+	model.scale = Vector3.ONE * 2.2
+	model.show_weapon = false
+	actor.add_child(model)
+	return actor
+
+
+func _create_lulu_actor(parent: Node3D, actor_position: Vector3, size_scale: float) -> Node3D:
+	var actor := Node3D.new()
+	actor.position = actor_position
+	actor.scale = Vector3.ONE * size_scale
+	parent.add_child(actor)
+	var head_pivot := Node3D.new()
+	head_pivot.name = "HeadPivot"
+	actor.add_child(head_pivot)
+	var model := LULU_SCENE.instantiate() as LuluModel
+	model.name = "LuluModel"
+	model.scale = Vector3.ONE * 2.2
+	model.show_weapon = false
+	actor.add_child(model)
+	return actor
+
+
+func _create_doumaoren_actor(parent: Node3D, actor_position: Vector3, size_scale: float) -> Node3D:
+	var actor := Node3D.new()
+	actor.position = actor_position
+	actor.scale = Vector3.ONE * size_scale
+	parent.add_child(actor)
+	var head_pivot := Node3D.new()
+	head_pivot.name = "HeadPivot"
+	actor.add_child(head_pivot)
+	var model := DOUMAOREN_SCENE.instantiate() as DoumaorenModel
+	model.name = "DoumaorenModel"
+	model.scale = Vector3.ONE * 2.2
+	model.show_weapon = false
+	actor.add_child(model)
+	return actor
 
 
 func _create_actor(parent: Node3D, actor_position: Vector3, color: Color, size_scale: float) -> Node3D:
@@ -440,6 +535,18 @@ func _show_selected_character_pose() -> void:
 		_character_spotlights[index].visible = selected
 	if selected_character < _character_models.size():
 		_character_models[selected_character].position = Vector3(0, 0, 0)
+		if selected_character == 0:
+			var fashi_model := _character_models[selected_character].get_node("FashiModel") as FashiModel
+			fashi_model.play_animation(&"pointing")
+		elif selected_character == 1:
+			var model := _character_models[selected_character].get_node("HappyStudentModel") as HappyStudentModel
+			model.play_animation(&"pointing")
+		elif selected_character == 3:
+			var lulu_model := _character_models[selected_character].get_node("LuluModel") as LuluModel
+			lulu_model.play_animation(&"pointing")
+		elif selected_character == 2:
+			var doumaoren_model := _character_models[selected_character].get_node("DoumaorenModel") as DoumaorenModel
+			doumaoren_model.play_animation(&"pointing")
 
 
 func _restore_character_showcase() -> void:
@@ -449,3 +556,15 @@ func _restore_character_showcase() -> void:
 		_character_models[index].rotation = Vector3.ZERO
 		_character_models[index].get_node("HeadPivot").rotation = Vector3.ZERO
 		_character_spotlights[index].visible = false
+		if index == 0:
+			var fashi_model := _character_models[index].get_node("FashiModel") as FashiModel
+			fashi_model.play_animation(&"idle")
+		elif index == 1:
+			var model := _character_models[index].get_node("HappyStudentModel") as HappyStudentModel
+			model.play_animation(&"idle")
+		elif index == 3:
+			var lulu_model := _character_models[index].get_node("LuluModel") as LuluModel
+			lulu_model.play_animation(&"idle")
+		elif index == 2:
+			var doumaoren_model := _character_models[index].get_node("DoumaorenModel") as DoumaorenModel
+			doumaoren_model.play_animation(&"idle")
