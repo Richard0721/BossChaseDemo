@@ -1,0 +1,34 @@
+# Godot 4 generated cache and imported resources
+.godot/
+
+# Mono/C# generated files (kept for future project compatibility)
+.mono/
+data_*/
+
+# Exported builds and packages
+build/
+builds/
+dist/
+export/
+exports/
+*.pck
+*.zip
+
+# Editor and IDE settings
+.vscode/
+.idea/
+*.suo
+*.user
+*.userprefs
+
+# Operating-system metadata
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Logs and temporary files
+*.log
+*.tmp
+*.temp
+*~
+

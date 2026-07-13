@@ -1,0 +1,390 @@
+[gd_scene load_steps=11 format=3]
+
+[ext_resource type="Script" path="res://menus/main_menu.gd" id="1_menu"]
+
+[sub_resource type="Environment" id="MenuEnvironment"]
+background_mode = 1
+background_color = Color(0.018, 0.028, 0.052, 1)
+ambient_light_source = 3
+ambient_light_color = Color(0.34, 0.46, 0.72, 1)
+ambient_light_energy = 0.72
+tonemap_mode = 2
+
+[sub_resource type="CapsuleMesh" id="CharacterBodyMesh"]
+radius = 0.72
+height = 2.8
+
+[sub_resource type="SphereMesh" id="CharacterHeadMesh"]
+radius = 0.58
+height = 1.16
+
+[sub_resource type="SphereMesh" id="EyeMesh"]
+radius = 0.085
+height = 0.17
+
+[sub_resource type="StandardMaterial3D" id="EyeMaterial"]
+albedo_color = Color(0.02, 0.035, 0.06, 1)
+metallic = 0.2
+roughness = 0.25
+
+[sub_resource type="StyleBoxFlat" id="DarkPanel"]
+bg_color = Color(0.025, 0.045, 0.085, 0.93)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.18, 0.42, 0.72, 0.65)
+corner_radius_top_left = 14
+corner_radius_top_right = 14
+corner_radius_bottom_right = 14
+corner_radius_bottom_left = 14
+shadow_color = Color(0, 0, 0, 0.45)
+shadow_size = 12
+
+[sub_resource type="StyleBoxFlat" id="ButtonNormal"]
+bg_color = Color(0.07, 0.12, 0.2, 0.95)
+border_width_left = 3
+border_color = Color(0.1, 0.5, 0.9, 0.8)
+corner_radius_top_left = 7
+corner_radius_top_right = 7
+corner_radius_bottom_right = 7
+corner_radius_bottom_left = 7
+
+[sub_resource type="StyleBoxFlat" id="ButtonHover"]
+bg_color = Color(0.1, 0.32, 0.55, 1)
+border_width_left = 5
+border_color = Color(0.2, 0.75, 1, 1)
+corner_radius_top_left = 7
+corner_radius_top_right = 7
+corner_radius_bottom_right = 7
+corner_radius_bottom_left = 7
+
+[sub_resource type="StyleBoxFlat" id="ButtonPressed"]
+bg_color = Color(0.05, 0.52, 0.68, 1)
+corner_radius_top_left = 7
+corner_radius_top_right = 7
+corner_radius_bottom_right = 7
+corner_radius_bottom_left = 7
+
+[sub_resource type="StyleBoxFlat" id="ScreenShade"]
+bg_color = Color(0.005, 0.01, 0.025, 0.2)
+
+[node name="MainMenu" type="Node3D"]
+script = ExtResource("1_menu")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("MenuEnvironment")
+
+[node name="Sun" type="DirectionalLight3D" parent="."]
+rotation_degrees = Vector3(-48, -24, 0)
+light_color = Color(0.72, 0.84, 1, 1)
+light_energy = 1.4
+shadow_enabled = true
+
+[node name="RimLight" type="OmniLight3D" parent="."]
+position = Vector3(4, 4, 2)
+light_color = Color(0.1, 0.58, 1, 1)
+light_energy = 7.0
+omni_range = 12.0
+
+[node name="MenuCamera" type="Camera3D" parent="."]
+position = Vector3(0, 3.1, 11)
+rotation_degrees = Vector3(-7, 0, 0)
+current = true
+fov = 55.0
+
+[node name="BackgroundSlot" type="Node3D" parent="."]
+
+[node name="DisplayCharacter" type="Node3D" parent="."]
+position = Vector3(2.2, 1.45, 0)
+
+[node name="Body" type="MeshInstance3D" parent="DisplayCharacter"]
+mesh = SubResource("CharacterBodyMesh")
+
+[node name="HeadPivot" type="Node3D" parent="DisplayCharacter"]
+position = Vector3(0, 1.75, 0)
+
+[node name="Head" type="MeshInstance3D" parent="DisplayCharacter/HeadPivot"]
+mesh = SubResource("CharacterHeadMesh")
+
+[node name="EyeLeft" type="MeshInstance3D" parent="DisplayCharacter/HeadPivot"]
+position = Vector3(-0.2, 0.08, 0.52)
+mesh = SubResource("EyeMesh")
+material_override = SubResource("EyeMaterial")
+
+[node name="EyeRight" type="MeshInstance3D" parent="DisplayCharacter/HeadPivot"]
+position = Vector3(0.2, 0.08, 0.52)
+mesh = SubResource("EyeMesh")
+material_override = SubResource("EyeMaterial")
+
+[node name="MainMenuUI" type="CanvasLayer" parent="."]
+
+[node name="Shade" type="Panel" parent="MainMenuUI"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("ScreenShade")
+
+[node name="GameTitle" type="Label" parent="MainMenuUI"]
+offset_left = 48.0
+offset_top = 34.0
+offset_right = 760.0
+offset_bottom = 92.0
+theme_override_colors/font_color = Color(0.7, 0.9, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.8)
+theme_override_constants/shadow_offset_x = 3
+theme_override_constants/shadow_offset_y = 3
+theme_override_font_sizes/font_size = 36
+text = "BOSS CHASE // 追击协议"
+
+[node name="SubTitle" type="Label" parent="MainMenuUI"]
+offset_left = 51.0
+offset_top = 88.0
+offset_right = 600.0
+offset_bottom = 118.0
+theme_override_colors/font_color = Color(0.4, 0.64, 0.82, 1)
+theme_override_font_sizes/font_size = 16
+text = "LAN THIRD-PERSON ACTION DEMO"
+
+[node name="MainPanel" type="Panel" parent="MainMenuUI"]
+offset_left = 48.0
+offset_top = 150.0
+offset_right = 378.0
+offset_bottom = 646.0
+theme_override_styles/panel = SubResource("DarkPanel")
+
+[node name="Content" type="VBoxContainer" parent="MainMenuUI/MainPanel"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 26.0
+offset_top = 30.0
+offset_right = -26.0
+offset_bottom = -30.0
+theme_override_constants/separation = 16
+
+[node name="MenuLabel" type="Label" parent="MainMenuUI/MainPanel/Content"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.6, 0.82, 1, 1)
+theme_override_font_sizes/font_size = 17
+text = "主菜单 / MAIN MENU"
+
+[node name="Spacer" type="Control" parent="MainMenuUI/MainPanel/Content"]
+custom_minimum_size = Vector2(0, 18)
+layout_mode = 2
+
+[node name="Start" type="Button" parent="MainMenuUI/MainPanel/Content"]
+custom_minimum_size = Vector2(0, 58)
+layout_mode = 2
+theme_override_font_sizes/font_size = 21
+theme_override_styles/normal = SubResource("ButtonNormal")
+theme_override_styles/hover = SubResource("ButtonHover")
+theme_override_styles/pressed = SubResource("ButtonPressed")
+text = "开始游戏"
+
+[node name="Rules" type="Button" parent="MainMenuUI/MainPanel/Content"]
+custom_minimum_size = Vector2(0, 58)
+layout_mode = 2
+theme_override_font_sizes/font_size = 21
+theme_override_styles/normal = SubResource("ButtonNormal")
+theme_override_styles/hover = SubResource("ButtonHover")
+theme_override_styles/pressed = SubResource("ButtonPressed")
+text = "说明"
+
+[node name="Settings" type="Button" parent="MainMenuUI/MainPanel/Content"]
+custom_minimum_size = Vector2(0, 58)
+layout_mode = 2
+theme_override_font_sizes/font_size = 21
+theme_override_styles/normal = SubResource("ButtonNormal")
+theme_override_styles/hover = SubResource("ButtonHover")
+theme_override_styles/pressed = SubResource("ButtonPressed")
+text = "设置"
+
+[node name="Quit" type="Button" parent="MainMenuUI/MainPanel/Content"]
+custom_minimum_size = Vector2(0, 58)
+layout_mode = 2
+theme_override_font_sizes/font_size = 21
+theme_override_styles/normal = SubResource("ButtonNormal")
+theme_override_styles/hover = SubResource("ButtonHover")
+theme_override_styles/pressed = SubResource("ButtonPressed")
+text = "结束游戏"
+
+[node name="CharacterName" type="Label" parent="MainMenuUI"]
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -520.0
+offset_top = -92.0
+offset_right = -48.0
+offset_bottom = -42.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_colors/font_color = Color(0.75, 0.9, 1, 1)
+theme_override_font_sizes/font_size = 25
+text = "角色名称"
+horizontal_alignment = 2
+
+[node name="SelectionPanel" type="Panel" parent="MainMenuUI"]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -290.0
+offset_top = -275.0
+offset_right = 290.0
+offset_bottom = 275.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("DarkPanel")
+
+[node name="Content" type="VBoxContainer" parent="MainMenuUI/SelectionPanel"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 42.0
+offset_top = 32.0
+offset_right = -42.0
+offset_bottom = -32.0
+theme_override_constants/separation = 13
+
+[node name="Title" type="Label" parent="MainMenuUI/SelectionPanel/Content"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.6, 0.86, 1, 1)
+theme_override_font_sizes/font_size = 28
+text = "战斗部署"
+horizontal_alignment = 1
+
+[node name="BossLabel" type="Label" parent="MainMenuUI/SelectionPanel/Content"]
+layout_mode = 2
+text = "选择 Boss"
+
+[node name="BossOption" type="OptionButton" parent="MainMenuUI/SelectionPanel/Content"]
+custom_minimum_size = Vector2(0, 45)
+layout_mode = 2
+
+[node name="MapLabel" type="Label" parent="MainMenuUI/SelectionPanel/Content"]
+layout_mode = 2
+text = "选择地图"
+
+[node name="MapOption" type="OptionButton" parent="MainMenuUI/SelectionPanel/Content"]
+custom_minimum_size = Vector2(0, 45)
+layout_mode = 2
+
+[node name="CharacterLabel" type="Label" parent="MainMenuUI/SelectionPanel/Content"]
+layout_mode = 2
+text = "选择角色"
+
+[node name="CharacterOption" type="OptionButton" parent="MainMenuUI/SelectionPanel/Content"]
+custom_minimum_size = Vector2(0, 45)
+layout_mode = 2
+
+[node name="Deploy" type="Button" parent="MainMenuUI/SelectionPanel/Content"]
+custom_minimum_size = Vector2(0, 52)
+layout_mode = 2
+theme_override_styles/normal = SubResource("ButtonNormal")
+theme_override_styles/hover = SubResource("ButtonHover")
+text = "进入战斗"
+
+[node name="Back" type="Button" parent="MainMenuUI/SelectionPanel/Content"]
+custom_minimum_size = Vector2(0, 42)
+layout_mode = 2
+text = "返回"
+
+[node name="RulesPanel" type="Panel" parent="MainMenuUI"]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -330.0
+offset_top = -245.0
+offset_right = 330.0
+offset_bottom = 245.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("DarkPanel")
+
+[node name="Content" type="VBoxContainer" parent="MainMenuUI/RulesPanel"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 38.0
+offset_top = 30.0
+offset_right = -38.0
+offset_bottom = -30.0
+theme_override_constants/separation = 20
+
+[node name="Title" type="Label" parent="MainMenuUI/RulesPanel/Content"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 28
+text = "任务说明"
+
+[node name="RulesText" type="Label" parent="MainMenuUI/RulesPanel/Content"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(0.78, 0.86, 0.94, 1)
+theme_override_font_sizes/font_size = 17
+text = "在5分钟内追击并击败高机动Boss。\n\nWASD移动，Shift冲刺，空格跳跃。\n右键瞄准，左键射击，F拾取，滚轮切换道具。\n\n寻找符文和道具强化队伍；Boss生命归零则胜利，\n时间耗尽则任务失败。"
+autowrap_mode = 2
+
+[node name="Back" type="Button" parent="MainMenuUI/RulesPanel/Content"]
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 2
+text = "返回"
+
+[node name="SettingsPanel" type="Panel" parent="MainMenuUI"]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -280.0
+offset_top = -210.0
+offset_right = 280.0
+offset_bottom = 210.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("DarkPanel")
+
+[node name="Content" type="VBoxContainer" parent="MainMenuUI/SettingsPanel"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 40.0
+offset_top = 32.0
+offset_right = -40.0
+offset_bottom = -32.0
+theme_override_constants/separation = 22
+
+[node name="Title" type="Label" parent="MainMenuUI/SettingsPanel/Content"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 28
+text = "设置"
+
+[node name="Fullscreen" type="CheckButton" parent="MainMenuUI/SettingsPanel/Content"]
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 2
+text = "全屏显示"
+
+[node name="VolumeLabel" type="Label" parent="MainMenuUI/SettingsPanel/Content"]
+layout_mode = 2
+text = "主音量"
+
+[node name="Volume" type="HSlider" parent="MainMenuUI/SettingsPanel/Content"]
+custom_minimum_size = Vector2(0, 42)
+layout_mode = 2
+value = 80.0
+
+[node name="Back" type="Button" parent="MainMenuUI/SettingsPanel/Content"]
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 2
+text = "保存并返回"

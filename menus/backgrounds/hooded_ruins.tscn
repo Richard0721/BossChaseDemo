@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://menus/backgrounds/menu_background.gd" id="1_bg"]
+
+[node name="HoodedRuins" type="Node3D"]
+script = ExtResource("1_bg")
+ground_color = Color(0.035, 0.025, 0.065, 1)
+accent_color = Color(0.52, 0.24, 0.95, 1)
+layout_style = 2
+

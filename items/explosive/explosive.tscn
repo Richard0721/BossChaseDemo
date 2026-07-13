@@ -1,0 +1,21 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://items/explosive/explosive.gd" id="1_explosive"]
+
+[sub_resource type="SphereMesh" id="BombMesh"]
+radius = 0.48
+height = 0.96
+
+[node name="Explosive" type="Node3D"]
+script = ExtResource("1_explosive")
+
+[node name="Body" type="MeshInstance3D" parent="."]
+mesh = SubResource("BombMesh")
+
+[node name="Countdown" type="Label3D" parent="."]
+position = Vector3(0, 0.9, 0)
+text = "2.0"
+font_size = 34
+outline_size = 8
+billboard = 1
+

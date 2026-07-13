@@ -1,0 +1,301 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://menus/deployment_flow.gd" id="1_flow"]
+[ext_resource type="VideoStream" path="res://assets/videos/highland_preview.ogv" id="2_video"]
+
+[sub_resource type="Environment" id="FlowEnvironment"]
+background_mode = 1
+background_color = Color(0.012, 0.022, 0.045, 1)
+ambient_light_source = 3
+ambient_light_color = Color(0.34, 0.48, 0.72, 1)
+ambient_light_energy = 0.68
+tonemap_mode = 2
+
+[sub_resource type="StyleBoxFlat" id="GlassPanel"]
+bg_color = Color(0.025, 0.055, 0.1, 0.9)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.12, 0.5, 0.86, 0.78)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+
+[sub_resource type="StyleBoxFlat" id="ActionButton"]
+bg_color = Color(0.05, 0.35, 0.58, 1)
+border_width_left = 3
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.2, 0.78, 1, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[node name="DeploymentFlow" type="Node3D"]
+script = ExtResource("1_flow")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("FlowEnvironment")
+
+[node name="Sun" type="DirectionalLight3D" parent="."]
+rotation_degrees = Vector3(-48, -28, 0)
+light_energy = 1.35
+shadow_enabled = true
+
+[node name="FillLight" type="OmniLight3D" parent="."]
+position = Vector3(0, 4, 5)
+light_color = Color(0.15, 0.55, 1, 1)
+light_energy = 7.0
+omni_range = 14.0
+
+[node name="Camera3D" type="Camera3D" parent="."]
+position = Vector3(0, 3.3, 13)
+rotation_degrees = Vector3(-6, 0, 0)
+current = true
+fov = 52.0
+
+[node name="BossShowcase" type="Node3D" parent="."]
+
+[node name="MapShowcase" type="Node3D" parent="."]
+visible = false
+
+[node name="CharacterShowcase" type="Node3D" parent="."]
+visible = false
+
+[node name="UI" type="CanvasLayer" parent="."]
+
+[node name="TopShade" type="ColorRect" parent="UI"]
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 138.0
+grow_horizontal = 2
+color = Color(0.005, 0.012, 0.03, 0.84)
+mouse_filter = 2
+
+[node name="StageLabel" type="Label" parent="UI"]
+offset_left = 46.0
+offset_top = 28.0
+offset_right = 260.0
+offset_bottom = 56.0
+theme_override_colors/font_color = Color(0.2, 0.72, 1, 1)
+theme_override_font_sizes/font_size = 16
+text = "STEP 1 / 3"
+
+[node name="Title" type="Label" parent="UI"]
+offset_left = 44.0
+offset_top = 57.0
+offset_right = 650.0
+offset_bottom = 105.0
+theme_override_colors/font_color = Color(0.76, 0.92, 1, 1)
+theme_override_font_sizes/font_size = 32
+text = "选择 Boss"
+
+[node name="Instruction" type="Label" parent="UI"]
+offset_left = 46.0
+offset_top = 106.0
+offset_right = 800.0
+offset_bottom = 132.0
+theme_override_colors/font_color = Color(0.45, 0.65, 0.8, 1)
+text = "确认本次追击目标"
+
+[node name="PartySizeLabel" type="Label" parent="UI"]
+anchors_preset = 10
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -350.0
+offset_top = 78.0
+offset_right = -190.0
+offset_bottom = 108.0
+grow_horizontal = 0
+theme_override_colors/font_color = Color(0.55, 0.78, 0.94, 1)
+text = "挑战人数"
+horizontal_alignment = 2
+
+[node name="PartySize" type="OptionButton" parent="UI"]
+anchors_preset = 10
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -180.0
+offset_top = 70.0
+offset_right = -42.0
+offset_bottom = 112.0
+grow_horizontal = 0
+
+[node name="DifficultyLabel" type="Label" parent="UI"]
+anchors_preset = 10
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -350.0
+offset_top = 116.0
+offset_right = -190.0
+offset_bottom = 146.0
+grow_horizontal = 0
+theme_override_colors/font_color = Color(0.55, 0.78, 0.94, 1)
+text = "Boss难度"
+horizontal_alignment = 2
+
+[node name="Difficulty" type="OptionButton" parent="UI"]
+anchors_preset = 10
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -180.0
+offset_top = 112.0
+offset_right = -42.0
+offset_bottom = 154.0
+grow_horizontal = 0
+
+[node name="CardContainer" type="HBoxContainer" parent="UI"]
+anchors_preset = 12
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 140.0
+offset_top = -405.0
+offset_right = -140.0
+offset_bottom = -105.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_constants/separation = 18
+alignment = 1
+
+[node name="MapPrevious" type="Button" parent="UI"]
+visible = false
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 20.0
+offset_top = -18.0
+offset_right = 90.0
+offset_bottom = 52.0
+grow_vertical = 2
+theme_override_font_sizes/font_size = 32
+text = "◀"
+
+[node name="MapNext" type="Button" parent="UI"]
+visible = false
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -90.0
+offset_top = -18.0
+offset_right = -20.0
+offset_bottom = 52.0
+grow_horizontal = 0
+grow_vertical = 2
+theme_override_font_sizes/font_size = 32
+text = "▶"
+
+[node name="MapPreview" type="Panel" parent="UI"]
+visible = false
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -404.0
+offset_top = 100.0
+offset_right = -40.0
+offset_bottom = 305.0
+grow_horizontal = 0
+mouse_default_cursor_shape = 2
+theme_override_styles/panel = SubResource("GlassPanel")
+
+[node name="VideoStreamPlayer" type="VideoStreamPlayer" parent="UI/MapPreview"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = -8.0
+grow_horizontal = 2
+grow_vertical = 2
+stream = ExtResource("2_video")
+expand = true
+loop = true
+mouse_filter = 2
+
+[node name="VideoPlaceholder" type="ColorRect" parent="UI/MapPreview"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = -8.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.025, 0.09, 0.15, 0.9)
+mouse_filter = 2
+
+[node name="PlaceholderText" type="Label" parent="UI/MapPreview/VideoPlaceholder"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.45, 0.78, 1, 1)
+theme_override_font_sizes/font_size = 24
+text = "地图预览视频占位\nHIGH-LAND TEST FIELD // LIVE PREVIEW"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Dialogue" type="Label" parent="UI"]
+visible = false
+anchors_preset = 12
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 260.0
+offset_top = -215.0
+offset_right = -260.0
+offset_bottom = -155.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_colors/font_color = Color(1, 0.84, 0.42, 1)
+theme_override_font_sizes/font_size = 22
+text = "“互动语言”"
+horizontal_alignment = 1
+
+[node name="Back" type="Button" parent="UI"]
+anchors_preset = 3
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 42.0
+offset_top = -82.0
+offset_right = 225.0
+offset_bottom = -28.0
+grow_vertical = 0
+theme_override_font_sizes/font_size = 19
+text = "返回"
+
+[node name="Next" type="Button" parent="UI"]
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -280.0
+offset_top = -88.0
+offset_right = -42.0
+offset_bottom = -26.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_font_sizes/font_size = 21
+theme_override_styles/normal = SubResource("ActionButton")
+text = "下一步  >"
+
+[node name="ControllerHint" type="Label" parent="UI"]
+anchors_preset = 10
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -460.0
+offset_top = 35.0
+offset_right = -42.0
+offset_bottom = 66.0
+grow_horizontal = 0
+theme_override_colors/font_color = Color(0.44, 0.65, 0.78, 1)
+text = "Nintendo: 左摇杆移动光标  |  A确认  |  B返回"
+horizontal_alignment = 2

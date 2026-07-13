@@ -1,0 +1,53 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://actors/ai_teammate/ai_teammate.gd" id="1_ai"]
+
+[sub_resource type="CapsuleShape3D" id="AIShape"]
+radius = 0.45
+height = 1.8
+
+[sub_resource type="CapsuleMesh" id="AIBody"]
+radius = 0.45
+height = 1.8
+
+[sub_resource type="SphereMesh" id="AIHead"]
+radius = 0.34
+height = 0.68
+
+[sub_resource type="BoxMesh" id="AIGun"]
+size = Vector3(0.16, 0.18, 0.9)
+
+[sub_resource type="StandardMaterial3D" id="GunMaterial"]
+albedo_color = Color(0.06, 0.08, 0.12, 1)
+metallic = 0.7
+roughness = 0.3
+
+[node name="AITeammate" type="CharacterBody3D"]
+script = ExtResource("1_ai")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("AIShape")
+
+[node name="Visuals" type="Node3D" parent="."]
+
+[node name="Body" type="MeshInstance3D" parent="Visuals"]
+mesh = SubResource("AIBody")
+
+[node name="Head" type="MeshInstance3D" parent="Visuals"]
+position = Vector3(0, 0.82, 0)
+mesh = SubResource("AIHead")
+
+[node name="Gun" type="MeshInstance3D" parent="Visuals"]
+position = Vector3(0.48, 0.28, 0.42)
+mesh = SubResource("AIGun")
+material_override = SubResource("GunMaterial")
+
+[node name="Muzzle" type="Marker3D" parent="Visuals"]
+position = Vector3(0.48, 0.28, 0.92)
+
+[node name="NameLabel" type="Label3D" parent="."]
+position = Vector3(0, 1.45, 0)
+text = "AI"
+font_size = 26
+outline_size = 7
+billboard = 1

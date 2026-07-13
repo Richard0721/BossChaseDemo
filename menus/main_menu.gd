@@ -1,0 +1,157 @@
+extends Node3D
+
+const CHARACTER_NAMES: Array[String] = [
+	"头疼的符文大师",
+	"快乐的本科生",
+	"神秘兜帽人",
+	"潇洒的男子 Lulu",
+]
+const BACKGROUND_SCENES: Array[PackedScene] = [
+	preload("res://menus/backgrounds/rune_sanctum.tscn"),
+	preload("res://menus/backgrounds/campus_roof.tscn"),
+	preload("res://menus/backgrounds/hooded_ruins.tscn"),
+	preload("res://menus/backgrounds/lulu_skyway.tscn"),
+]
+
+@onready var camera: Camera3D = $MenuCamera
+@onready var display_character: Node3D = $DisplayCharacter
+@onready var character_head: Node3D = $DisplayCharacter/HeadPivot
+@onready var background_slot: Node3D = $BackgroundSlot
+@onready var character_name_label: Label = $MainMenuUI/CharacterName
+
+@onready var main_panel: Control = $MainMenuUI/MainPanel
+@onready var selection_panel: Control = $MainMenuUI/SelectionPanel
+@onready var rules_panel: Control = $MainMenuUI/RulesPanel
+@onready var settings_panel: Control = $MainMenuUI/SettingsPanel
+
+@onready var boss_option: OptionButton = $MainMenuUI/SelectionPanel/Content/BossOption
+@onready var map_option: OptionButton = $MainMenuUI/SelectionPanel/Content/MapOption
+@onready var character_option: OptionButton = $MainMenuUI/SelectionPanel/Content/CharacterOption
+@onready var fullscreen_toggle: CheckButton = $MainMenuUI/SettingsPanel/Content/Fullscreen
+@onready var volume_slider: HSlider = $MainMenuUI/SettingsPanel/Content/Volume
+
+var _display_character_index := 0
+
+
+func _ready() -> void:
+	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+	_display_character_index = randi_range(0, CHARACTER_NAMES.size() - 1)
+	_load_character_showcase(_display_character_index)
+	_populate_selection_options()
+	_connect_buttons()
+	fullscreen_toggle.button_pressed = DisplayServer.window_get_mode() == DisplayServer.WINDOW_MODE_FULLSCREEN
+	var master_bus := AudioServer.get_bus_index("Master")
+	volume_slider.value = db_to_linear(AudioServer.get_bus_volume_db(master_bus)) * 100.0
+
+
+func _process(delta: float) -> void:
+	var viewport_size := get_viewport().get_visible_rect().size
+	var mouse_position := get_viewport().get_mouse_position()
+	var normalized_mouse := Vector2.ZERO
+	if viewport_size.x > 0.0 and viewport_size.y > 0.0:
+		normalized_mouse = mouse_position / viewport_size * 2.0 - Vector2.ONE
+	var target_head_rotation := Vector3(
+		clampf(normalized_mouse.y * 0.22, -0.22, 0.22),
+		clampf(normalized_mouse.x * 0.48, -0.48, 0.48),
+		0.0
+	)
+	character_head.rotation = character_head.rotation.lerp(target_head_rotation, 7.0 * delta)
+	display_character.rotation.y = lerp_angle(display_character.rotation.y, normalized_mouse.x * 0.08, 2.5 * delta)
+	camera.position.x = lerpf(camera.position.x, normalized_mouse.x * 0.28, 1.8 * delta)
+	camera.position.y = lerpf(camera.position.y, 3.1 - normalized_mouse.y * 0.12, 1.8 * delta)
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed("ui_cancel") or event.is_action_pressed("controller_back"):
+		_show_main_panel()
+
+
+func _load_character_showcase(character_index: int) -> void:
+	for child in background_slot.get_children():
+		child.queue_free()
+	var background := BACKGROUND_SCENES[character_index].instantiate()
+	background_slot.add_child(background)
+	character_name_label.text = CHARACTER_NAMES[character_index]
+	var character_colors := [
+		Color(0.1, 0.85, 0.65, 1),
+		Color(1.0, 0.58, 0.12, 1),
+		Color(0.48, 0.2, 0.9, 1),
+		Color(0.08, 0.58, 1.0, 1),
+	]
+	var material := StandardMaterial3D.new()
+	material.albedo_color = character_colors[character_index]
+	material.metallic = 0.15
+	material.roughness = 0.42
+	$DisplayCharacter/Body.material_override = material
+	$DisplayCharacter/HeadPivot/Head.material_override = material
+
+
+func _populate_selection_options() -> void:
+	boss_option.add_item("赤色追猎者")
+	map_option.add_item("高地试验场")
+	for character_name in CHARACTER_NAMES:
+		character_option.add_item(character_name)
+	character_option.select(_display_character_index)
+	character_option.item_selected.connect(_on_character_selected)
+
+
+func _connect_buttons() -> void:
+	$MainMenuUI/MainPanel/Content/Start.pressed.connect(_open_deployment_flow)
+	$MainMenuUI/MainPanel/Content/Rules.pressed.connect(_show_rules_panel)
+	$MainMenuUI/MainPanel/Content/Settings.pressed.connect(_show_settings_panel)
+	$MainMenuUI/MainPanel/Content/Quit.pressed.connect(UIManager.quit_game)
+	$MainMenuUI/SelectionPanel/Content/Deploy.pressed.connect(_deploy_game)
+	$MainMenuUI/SelectionPanel/Content/Back.pressed.connect(_show_main_panel)
+	$MainMenuUI/RulesPanel/Content/Back.pressed.connect(_show_main_panel)
+	$MainMenuUI/SettingsPanel/Content/Back.pressed.connect(_show_main_panel)
+	fullscreen_toggle.toggled.connect(_on_fullscreen_toggled)
+	volume_slider.value_changed.connect(_on_volume_changed)
+
+
+func _show_only(panel: Control) -> void:
+	main_panel.visible = panel == main_panel
+	selection_panel.visible = panel == selection_panel
+	rules_panel.visible = panel == rules_panel
+	settings_panel.visible = panel == settings_panel
+
+
+func _show_main_panel() -> void:
+	_show_only(main_panel)
+
+
+func _show_selection_panel() -> void:
+	_show_only(selection_panel)
+
+
+func _open_deployment_flow() -> void:
+	UIManager.open_lobby()
+
+
+func _show_rules_panel() -> void:
+	_show_only(rules_panel)
+
+
+func _show_settings_panel() -> void:
+	_show_only(settings_panel)
+
+
+func _on_character_selected(index: int) -> void:
+	_display_character_index = index
+	_load_character_showcase(index)
+
+
+func _deploy_game() -> void:
+	UIManager.start_game(
+		boss_option.get_item_text(boss_option.selected),
+		map_option.get_item_text(map_option.selected),
+		character_option.get_item_text(character_option.selected)
+	)
+
+
+func _on_fullscreen_toggled(enabled: bool) -> void:
+	DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN if enabled else DisplayServer.WINDOW_MODE_WINDOWED)
+
+
+func _on_volume_changed(value: float) -> void:
+	var master_bus := AudioServer.get_bus_index("Master")
+	AudioServer.set_bus_volume_db(master_bus, linear_to_db(maxf(value / 100.0, 0.001)))

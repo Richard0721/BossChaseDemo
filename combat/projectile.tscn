@@ -1,0 +1,26 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://combat/projectile.gd" id="1_projectile"]
+
+[sub_resource type="SphereMesh" id="ProjectileMesh"]
+radius = 0.13
+height = 0.26
+radial_segments = 12
+rings = 6
+
+[sub_resource type="CylinderMesh" id="TrailMesh"]
+top_radius = 0.045
+bottom_radius = 0.045
+height = 1.8
+radial_segments = 8
+
+[node name="Projectile" type="Node3D"]
+script = ExtResource("1_projectile")
+
+[node name="Mesh" type="MeshInstance3D" parent="."]
+mesh = SubResource("ProjectileMesh")
+
+[node name="Trail" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0, 0.95)
+rotation = Vector3(1.5708, 0, 0)
+mesh = SubResource("TrailMesh")

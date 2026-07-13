@@ -1,0 +1,125 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://menus/network_lobby.gd" id="1_lobby"]
+
+[sub_resource type="StyleBoxFlat" id="LobbyPanel"]
+bg_color = Color(0.025, 0.05, 0.09, 0.97)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.15, 0.55, 0.9, 0.8)
+corner_radius_top_left = 14
+corner_radius_top_right = 14
+corner_radius_bottom_right = 14
+corner_radius_bottom_left = 14
+
+[node name="NetworkLobby" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_lobby")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.006, 0.015, 0.032, 1)
+
+[node name="Title" type="Label" parent="."]
+layout_mode = 0
+offset_left = 42.0
+offset_top = 28.0
+offset_right = 700.0
+offset_bottom = 76.0
+theme_override_colors/font_color = Color(0.66, 0.88, 1, 1)
+theme_override_font_sizes/font_size = 30
+text = "LAN 房间 / CONNECTION"
+
+[node name="Panel" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -330.0
+offset_top = -280.0
+offset_right = 330.0
+offset_bottom = 280.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("LobbyPanel")
+
+[node name="Content" type="VBoxContainer" parent="Panel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 42.0
+offset_top = 34.0
+offset_right = -42.0
+offset_bottom = -34.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 12
+
+[node name="Hint" type="Label" parent="Panel/Content"]
+layout_mode = 2
+text = "同一局域网内，Host创建房间，Client输入Host的IPv4地址加入。"
+autowrap_mode = 2
+
+[node name="Address" type="LineEdit" parent="Panel/Content"]
+custom_minimum_size = Vector2(0, 42)
+layout_mode = 2
+placeholder_text = "Host IP，例如 192.168.1.20"
+text = "127.0.0.1"
+
+[node name="Port" type="SpinBox" parent="Panel/Content"]
+custom_minimum_size = Vector2(0, 42)
+layout_mode = 2
+min_value = 1024.0
+max_value = 65535.0
+value = 7000.0
+
+[node name="Offline" type="Button" parent="Panel/Content"]
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
+text = "离线测试（Host + AI）"
+
+[node name="Host" type="Button" parent="Panel/Content"]
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
+text = "创建 Host 房间"
+
+[node name="Join" type="Button" parent="Panel/Content"]
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
+text = "加入 LAN 房间"
+
+[node name="Status" type="Label" parent="Panel/Content"]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.4, 0.85, 1, 1)
+text = "连接状态"
+
+[node name="Players" type="Label" parent="Panel/Content"]
+custom_minimum_size = Vector2(0, 76)
+layout_mode = 2
+text = "房间成员 0 / 4"
+
+[node name="Continue" type="Button" parent="Panel/Content"]
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 2
+text = "Host：进入Boss选择"
+
+[node name="Back" type="Button" parent="Panel/Content"]
+custom_minimum_size = Vector2(0, 42)
+layout_mode = 2
+text = "返回主菜单"

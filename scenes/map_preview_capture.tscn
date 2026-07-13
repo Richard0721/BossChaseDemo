@@ -1,0 +1,15 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scenes/map_preview_capture.gd" id="1_director"]
+[ext_resource type="PackedScene" path="res://scenes/prototype_arena.tscn" id="2_arena"]
+
+[node name="MapPreviewCapture" type="Node3D"]
+script = ExtResource("1_director")
+
+[node name="PrototypeArena" parent="." instance=ExtResource("2_arena")]
+
+[node name="PreviewCamera" type="Camera3D" parent="."]
+current = true
+fov = 58.0
+near = 0.1
+far = 500.0

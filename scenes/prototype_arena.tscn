@@ -1,0 +1,429 @@
+[gd_scene format=3 uid="uid://dcuhijuypvx2c"]
+
+[ext_resource type="Script" uid="uid://yisocuaa5m26" path="res://scenes/prototype_arena.gd" id="1_main"]
+[ext_resource type="PackedScene" path="res://actors/player/player.tscn" id="2_player"]
+[ext_resource type="PackedScene" path="res://actors/boss/boss.tscn" id="3_boss"]
+[ext_resource type="Script" path="res://runes/rune_manager.gd" id="5_rune_manager"]
+[ext_resource type="Script" path="res://ui/pause_ui.gd" id="6_pause"]
+[ext_resource type="Script" path="res://items/item_box/item_box_manager.gd" id="7_item_boxes"]
+
+[sub_resource type="Environment" id="Environment_main"]
+background_mode = 1
+background_color = Color(0.035, 0.055, 0.09, 1)
+ambient_light_source = 3
+ambient_light_color = Color(0.48, 0.56, 0.72, 1)
+ambient_light_energy = 0.65
+tonemap_mode = 2
+
+[sub_resource type="StyleBoxFlat" id="BossBarBackground"]
+bg_color = Color(0.08, 0.09, 0.12, 0.9)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="BossBarFill"]
+bg_color = Color(0.92, 0.12, 0.18, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="PausePanelStyle"]
+bg_color = Color(0.025, 0.045, 0.08, 0.97)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.18, 0.55, 0.9, 0.75)
+corner_radius_top_left = 14
+corner_radius_top_right = 14
+corner_radius_bottom_right = 14
+corner_radius_bottom_left = 14
+shadow_color = Color(0, 0, 0, 0.55)
+shadow_size = 18
+
+[sub_resource type="StyleBoxFlat" id="PauseButtonStyle"]
+bg_color = Color(0.07, 0.15, 0.26, 1)
+border_width_left = 4
+border_color = Color(0.1, 0.62, 1, 1)
+corner_radius_top_left = 7
+corner_radius_top_right = 7
+corner_radius_bottom_right = 7
+corner_radius_bottom_left = 7
+
+[node name="PrototypeArena" type="Node3D" unique_id=1468021338]
+script = ExtResource("1_main")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1128965028]
+environment = SubResource("Environment_main")
+
+[node name="Sun" type="DirectionalLight3D" parent="." unique_id=698746885]
+transform = Transform3D(0.88294756, 0.36994863, -0.2890356, 0, 0.6156615, 0.7880107, 0.46947157, -0.6957722, 0.5435968, 0, 0, 0)
+light_energy = 1.25
+shadow_enabled = true
+
+[node name="Player" parent="." unique_id=1850213220 instance=ExtResource("2_player")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 10)
+
+[node name="Boss" parent="." unique_id=1210606371 instance=ExtResource("3_boss")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.35, -26)
+
+[node name="SpectatorCamera" type="Camera3D" parent="."]
+position = Vector3(0, 5, 16)
+current = false
+fov = 68.0
+
+[node name="RuneManager" type="Node3D" parent="."]
+script = ExtResource("5_rune_manager")
+
+[node name="WestPlateauPoint" type="Marker3D" parent="RuneManager"]
+position = Vector3(-72, 6.7, 5)
+
+[node name="EastRidgePoint" type="Marker3D" parent="RuneManager"]
+position = Vector3(68, 9.7, -42)
+
+[node name="SouthFieldPoint" type="Marker3D" parent="RuneManager"]
+position = Vector3(20, 0.2, 96)
+
+[node name="WestFieldPoint" type="Marker3D" parent="RuneManager"]
+position = Vector3(-55, 0.2, 85)
+
+[node name="ItemBoxManager" type="Node3D" parent="."]
+script = ExtResource("7_item_boxes")
+
+[node name="NorthWestBox" type="Marker3D" parent="ItemBoxManager"]
+position = Vector3(-95, 0.2, -80)
+
+[node name="NorthEastBox" type="Marker3D" parent="ItemBoxManager"]
+position = Vector3(95, 0.2, -75)
+
+[node name="WestPlateauBox" type="Marker3D" parent="ItemBoxManager"]
+position = Vector3(-72, 6.7, 15)
+
+[node name="EastRidgeBox" type="Marker3D" parent="ItemBoxManager"]
+position = Vector3(68, 9.7, -42)
+
+[node name="B1Box" type="Marker3D" parent="ItemBoxManager"]
+position = Vector3(0, -8.2, 55)
+
+[node name="CenterNorthBox" type="Marker3D" parent="ItemBoxManager"]
+position = Vector3(-10, 0.2, -72)
+
+[node name="CenterSouthBox" type="Marker3D" parent="ItemBoxManager"]
+position = Vector3(24, 0.2, 92)
+
+[node name="WestSlopeBox" type="Marker3D" parent="ItemBoxManager"]
+position = Vector3(-42, 3.6, 18)
+
+[node name="EastSlopeBox" type="Marker3D" parent="ItemBoxManager"]
+position = Vector3(50, 4.7, -12)
+
+[node name="SouthWestBox" type="Marker3D" parent="ItemBoxManager"]
+position = Vector3(-86, 0.2, 76)
+
+[node name="SouthEastBox" type="Marker3D" parent="ItemBoxManager"]
+position = Vector3(86, 0.2, 76)
+
+[node name="B1NorthRampBox" type="Marker3D" parent="ItemBoxManager"]
+position = Vector3(-18, -3.2, 37)
+
+[node name="B1SouthRampBox" type="Marker3D" parent="ItemBoxManager"]
+position = Vector3(18, -3.2, 68)
+
+[node name="NorthCenterBox" type="Marker3D" parent="ItemBoxManager"]
+position = Vector3(34, 0.2, -92)
+
+[node name="WestFieldBox" type="Marker3D" parent="ItemBoxManager"]
+position = Vector3(-56, 0.2, 92)
+
+[node name="HUD" type="CanvasLayer" parent="." unique_id=729427236]
+
+[node name="Title" type="Label" parent="HUD" unique_id=2123688434]
+offset_left = 24.0
+offset_top = 20.0
+offset_right = 390.0
+offset_bottom = 52.0
+theme_override_colors/font_color = Color(0.75, 0.88, 1, 1)
+theme_override_font_sizes/font_size = 22
+text = "BOSS CHASE // PROTOTYPE 01"
+
+[node name="Instructions" type="Label" parent="HUD" unique_id=335642242]
+offset_left = 24.0
+offset_top = 56.0
+offset_right = 570.0
+offset_bottom = 116.0
+theme_override_colors/font_color = Color(0.75, 0.8, 0.86, 1)
+theme_override_font_sizes/font_size = 16
+text = "WASD Move  |  Shift Sprint  |  Space Jump
+LMB Melee  |  RMB Aim + LMB Fire  |  F Pick Up  |  G Discard  |  Wheel Switch  |  Q Lock"
+
+[node name="ActiveItem" type="Label" parent="HUD" unique_id=1443900851]
+offset_left = 24.0
+offset_top = 122.0
+offset_right = 320.0
+offset_bottom = 150.0
+theme_override_colors/font_color = Color(1, 0.72, 0.2, 1)
+theme_override_font_sizes/font_size = 18
+text = "ACTIVE: RANGED"
+
+[node name="CharacterStatus" type="Label" parent="HUD"]
+offset_left = 24.0
+offset_top = 153.0
+offset_right = 470.0
+offset_bottom = 180.0
+theme_override_colors/font_color = Color(0.68, 0.86, 1, 1)
+theme_override_font_sizes/font_size = 16
+text = "CHARACTER: RUNE MASTER"
+
+[node name="RuneStatus" type="Label" parent="HUD"]
+offset_left = 24.0
+offset_top = 182.0
+offset_right = 650.0
+offset_bottom = 212.0
+theme_override_colors/font_color = Color(0.45, 1, 0.72, 1)
+theme_override_font_sizes/font_size = 16
+text = "RUNES: 2 ACTIVE  |  NEXT 60s"
+
+[node name="PlayerHealth" type="ProgressBar" parent="HUD" unique_id=2111737078]
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 24.0
+offset_top = -58.0
+offset_right = 264.0
+offset_bottom = -32.0
+grow_vertical = 0
+value = 100.0
+show_percentage = false
+
+[node name="PlayerHealthLabel" type="Label" parent="HUD" unique_id=1932246390]
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 28.0
+offset_top = -56.0
+offset_right = 260.0
+offset_bottom = -34.0
+grow_vertical = 0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+text = "HP  100 / 100"
+horizontal_alignment = 1
+
+[node name="Stamina" type="ProgressBar" parent="HUD" unique_id=131409283]
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 24.0
+offset_top = -92.0
+offset_right = 264.0
+offset_bottom = -66.0
+grow_vertical = 0
+value = 100.0
+show_percentage = false
+
+[node name="StaminaLabel" type="Label" parent="HUD" unique_id=440798368]
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 28.0
+offset_top = -90.0
+offset_right = 260.0
+offset_bottom = -68.0
+grow_vertical = 0
+theme_override_colors/font_color = Color(0.5, 0.9, 1, 1)
+text = "STAMINA  100 / 100"
+horizontal_alignment = 1
+
+[node name="HammerCharge" type="Label" parent="HUD" unique_id=1020028571]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -150.0
+offset_top = 90.0
+offset_right = 150.0
+offset_bottom = 126.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 0.55, 0.08, 1)
+theme_override_font_sizes/font_size = 22
+text = "HAMMER CHARGE  1.0"
+horizontal_alignment = 1
+
+[node name="Ammo" type="Label" parent="HUD" unique_id=1805984499]
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -260.0
+offset_top = -72.0
+offset_right = -24.0
+offset_bottom = -32.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_colors/font_color = Color(1, 0.78, 0.28, 1)
+theme_override_font_sizes/font_size = 24
+text = "AMMO  300 / 300"
+horizontal_alignment = 2
+
+[node name="Timer" type="Label" parent="HUD" unique_id=387313849]
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = -80.0
+offset_top = 20.0
+offset_right = -24.0
+offset_bottom = 56.0
+grow_horizontal = 0
+theme_override_font_sizes/font_size = 24
+text = "05:00"
+horizontal_alignment = 2
+
+[node name="BossBar" type="ProgressBar" parent="HUD" unique_id=427027502]
+anchors_preset = -1
+anchor_left = 0.25
+anchor_right = 0.75
+offset_top = 24.0
+offset_bottom = 50.0
+grow_horizontal = 2
+theme_override_styles/background = SubResource("BossBarBackground")
+theme_override_styles/fill = SubResource("BossBarFill")
+value = 100.0
+show_percentage = false
+
+[node name="Status" type="Label" parent="HUD" unique_id=1081192991]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 270.0
+offset_top = -58.0
+offset_right = -270.0
+offset_bottom = -24.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_font_sizes/font_size = 19
+text = "Boss: Taunt | HP 200 / 200"
+horizontal_alignment = 1
+
+[node name="Crosshair" type="Label" parent="HUD" unique_id=64792622]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -8.0
+offset_top = -16.0
+offset_right = 8.0
+offset_bottom = 16.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.9, 0.95, 1, 0.9)
+theme_override_font_sizes/font_size = 22
+text = "+"
+horizontal_alignment = 1
+
+[node name="PauseUI" type="CanvasLayer" parent="."]
+process_mode = 3
+layer = 20
+script = ExtResource("6_pause")
+
+[node name="Shade" type="ColorRect" parent="PauseUI"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.005, 0.01, 0.025, 0.78)
+
+[node name="Panel" type="Panel" parent="PauseUI/Shade"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -240.0
+offset_top = -190.0
+offset_right = 240.0
+offset_bottom = 190.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("PausePanelStyle")
+
+[node name="Content" type="VBoxContainer" parent="PauseUI/Shade/Panel"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 48.0
+offset_top = 42.0
+offset_right = -48.0
+offset_bottom = -42.0
+theme_override_constants/separation = 22
+
+[node name="Title" type="Label" parent="PauseUI/Shade/Panel/Content"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.68, 0.88, 1, 1)
+theme_override_font_sizes/font_size = 30
+text = "游戏暂停"
+horizontal_alignment = 1
+
+[node name="Hint" type="Label" parent="PauseUI/Shade/Panel/Content"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.48, 0.64, 0.78, 1)
+text = "PAUSED // ESC 返回"
+horizontal_alignment = 1
+
+[node name="Spacer" type="Control" parent="PauseUI/Shade/Panel/Content"]
+custom_minimum_size = Vector2(0, 18)
+layout_mode = 2
+
+[node name="Resume" type="Button" parent="PauseUI/Shade/Panel/Content"]
+custom_minimum_size = Vector2(0, 58)
+layout_mode = 2
+theme_override_font_sizes/font_size = 21
+theme_override_styles/normal = SubResource("PauseButtonStyle")
+text = "回到游戏"
+
+[node name="MainMenu" type="Button" parent="PauseUI/Shade/Panel/Content"]
+custom_minimum_size = Vector2(0, 58)
+layout_mode = 2
+theme_override_font_sizes/font_size = 21
+theme_override_styles/normal = SubResource("PauseButtonStyle")
+text = "返回主菜单"
+
+[node name="DeathUI" type="CanvasLayer" parent="."]
+visible = false
+layer = 15
+
+[node name="Shade" type="ColorRect" parent="DeathUI"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.12, 0.005, 0.01, 0.48)
+mouse_filter = 2
+
+[node name="Status" type="Label" parent="DeathUI/Shade"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -320.0
+offset_top = -72.0
+offset_right = 320.0
+offset_bottom = 72.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 0.72, 0.72, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 3
+theme_override_constants/shadow_offset_y = 3
+theme_override_font_sizes/font_size = 28
+text = "观战中\n15秒后复活"
+horizontal_alignment = 1
+vertical_alignment = 1
