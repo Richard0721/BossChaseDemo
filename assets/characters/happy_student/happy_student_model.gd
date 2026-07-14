@@ -18,22 +18,15 @@ const LOOPING_ANIMATIONS := [&"idle", &"standing", &"pointing", &"walk_rifle", &
 @export var starting_animation: StringName = &"idle"
 @export var show_weapon := true
 @export var editor_preview_animation: StringName = &"standing"
-@export_category("Shot Sound")
-@export_range(-30.0, 6.0, 0.5) var shot_volume_db := -4.0
-@export_range(0.8, 1.2, 0.01) var shot_pitch_min := 0.96
-@export_range(0.8, 1.2, 0.01) var shot_pitch_max := 1.04
-
 @onready var rig: Node3D = $Rig
 @onready var skeleton: Skeleton3D = $Rig/Skeleton3D
 @onready var animation_player: AnimationPlayer = $Rig/AnimationPlayer
 @onready var _weapon: Node3D = $Rig/Skeleton3D/WeaponAttachment/Weapon
-@onready var _shot_sfx: AudioStreamPlayer3D = $ShotSFX
 
 
 func _ready() -> void:
 	_install_animation_library()
 	_weapon.visible = show_weapon
-	_shot_sfx.volume_db = shot_volume_db
 	play_animation(editor_preview_animation if Engine.is_editor_hint() else starting_animation)
 
 
@@ -93,8 +86,5 @@ func set_rapid_gun_visible(is_visible: bool) -> void:
 
 
 func play_shot_sound() -> void:
-	if not is_instance_valid(_shot_sfx):
-		return
-	_shot_sfx.volume_db = shot_volume_db
-	_shot_sfx.pitch_scale = randf_range(minf(shot_pitch_min, shot_pitch_max), maxf(shot_pitch_min, shot_pitch_max))
-	_shot_sfx.play()
+	# Shooting audio is centralized in AudioManager so Murphy's uploaded SFX is authoritative.
+	pass

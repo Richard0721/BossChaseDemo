@@ -3,7 +3,6 @@
 [ext_resource type="Script" uid="uid://dulue6ojindei" path="res://assets/characters/happy_student/happy_student_model.gd" id="1_script"]
 [ext_resource type="PackedScene" uid="uid://yph32ukdkerb" path="res://assets/characters/happy_student/source/Happy Student Idle.fbx" id="2_rig"]
 [ext_resource type="PackedScene" uid="uid://pb43b0u00xd" path="res://assets/characters/happy_student/source/Weapon/Weapon.fbx" id="3_weapon"]
-[ext_resource type="AudioStream" uid="uid://cgcmvs720mhfm" path="res://assets/audio/happy_student/happy_student_rifle_shot.wav" id="4_shot_sfx"]
 [ext_resource type="PackedScene" path="res://assets/items/shield/shield_visual.tscn" id="5_shield"]
 [ext_resource type="Resource" path="res://assets/items/shield/happy_student_shield_settings.tres" id="6_shield_settings"]
 [ext_resource type="PackedScene" path="res://assets/items/hammer/hammer_visual.tscn" id="7_hammer"]
@@ -84,12 +83,5 @@ bone_idx = 18
 transform = Transform3D(0.0015782705, 0.005598565, -0.0014714435, -0.005748599, 0.0016950639, 0.0002834536, 0.00068018533, 0.0013352293, 0.0058098696, 0.03315878, 0.23275578, 0.008022623)
 visible = false
 mount_settings = ExtResource("10_rapid_gun_settings")
-
-[node name="ShotSFX" type="AudioStreamPlayer3D" parent="." unique_id=885951081]
-stream = ExtResource("4_shot_sfx")
-volume_db = -4.0
-unit_size = 4.0
-max_distance = 55.0
-max_polyphony = 4
 
 [editable path="Rig"]

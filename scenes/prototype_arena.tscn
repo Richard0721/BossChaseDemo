@@ -6,7 +6,6 @@
 [ext_resource type="Script" path="res://runes/rune_manager.gd" id="5_rune_manager"]
 [ext_resource type="Script" path="res://ui/pause_ui.gd" id="6_pause"]
 [ext_resource type="Script" path="res://items/item_box/item_box_manager.gd" id="7_item_boxes"]
-[ext_resource type="PackedScene" path="res://assets/audio/gameplay_bgm/gameplay_bgm.tscn" id="8_gameplay_bgm"]
 
 [sub_resource type="Environment" id="Environment_main"]
 background_mode = 1
@@ -55,8 +54,6 @@ corner_radius_bottom_left = 7
 
 [node name="PrototypeArena" type="Node3D" unique_id=1468021338]
 script = ExtResource("1_main")
-
-[node name="GameplayBGM" parent="." instance=ExtResource("8_gameplay_bgm")]
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1128965028]
 environment = SubResource("Environment_main")
