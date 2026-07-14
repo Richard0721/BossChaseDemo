@@ -39,6 +39,7 @@ func _trigger() -> void:
 	if triggered:
 		return
 	triggered = true
+	AudioManager.play_explosion()
 	for target in _collect_targets(blast_radius):
 		if target.has_method("apply_blast_effect"):
 			target.apply_blast_effect(damage, global_position, horizontal_force, vertical_force, tumble_duration, source_owner)

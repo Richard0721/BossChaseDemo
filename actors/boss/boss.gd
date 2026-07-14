@@ -338,6 +338,7 @@ func _deal_melee_attack() -> void:
 
 
 func _fire_remote_attack(target: Node3D, damage: float, charged: bool) -> void:
+	AudioManager.play_boss_shoot()
 	var spawn_position := global_position + Vector3.UP * 0.8
 	var target_position := target.global_position + Vector3.UP * 0.3
 	var projectile_direction := (target_position - spawn_position).normalized()

@@ -60,6 +60,7 @@ func explode() -> void:
 	if _exploded:
 		return
 	_exploded = true
+	AudioManager.play_explosion()
 	body_mesh.visible = false
 	countdown_label.visible = false
 	for target in _collect_targets(radius):
