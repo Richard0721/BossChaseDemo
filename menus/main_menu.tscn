@@ -1,10 +1,10 @@
-[gd_scene load_steps=12 format=3]
+[gd_scene format=3 uid="uid://ciwwuidnl5s1p"]
 
-[ext_resource type="Script" path="res://menus/main_menu.gd" id="1_menu"]
-[ext_resource type="PackedScene" path="res://assets/characters/happy_student/happy_student_model.tscn" id="2_happy_student"]
-[ext_resource type="PackedScene" path="res://assets/characters/fashi/fashi_model.tscn" id="3_fashi"]
-[ext_resource type="PackedScene" path="res://assets/characters/lulu/lulu_model.tscn" id="4_lulu"]
-[ext_resource type="PackedScene" path="res://assets/characters/doumaoren/doumaoren_model.tscn" id="5_doumaoren"]
+[ext_resource type="Script" uid="uid://dar1hngmq07bx" path="res://menus/main_menu.gd" id="1_menu"]
+[ext_resource type="PackedScene" uid="uid://blciu2a8g6l5w" path="res://assets/characters/happy_student/happy_student_model.tscn" id="2_happy_student"]
+[ext_resource type="PackedScene" uid="uid://8sgriayytilc" path="res://assets/characters/fashi/fashi_model.tscn" id="3_fashi"]
+[ext_resource type="PackedScene" uid="uid://g0xrhxxwbo4t" path="res://assets/characters/lulu/lulu_model.tscn" id="4_lulu"]
+[ext_resource type="PackedScene" uid="uid://b610t4tb0qim" path="res://assets/characters/doumaoren/doumaoren_model.tscn" id="5_doumaoren"]
 
 [sub_resource type="Environment" id="MenuEnvironment"]
 background_mode = 1
@@ -22,14 +22,17 @@ height = 2.8
 radius = 0.58
 height = 1.16
 
-[sub_resource type="SphereMesh" id="EyeMesh"]
-radius = 0.085
-height = 0.17
-
 [sub_resource type="StandardMaterial3D" id="EyeMaterial"]
 albedo_color = Color(0.02, 0.035, 0.06, 1)
 metallic = 0.2
 roughness = 0.25
+
+[sub_resource type="SphereMesh" id="EyeMesh"]
+radius = 0.085
+height = 0.17
+
+[sub_resource type="StyleBoxFlat" id="ScreenShade"]
+bg_color = Color(0.005, 0.01, 0.025, 0.2)
 
 [sub_resource type="StyleBoxFlat" id="DarkPanel"]
 bg_color = Color(0.025, 0.045, 0.085, 0.93)
@@ -54,6 +57,13 @@ corner_radius_top_right = 7
 corner_radius_bottom_right = 7
 corner_radius_bottom_left = 7
 
+[sub_resource type="StyleBoxFlat" id="ButtonPressed"]
+bg_color = Color(0.05, 0.52, 0.68, 1)
+corner_radius_top_left = 7
+corner_radius_top_right = 7
+corner_radius_bottom_right = 7
+corner_radius_bottom_left = 7
+
 [sub_resource type="StyleBoxFlat" id="ButtonHover"]
 bg_color = Color(0.1, 0.32, 0.55, 1)
 border_width_left = 5
@@ -63,91 +73,76 @@ corner_radius_top_right = 7
 corner_radius_bottom_right = 7
 corner_radius_bottom_left = 7
 
-[sub_resource type="StyleBoxFlat" id="ButtonPressed"]
-bg_color = Color(0.05, 0.52, 0.68, 1)
-corner_radius_top_left = 7
-corner_radius_top_right = 7
-corner_radius_bottom_right = 7
-corner_radius_bottom_left = 7
-
-[sub_resource type="StyleBoxFlat" id="ScreenShade"]
-bg_color = Color(0.005, 0.01, 0.025, 0.2)
-
-[node name="MainMenu" type="Node3D"]
+[node name="MainMenu" type="Node3D" unique_id=1451620246]
 script = ExtResource("1_menu")
 
-[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=255481407]
 environment = SubResource("MenuEnvironment")
 
-[node name="Sun" type="DirectionalLight3D" parent="."]
-rotation_degrees = Vector3(-48, -24, 0)
+[node name="Sun" type="DirectionalLight3D" parent="." unique_id=860201433]
+transform = Transform3D(0.9135454, 0.30226424, -0.2721599, 0, 0.66913056, 0.74314487, 0.40673664, -0.6788966, 0.61128116, 0, 0, 0)
 light_color = Color(0.72, 0.84, 1, 1)
 light_energy = 1.4
 shadow_enabled = true
 
-[node name="RimLight" type="OmniLight3D" parent="."]
-position = Vector3(4, 4, 2)
+[node name="RimLight" type="OmniLight3D" parent="." unique_id=518984969]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 4, 2)
 light_color = Color(0.1, 0.58, 1, 1)
 light_energy = 7.0
 omni_range = 12.0
 
-[node name="MenuCamera" type="Camera3D" parent="."]
-position = Vector3(0, 3.1, 11)
-rotation_degrees = Vector3(-7, 0, 0)
+[node name="MenuCamera" type="Camera3D" parent="." unique_id=578224931]
+transform = Transform3D(1, 0, 0, 0, 0.99254614, 0.12186935, 0, -0.12186935, 0.99254614, 0, 3.1, 11)
 current = true
 fov = 55.0
 
-[node name="BackgroundSlot" type="Node3D" parent="."]
+[node name="BackgroundSlot" type="Node3D" parent="." unique_id=961106235]
 
-[node name="DisplayCharacter" type="Node3D" parent="."]
-position = Vector3(2.2, 1.45, 0)
+[node name="DisplayCharacter" type="Node3D" parent="." unique_id=1649914128]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.2, 1.45, 0)
 
-[node name="HappyStudent" parent="DisplayCharacter" instance=ExtResource("2_happy_student")]
+[node name="HappyStudent" parent="DisplayCharacter" unique_id=593639679 instance=ExtResource("2_happy_student")]
+transform = Transform3D(1.75, 0, 0, 0, 1.75, 0, 0, 0, 1.75, 0, -1.45, 0)
 visible = false
-position = Vector3(0, -1.45, 0)
-scale = Vector3(1.75, 1.75, 1.75)
 show_weapon = false
 
-[node name="Fashi" parent="DisplayCharacter" instance=ExtResource("3_fashi")]
+[node name="Fashi" parent="DisplayCharacter" unique_id=1971655109 instance=ExtResource("3_fashi")]
+transform = Transform3D(1.75, 0, 0, 0, 1.75, 0, 0, 0, 1.75, 0, -1.45, 0)
 visible = false
-position = Vector3(0, -1.45, 0)
-scale = Vector3(1.75, 1.75, 1.75)
 show_weapon = false
 
-[node name="Lulu" parent="DisplayCharacter" instance=ExtResource("4_lulu")]
+[node name="Lulu" parent="DisplayCharacter" unique_id=1288512358 instance=ExtResource("4_lulu")]
+transform = Transform3D(1.75, 0, 0, 0, 1.75, 0, 0, 0, 1.75, 0, -1.45, 0)
 visible = false
-position = Vector3(0, -1.45, 0)
-scale = Vector3(1.75, 1.75, 1.75)
 show_weapon = false
 
-[node name="Doumaoren" parent="DisplayCharacter" instance=ExtResource("5_doumaoren")]
+[node name="Doumaoren" parent="DisplayCharacter" unique_id=67749605 instance=ExtResource("5_doumaoren")]
+transform = Transform3D(1.75, 0, 0, 0, 1.75, 0, 0, 0, 1.75, 0, -1.45, 0)
 visible = false
-position = Vector3(0, -1.45, 0)
-scale = Vector3(1.75, 1.75, 1.75)
 show_weapon = false
 
-[node name="Body" type="MeshInstance3D" parent="DisplayCharacter"]
+[node name="Body" type="MeshInstance3D" parent="DisplayCharacter" unique_id=2125324149]
 mesh = SubResource("CharacterBodyMesh")
 
-[node name="HeadPivot" type="Node3D" parent="DisplayCharacter"]
-position = Vector3(0, 1.75, 0)
+[node name="HeadPivot" type="Node3D" parent="DisplayCharacter" unique_id=340126813]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.75, 0)
 
-[node name="Head" type="MeshInstance3D" parent="DisplayCharacter/HeadPivot"]
+[node name="Head" type="MeshInstance3D" parent="DisplayCharacter/HeadPivot" unique_id=1835230892]
 mesh = SubResource("CharacterHeadMesh")
 
-[node name="EyeLeft" type="MeshInstance3D" parent="DisplayCharacter/HeadPivot"]
-position = Vector3(-0.2, 0.08, 0.52)
-mesh = SubResource("EyeMesh")
+[node name="EyeLeft" type="MeshInstance3D" parent="DisplayCharacter/HeadPivot" unique_id=1170520403]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.2, 0.08, 0.52)
 material_override = SubResource("EyeMaterial")
-
-[node name="EyeRight" type="MeshInstance3D" parent="DisplayCharacter/HeadPivot"]
-position = Vector3(0.2, 0.08, 0.52)
 mesh = SubResource("EyeMesh")
+
+[node name="EyeRight" type="MeshInstance3D" parent="DisplayCharacter/HeadPivot" unique_id=62284243]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.2, 0.08, 0.52)
 material_override = SubResource("EyeMaterial")
+mesh = SubResource("EyeMesh")
 
-[node name="MainMenuUI" type="CanvasLayer" parent="."]
+[node name="MainMenuUI" type="CanvasLayer" parent="." unique_id=1125337889]
 
-[node name="Shade" type="Panel" parent="MainMenuUI"]
+[node name="Shade" type="Panel" parent="MainMenuUI" unique_id=1121596944]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -156,7 +151,7 @@ grow_vertical = 2
 mouse_filter = 2
 theme_override_styles/panel = SubResource("ScreenShade")
 
-[node name="GameTitle" type="Label" parent="MainMenuUI"]
+[node name="GameTitle" type="Label" parent="MainMenuUI" unique_id=1218144763]
 offset_left = 48.0
 offset_top = 34.0
 offset_right = 760.0
@@ -168,7 +163,7 @@ theme_override_constants/shadow_offset_y = 3
 theme_override_font_sizes/font_size = 36
 text = "BOSS CHASE // 追击协议"
 
-[node name="SubTitle" type="Label" parent="MainMenuUI"]
+[node name="SubTitle" type="Label" parent="MainMenuUI" unique_id=1507309067]
 offset_left = 51.0
 offset_top = 88.0
 offset_right = 600.0
@@ -177,15 +172,15 @@ theme_override_colors/font_color = Color(0.4, 0.64, 0.82, 1)
 theme_override_font_sizes/font_size = 16
 text = "LAN THIRD-PERSON ACTION DEMO"
 
-[node name="MainPanel" type="Panel" parent="MainMenuUI"]
+[node name="MainPanel" type="Panel" parent="MainMenuUI" unique_id=2059272162]
 offset_left = 48.0
 offset_top = 150.0
 offset_right = 378.0
 offset_bottom = 646.0
 theme_override_styles/panel = SubResource("DarkPanel")
 
-[node name="Content" type="VBoxContainer" parent="MainMenuUI/MainPanel"]
-anchors_preset = 15
+[node name="Content" type="VBoxContainer" parent="MainMenuUI/MainPanel" unique_id=958538586]
+layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = 26.0
@@ -194,53 +189,53 @@ offset_right = -26.0
 offset_bottom = -30.0
 theme_override_constants/separation = 16
 
-[node name="MenuLabel" type="Label" parent="MainMenuUI/MainPanel/Content"]
+[node name="MenuLabel" type="Label" parent="MainMenuUI/MainPanel/Content" unique_id=1063670854]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.6, 0.82, 1, 1)
 theme_override_font_sizes/font_size = 17
 text = "主菜单 / MAIN MENU"
 
-[node name="Spacer" type="Control" parent="MainMenuUI/MainPanel/Content"]
+[node name="Spacer" type="Control" parent="MainMenuUI/MainPanel/Content" unique_id=1934911366]
 custom_minimum_size = Vector2(0, 18)
 layout_mode = 2
 
-[node name="Start" type="Button" parent="MainMenuUI/MainPanel/Content"]
+[node name="Start" type="Button" parent="MainMenuUI/MainPanel/Content" unique_id=2006063567]
 custom_minimum_size = Vector2(0, 58)
 layout_mode = 2
 theme_override_font_sizes/font_size = 21
 theme_override_styles/normal = SubResource("ButtonNormal")
-theme_override_styles/hover = SubResource("ButtonHover")
 theme_override_styles/pressed = SubResource("ButtonPressed")
+theme_override_styles/hover = SubResource("ButtonHover")
 text = "开始游戏"
 
-[node name="Rules" type="Button" parent="MainMenuUI/MainPanel/Content"]
+[node name="Rules" type="Button" parent="MainMenuUI/MainPanel/Content" unique_id=1220448338]
 custom_minimum_size = Vector2(0, 58)
 layout_mode = 2
 theme_override_font_sizes/font_size = 21
 theme_override_styles/normal = SubResource("ButtonNormal")
-theme_override_styles/hover = SubResource("ButtonHover")
 theme_override_styles/pressed = SubResource("ButtonPressed")
+theme_override_styles/hover = SubResource("ButtonHover")
 text = "说明"
 
-[node name="Settings" type="Button" parent="MainMenuUI/MainPanel/Content"]
+[node name="Settings" type="Button" parent="MainMenuUI/MainPanel/Content" unique_id=1758469999]
 custom_minimum_size = Vector2(0, 58)
 layout_mode = 2
 theme_override_font_sizes/font_size = 21
 theme_override_styles/normal = SubResource("ButtonNormal")
-theme_override_styles/hover = SubResource("ButtonHover")
 theme_override_styles/pressed = SubResource("ButtonPressed")
+theme_override_styles/hover = SubResource("ButtonHover")
 text = "设置"
 
-[node name="Quit" type="Button" parent="MainMenuUI/MainPanel/Content"]
+[node name="Quit" type="Button" parent="MainMenuUI/MainPanel/Content" unique_id=1557361105]
 custom_minimum_size = Vector2(0, 58)
 layout_mode = 2
 theme_override_font_sizes/font_size = 21
 theme_override_styles/normal = SubResource("ButtonNormal")
-theme_override_styles/hover = SubResource("ButtonHover")
 theme_override_styles/pressed = SubResource("ButtonPressed")
+theme_override_styles/hover = SubResource("ButtonHover")
 text = "结束游戏"
 
-[node name="CharacterName" type="Label" parent="MainMenuUI"]
+[node name="CharacterName" type="Label" parent="MainMenuUI" unique_id=522476784]
 anchors_preset = 3
 anchor_left = 1.0
 anchor_top = 1.0
@@ -257,7 +252,7 @@ theme_override_font_sizes/font_size = 25
 text = "角色名称"
 horizontal_alignment = 2
 
-[node name="SelectionPanel" type="Panel" parent="MainMenuUI"]
+[node name="SelectionPanel" type="Panel" parent="MainMenuUI" unique_id=1864719814]
 visible = false
 anchors_preset = 8
 anchor_left = 0.5
@@ -272,8 +267,8 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("DarkPanel")
 
-[node name="Content" type="VBoxContainer" parent="MainMenuUI/SelectionPanel"]
-anchors_preset = 15
+[node name="Content" type="VBoxContainer" parent="MainMenuUI/SelectionPanel" unique_id=319361382]
+layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = 42.0
@@ -282,50 +277,50 @@ offset_right = -42.0
 offset_bottom = -32.0
 theme_override_constants/separation = 13
 
-[node name="Title" type="Label" parent="MainMenuUI/SelectionPanel/Content"]
+[node name="Title" type="Label" parent="MainMenuUI/SelectionPanel/Content" unique_id=121001487]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.6, 0.86, 1, 1)
 theme_override_font_sizes/font_size = 28
 text = "战斗部署"
 horizontal_alignment = 1
 
-[node name="BossLabel" type="Label" parent="MainMenuUI/SelectionPanel/Content"]
+[node name="BossLabel" type="Label" parent="MainMenuUI/SelectionPanel/Content" unique_id=487097611]
 layout_mode = 2
 text = "选择 Boss"
 
-[node name="BossOption" type="OptionButton" parent="MainMenuUI/SelectionPanel/Content"]
+[node name="BossOption" type="OptionButton" parent="MainMenuUI/SelectionPanel/Content" unique_id=1282590953]
 custom_minimum_size = Vector2(0, 45)
 layout_mode = 2
 
-[node name="MapLabel" type="Label" parent="MainMenuUI/SelectionPanel/Content"]
+[node name="MapLabel" type="Label" parent="MainMenuUI/SelectionPanel/Content" unique_id=697049068]
 layout_mode = 2
 text = "选择地图"
 
-[node name="MapOption" type="OptionButton" parent="MainMenuUI/SelectionPanel/Content"]
+[node name="MapOption" type="OptionButton" parent="MainMenuUI/SelectionPanel/Content" unique_id=278073680]
 custom_minimum_size = Vector2(0, 45)
 layout_mode = 2
 
-[node name="CharacterLabel" type="Label" parent="MainMenuUI/SelectionPanel/Content"]
+[node name="CharacterLabel" type="Label" parent="MainMenuUI/SelectionPanel/Content" unique_id=1572867071]
 layout_mode = 2
 text = "选择角色"
 
-[node name="CharacterOption" type="OptionButton" parent="MainMenuUI/SelectionPanel/Content"]
+[node name="CharacterOption" type="OptionButton" parent="MainMenuUI/SelectionPanel/Content" unique_id=624546881]
 custom_minimum_size = Vector2(0, 45)
 layout_mode = 2
 
-[node name="Deploy" type="Button" parent="MainMenuUI/SelectionPanel/Content"]
+[node name="Deploy" type="Button" parent="MainMenuUI/SelectionPanel/Content" unique_id=898417287]
 custom_minimum_size = Vector2(0, 52)
 layout_mode = 2
 theme_override_styles/normal = SubResource("ButtonNormal")
 theme_override_styles/hover = SubResource("ButtonHover")
 text = "进入战斗"
 
-[node name="Back" type="Button" parent="MainMenuUI/SelectionPanel/Content"]
+[node name="Back" type="Button" parent="MainMenuUI/SelectionPanel/Content" unique_id=674503919]
 custom_minimum_size = Vector2(0, 42)
 layout_mode = 2
 text = "返回"
 
-[node name="RulesPanel" type="Panel" parent="MainMenuUI"]
+[node name="RulesPanel" type="Panel" parent="MainMenuUI" unique_id=1019588826]
 visible = false
 anchors_preset = 8
 anchor_left = 0.5
@@ -340,8 +335,8 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("DarkPanel")
 
-[node name="Content" type="VBoxContainer" parent="MainMenuUI/RulesPanel"]
-anchors_preset = 15
+[node name="Content" type="VBoxContainer" parent="MainMenuUI/RulesPanel" unique_id=2051343369]
+layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = 38.0
@@ -350,25 +345,31 @@ offset_right = -38.0
 offset_bottom = -30.0
 theme_override_constants/separation = 20
 
-[node name="Title" type="Label" parent="MainMenuUI/RulesPanel/Content"]
+[node name="Title" type="Label" parent="MainMenuUI/RulesPanel/Content" unique_id=2027758104]
 layout_mode = 2
 theme_override_font_sizes/font_size = 28
 text = "任务说明"
 
-[node name="RulesText" type="Label" parent="MainMenuUI/RulesPanel/Content"]
+[node name="RulesText" type="Label" parent="MainMenuUI/RulesPanel/Content" unique_id=1883709401]
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_colors/font_color = Color(0.78, 0.86, 0.94, 1)
 theme_override_font_sizes/font_size = 17
-text = "在5分钟内追击并击败高机动Boss。\n\nWASD移动，Shift冲刺，空格跳跃。\n右键瞄准，左键射击，F拾取，滚轮切换道具。\n\n寻找符文和道具强化队伍；Boss生命归零则胜利，\n时间耗尽则任务失败。"
+text = "在5分钟内追击并击败高机动Boss。
+
+WASD移动，Shift冲刺，空格跳跃。
+右键瞄准，左键射击，F拾取，滚轮切换道具。
+
+寻找符文和道具强化队伍；Boss生命归零则胜利，
+时间耗尽则任务失败。"
 autowrap_mode = 2
 
-[node name="Back" type="Button" parent="MainMenuUI/RulesPanel/Content"]
+[node name="Back" type="Button" parent="MainMenuUI/RulesPanel/Content" unique_id=470700199]
 custom_minimum_size = Vector2(0, 48)
 layout_mode = 2
 text = "返回"
 
-[node name="SettingsPanel" type="Panel" parent="MainMenuUI"]
+[node name="SettingsPanel" type="Panel" parent="MainMenuUI" unique_id=649547063]
 visible = false
 anchors_preset = 8
 anchor_left = 0.5
@@ -383,8 +384,8 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("DarkPanel")
 
-[node name="Content" type="VBoxContainer" parent="MainMenuUI/SettingsPanel"]
-anchors_preset = 15
+[node name="Content" type="VBoxContainer" parent="MainMenuUI/SettingsPanel" unique_id=2003371792]
+layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = 40.0
@@ -393,26 +394,26 @@ offset_right = -40.0
 offset_bottom = -32.0
 theme_override_constants/separation = 22
 
-[node name="Title" type="Label" parent="MainMenuUI/SettingsPanel/Content"]
+[node name="Title" type="Label" parent="MainMenuUI/SettingsPanel/Content" unique_id=2022951221]
 layout_mode = 2
 theme_override_font_sizes/font_size = 28
 text = "设置"
 
-[node name="Fullscreen" type="CheckButton" parent="MainMenuUI/SettingsPanel/Content"]
+[node name="Fullscreen" type="CheckButton" parent="MainMenuUI/SettingsPanel/Content" unique_id=341439516]
 custom_minimum_size = Vector2(0, 48)
 layout_mode = 2
 text = "全屏显示"
 
-[node name="VolumeLabel" type="Label" parent="MainMenuUI/SettingsPanel/Content"]
+[node name="VolumeLabel" type="Label" parent="MainMenuUI/SettingsPanel/Content" unique_id=153012759]
 layout_mode = 2
 text = "主音量"
 
-[node name="Volume" type="HSlider" parent="MainMenuUI/SettingsPanel/Content"]
+[node name="Volume" type="HSlider" parent="MainMenuUI/SettingsPanel/Content" unique_id=347216262]
 custom_minimum_size = Vector2(0, 42)
 layout_mode = 2
 value = 80.0
 
-[node name="Back" type="Button" parent="MainMenuUI/SettingsPanel/Content"]
+[node name="Back" type="Button" parent="MainMenuUI/SettingsPanel/Content" unique_id=465940243]
 custom_minimum_size = Vector2(0, 48)
 layout_mode = 2
 text = "保存并返回"

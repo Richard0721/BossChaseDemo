@@ -1,18 +1,15 @@
 [gd_scene load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://items/landmine/landmine.gd" id="1_mine"]
-
-[sub_resource type="CylinderMesh" id="MineMesh"]
-top_radius = 0.65
-bottom_radius = 0.8
-height = 0.25
-radial_segments = 12
+[ext_resource type="PackedScene" uid="uid://bv7gyrejv8hdl" path="res://assets/items/explosive/source/Boom.fbx" id="2_model"]
 
 [node name="Landmine" type="Node3D"]
 script = ExtResource("1_mine")
 
-[node name="Body" type="MeshInstance3D" parent="."]
-mesh = SubResource("MineMesh")
+[node name="ModelAdjustment__与炸弹保持相同大小" type="Node3D" parent="."]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, 0)
+
+[node name="Boom" parent="ModelAdjustment__与炸弹保持相同大小" instance=ExtResource("2_model")]
 
 [node name="OmniLight3D" type="OmniLight3D" parent="."]
 position = Vector3(0, 0.35, 0)
@@ -26,4 +23,3 @@ text = "ARMING"
 font_size = 22
 outline_size = 6
 billboard = 1
-

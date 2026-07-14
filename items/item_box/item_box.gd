@@ -1,40 +1,70 @@
+@tool
 class_name ItemBox
 extends Area3D
 
 const EXPLOSIVE_SCENE := preload("res://items/explosive/explosive.tscn")
+const RANDOM_REWARDS: Array[StringName] = [
+	&"Hammer",
+	&"Propeller",
+	&"RapidGun",
+	&"Shield",
+	&"Landmine",
+	&"Bomb",
+]
 
+@export_group("道具箱模型调整")
+@export_range(1.0, 200.0, 0.5) var model_scale := 80.0:
+	set(value):
+		model_scale = value
+		_apply_model_adjustments()
+@export var model_position := Vector3(0.0, -0.38, 0.0):
+	set(value):
+		model_position = value
+		_apply_model_adjustments()
+@export var model_rotation_degrees := Vector3.ZERO:
+	set(value):
+		model_rotation_degrees = value
+		_apply_model_adjustments()
 var spawn_index := -1
+var rolled_reward: StringName = &""
 
 
 func _ready() -> void:
+	_apply_model_adjustments()
+	if Engine.is_editor_hint():
+		return
+	if rolled_reward.is_empty():
+		rolled_reward = RANDOM_REWARDS.pick_random()
 	add_to_group("interactables")
 	add_to_group("item_boxes")
 
 
 func _process(delta: float) -> void:
+	if Engine.is_editor_hint():
+		return
 	$Visuals.rotation.y += delta * 0.7
+
+
+func _apply_model_adjustments() -> void:
+	var adjustment := get_node_or_null("Visuals/ModelSizeAdjustment__在这里调大小") as Node3D
+	if adjustment == null:
+		return
+	adjustment.scale = Vector3.ONE * model_scale
+	adjustment.position = model_position
+	adjustment.rotation_degrees = model_rotation_degrees
 
 
 func interact(player: Node3D) -> void:
 	if not (multiplayer.multiplayer_peer is OfflineMultiplayerPeer or multiplayer.is_server()):
 		return
-	var roll := randi_range(0, 99)
-	if roll < 10:
+	if rolled_reward.is_empty():
+		rolled_reward = RANDOM_REWARDS.pick_random()
+	var reward := rolled_reward
+	if reward == &"Bomb":
 		_spawn_bomb()
 		queue_free()
 		return
-	var item_type: StringName
-	if roll < 30:
-		item_type = &"Hammer"
-	elif roll < 50:
-		item_type = &"Propeller"
-	elif roll < 70:
-		item_type = &"RapidGun"
-	elif roll < 90:
-		item_type = &"Shield"
-	else:
-		item_type = &"Landmine"
-	if player.has_method("receive_item") and player.receive_item(item_type):
+	if player.has_method("receive_item") and player.receive_item(reward):
 		queue_free()
 
 

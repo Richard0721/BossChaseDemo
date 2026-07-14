@@ -59,8 +59,8 @@ Team contributions use short-lived branches and pull requests into `main`. See
   high-ground jumps, piercing red shots and a 120-degree horizontal laser sweep
 - Spectator target cycling via Q/E, mouse wheel or controller shoulder buttons
 - Five Host-controlled item boxes at match start; one replacement check every 30 seconds
-- Weighted Hammer/Propeller/RapidGun/Shield/Landmine drops and 10% bomb punishment
-- One-slot inventory with ranged/item mode cycling and two-hand carry visuals
+- Equal-chance Hammer/Propeller/RapidGun/Shield/Landmine/Bomb item-box results
+- One active item slot with ranged/item mode cycling plus a passive equipped shield
 - 50/300 base ammo with 1.5-second R reload; 100-round disposable rapid gun
 - 100-damage shield, 10-second propeller flight, mines and Link-style aim slow-fall
 - Landmines launch players, AI and Bosses upward with a temporary somersault state

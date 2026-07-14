@@ -1,0 +1,272 @@
+[gd_scene format=3 uid="uid://j0mysfoc70ew"]
+
+[ext_resource type="Script" uid="uid://c65ir3bt164uy" path="res://assets/items/rapid_gun/rapid_gun_four_character_preview.gd" id="1_script"]
+[ext_resource type="Resource" path="res://assets/items/rapid_gun/fashi_rapid_gun_settings.tres" id="2_fashi_settings"]
+[ext_resource type="Resource" path="res://assets/items/rapid_gun/happy_student_rapid_gun_settings.tres" id="3_student_settings"]
+[ext_resource type="Resource" path="res://assets/items/rapid_gun/lulu_rapid_gun_settings.tres" id="4_lulu_settings"]
+[ext_resource type="Resource" path="res://assets/items/rapid_gun/doumaoren_rapid_gun_settings.tres" id="5_hooded_settings"]
+[ext_resource type="PackedScene" uid="uid://8sgriayytilc" path="res://assets/characters/fashi/fashi_model.tscn" id="6_fashi"]
+[ext_resource type="PackedScene" uid="uid://blciu2a8g6l5w" path="res://assets/characters/happy_student/happy_student_model.tscn" id="7_student"]
+[ext_resource type="PackedScene" uid="uid://g0xrhxxwbo4t" path="res://assets/characters/lulu/lulu_model.tscn" id="8_lulu"]
+[ext_resource type="PackedScene" uid="uid://b610t4tb0qim" path="res://assets/characters/doumaoren/doumaoren_model.tscn" id="9_hooded"]
+
+[sub_resource type="Environment" id="PreviewEnvironment"]
+background_mode = 1
+background_color = Color(0.035, 0.05, 0.08, 1)
+ambient_light_source = 3
+ambient_light_color = Color(0.72, 0.8, 1, 1)
+ambient_light_energy = 1.15
+
+[sub_resource type="StandardMaterial3D" id="FloorMaterial"]
+albedo_color = Color(0.11, 0.15, 0.21, 1)
+roughness = 0.82
+
+[sub_resource type="BoxMesh" id="FloorMesh"]
+material = SubResource("FloorMaterial")
+size = Vector3(15, 0.12, 5)
+
+[node name="RapidGunFourCharacterPreview__选择这里调整" type="Node3D" unique_id=396764088]
+script = ExtResource("1_script")
+rune_mage_settings = ExtResource("2_fashi_settings")
+happy_student_settings = ExtResource("3_student_settings")
+lulu_settings = ExtResource("4_lulu_settings")
+hooded_settings = ExtResource("5_hooded_settings")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=654185712]
+environment = SubResource("PreviewEnvironment")
+
+[node name="Floor" type="MeshInstance3D" parent="." unique_id=615284996]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.96, 0)
+mesh = SubResource("FloorMesh")
+
+[node name="RuneMage" parent="." unique_id=754267798 instance=ExtResource("6_fashi")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.8, -0.9, 0)
+starting_animation = &"standing"
+show_weapon = false
+
+[node name="Skeleton3D" parent="RuneMage/Rig" parent_id_path=PackedInt32Array(754267798, 608788730) index="0" unique_id=1334056349]
+bones/0/position = Vector3(0.0062996587, 0.5622207, -0.0032911524)
+bones/0/rotation = Quaternion(-0.108737394, -0.45329878, -0.098039255, 0.8792524)
+bones/1/rotation = Quaternion(0.07987753, 0.0010001125, 0.045049615, 0.9957858)
+bones/2/rotation = Quaternion(0.09827142, 0.0067288294, 0.04452181, 0.9941405)
+bones/3/rotation = Quaternion(0.12958933, 0.010548949, 0.039607476, 0.9907203)
+bones/7/rotation = Quaternion(-0.66708946, -0.3899374, 0.37443814, -0.5125783)
+bones/8/rotation = Quaternion(0.40124714, -0.35251528, -0.012701066, 0.84532386)
+bones/9/rotation = Quaternion(0.7341199, -0.3911064, 0.47682953, 0.28414348)
+bones/10/rotation = Quaternion(-0.21451172, -0.31675676, 0.18382405, 0.9054604)
+bones/15/rotation = Quaternion(0.59661704, -0.48899427, 0.35736415, 0.5265204)
+bones/16/rotation = Quaternion(0.23347226, -0.036632553, -0.33235013, 0.91306746)
+bones/17/rotation = Quaternion(0.18644808, 0.17432395, -0.8798167, 0.4009624)
+bones/18/rotation = Quaternion(0.15115085, -0.10856327, -0.08939216, -0.97845626)
+bones/23/rotation = Quaternion(0.13016054, 0.112336114, 0.96857226, -0.17974032)
+bones/24/rotation = Quaternion(-0.31718725, -0.099612944, 0.055624828, 0.94147515)
+bones/25/rotation = Quaternion(0.44391313, -0.16241749, -0.028717915, 0.88075936)
+bones/28/rotation = Quaternion(-0.2148232, -0.0068959347, 0.96970725, 0.116066195)
+bones/29/rotation = Quaternion(-0.29027393, 0.0028468962, -0.044067413, 0.95592415)
+bones/30/rotation = Quaternion(0.5094196, 0.15965505, 0.04362904, 0.84445155)
+
+[node name="WeaponAttachment" parent="RuneMage/Rig/Skeleton3D" index="1" unique_id=262761761]
+transform = Transform3D(-0.24395245, 0.050371766, 0.96847796, 0.9238384, 0.31582344, 0.21628173, -0.29497397, 0.9474794, -0.12358153, -0.145221, 0.954229, 0.05465989)
+
+[node name="Weapon" parent="RuneMage/Rig/Skeleton3D/WeaponAttachment" index="0" unique_id=1344329189]
+visible = false
+
+[node name="ShieldAttachment" parent="RuneMage/Rig/Skeleton3D" index="2" unique_id=922030034]
+transform = Transform3D(-0.3950374, -0.8490116, 0.35089147, -0.32467782, 0.48633745, 0.8112088, -0.8593775, 0.2065311, -0.46777678, 0.11757624, 0.8611985, 0.23075736)
+
+[node name="HammerAttachment" parent="RuneMage/Rig/Skeleton3D" index="3" unique_id=872103643]
+transform = Transform3D(-0.24395245, 0.050371766, 0.96847796, 0.9238384, 0.31582344, 0.21628173, -0.29497397, 0.9474794, -0.12358153, -0.145221, 0.954229, 0.05465989)
+
+[node name="RapidGunAttachment" parent="RuneMage/Rig/Skeleton3D" index="4"]
+transform = Transform3D(-0.24395245, 0.050371766, 0.96847796, 0.9238384, 0.31582344, 0.21628173, -0.29497397, 0.9474794, -0.12358153, -0.145221, 0.954229, 0.05465989)
+
+[node name="RapidGun" parent="RuneMage/Rig/Skeleton3D/RapidGunAttachment" index="0"]
+transform = Transform3D(0.0015755836, 0.0055335974, -0.0017020144, -0.005769068, 0.0016484895, 1.9052459e-05, 0.00048519927, 0.0016315054, 0.005753504, 0.039790392, 0.23105319, -0.0048766136)
+visible = true
+
+[node name="HappyStudent" parent="." unique_id=367558347 instance=ExtResource("7_student")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.6, -0.9, 0)
+starting_animation = &"standing"
+show_weapon = false
+
+[node name="Skeleton3D" parent="HappyStudent/Rig" parent_id_path=PackedInt32Array(367558347, 2143975647) index="0" unique_id=2084146944]
+bones/0/position = Vector3(0.006299659, 0.5622207, -0.0032911561)
+bones/0/rotation = Quaternion(-0.108737394, -0.45329878, -0.098039255, 0.8792524)
+bones/1/rotation = Quaternion(0.079877526, 0.0010001125, 0.045049615, 0.9957858)
+bones/2/rotation = Quaternion(0.09827142, 0.0067288294, 0.04452181, 0.9941405)
+bones/3/rotation = Quaternion(0.12958933, 0.010548949, 0.039607476, 0.9907203)
+bones/7/rotation = Quaternion(-0.66708946, -0.38993746, 0.3744381, -0.5125783)
+bones/8/rotation = Quaternion(0.40124717, -0.35251528, -0.012701067, 0.8453239)
+bones/9/rotation = Quaternion(0.7341199, -0.39110634, 0.4768295, 0.28414345)
+bones/10/rotation = Quaternion(-0.21451172, -0.31675673, 0.18382403, 0.9054605)
+bones/15/rotation = Quaternion(0.59661704, -0.48899427, 0.3573642, 0.5265204)
+bones/16/rotation = Quaternion(0.23347235, -0.036632556, -0.33235022, 0.9130675)
+bones/17/rotation = Quaternion(0.18644805, 0.17432395, -0.8798167, 0.4009624)
+bones/18/rotation = Quaternion(-0.15115085, 0.10856324, 0.08939218, 0.9784562)
+bones/23/rotation = Quaternion(0.13016057, 0.11233614, 0.96857226, -0.17974035)
+bones/24/rotation = Quaternion(-0.31718725, -0.09961295, 0.05562483, 0.9414752)
+bones/25/rotation = Quaternion(0.44391307, -0.16241749, -0.028717931, 0.88075936)
+bones/28/rotation = Quaternion(-0.21482317, -0.0068959356, 0.9697073, 0.1160662)
+bones/29/rotation = Quaternion(-0.2902739, 0.0028468962, -0.044067413, 0.95592415)
+bones/30/rotation = Quaternion(0.5094196, 0.15965505, 0.043629043, 0.84445155)
+
+[node name="WeaponAttachment" parent="HappyStudent/Rig/Skeleton3D" index="1" unique_id=1340200853]
+transform = Transform3D(-0.2439525, 0.050371736, 0.96847796, 0.92383826, 0.31582367, 0.21628165, -0.29497406, 0.94747967, -0.12358129, -0.17100784, 0.8384438, 0.07095657)
+
+[node name="Weapon" parent="HappyStudent/Rig/Skeleton3D/WeaponAttachment" index="0" unique_id=1018407436]
+visible = false
+
+[node name="ShieldAttachment" parent="HappyStudent/Rig/Skeleton3D" index="2" unique_id=1003225488]
+transform = Transform3D(-0.39503703, -0.8490116, 0.3508913, -0.32467788, 0.4863372, 0.81120884, -0.8593775, 0.20653105, -0.46777672, 0.12099691, 0.7476915, 0.24615113)
+
+[node name="HammerAttachment" parent="HappyStudent/Rig/Skeleton3D" index="3" unique_id=1094072042]
+transform = Transform3D(-0.2439525, 0.050371736, 0.96847796, 0.92383826, 0.31582367, 0.21628165, -0.29497406, 0.94747967, -0.12358129, -0.17100784, 0.8384438, 0.07095657)
+
+[node name="RapidGunAttachment" parent="HappyStudent/Rig/Skeleton3D" index="4"]
+transform = Transform3D(-0.2439525, 0.050371736, 0.96847796, 0.92383826, 0.31582367, 0.21628165, -0.29497406, 0.94747967, -0.12358129, -0.17100784, 0.8384438, 0.07095657)
+
+[node name="RapidGun" parent="HappyStudent/Rig/Skeleton3D/RapidGunAttachment" index="0"]
+transform = Transform3D(0.0014213095, 0.005483707, -0.001977087, -0.005697359, 0.0017372228, 0.0007226373, 0.001232891, 0.0017061784, 0.005618625, 0.02837184, 0.27070448, -0.0039361715)
+visible = true
+
+[node name="Lulu" parent="." unique_id=1341192379 instance=ExtResource("8_lulu")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.6, -0.9, 0)
+starting_animation = &"standing"
+show_weapon = false
+
+[node name="Skeleton3D" parent="Lulu/Rig" parent_id_path=PackedInt32Array(1341192379, 2089656064) index="0" unique_id=1207623007]
+bones/0/position = Vector3(0.006299659, 0.5622207, -0.0032911554)
+bones/0/rotation = Quaternion(-0.108737394, -0.45329878, -0.098039255, 0.8792524)
+bones/1/rotation = Quaternion(0.079877526, 0.0010001125, 0.04504961, 0.9957857)
+bones/2/rotation = Quaternion(0.09827142, 0.0067288294, 0.04452181, 0.9941405)
+bones/3/rotation = Quaternion(0.12958933, 0.010548949, 0.039607476, 0.9907203)
+bones/7/rotation = Quaternion(0.6670895, 0.3899375, -0.37443814, 0.5125783)
+bones/8/rotation = Quaternion(0.40124717, -0.35251528, -0.012701079, 0.8453239)
+bones/9/rotation = Quaternion(0.7341199, -0.3911064, 0.4768296, 0.28414342)
+bones/10/rotation = Quaternion(-0.21451174, -0.31675678, 0.18382405, 0.9054604)
+bones/15/rotation = Quaternion(0.59661704, -0.4889942, 0.35736424, 0.5265203)
+bones/16/rotation = Quaternion(0.2334723, -0.036632553, -0.3323502, 0.9130675)
+bones/17/rotation = Quaternion(0.18644808, 0.17432395, -0.87981683, 0.40096244)
+bones/18/rotation = Quaternion(-0.15115088, 0.108563244, 0.089392185, 0.97845626)
+bones/23/rotation = Quaternion(0.13016057, 0.11233613, 0.9685723, -0.17974035)
+bones/24/rotation = Quaternion(-0.31718728, -0.099612944, 0.05562483, 0.94147515)
+bones/25/rotation = Quaternion(0.4439131, -0.16241755, -0.028717926, 0.8807595)
+bones/28/rotation = Quaternion(-0.21482317, -0.006895935, 0.9697073, 0.11606619)
+bones/29/rotation = Quaternion(-0.29027396, 0.0028468969, -0.044067416, 0.9559242)
+bones/30/rotation = Quaternion(0.5094196, 0.15965505, 0.04362903, 0.84445155)
+
+[node name="WeaponAttachment" parent="Lulu/Rig/Skeleton3D" index="1" unique_id=442349321]
+transform = Transform3D(-0.24395248, 0.050371557, 0.9684781, 0.9238382, 0.3158237, 0.21628165, -0.29497406, 0.9474795, -0.123581246, -0.14669654, 0.88117707, 0.023462355)
+
+[node name="Weapon" parent="Lulu/Rig/Skeleton3D/WeaponAttachment" index="0" unique_id=1190657823]
+visible = false
+
+[node name="ShieldAttachment" parent="Lulu/Rig/Skeleton3D" index="2" unique_id=1802487444]
+transform = Transform3D(-0.39503714, -0.8490115, 0.35089123, -0.32467777, 0.48633718, 0.8112087, -0.8593773, 0.20653138, -0.46777666, 0.096932516, 0.808928, 0.2186033)
+
+[node name="HammerAttachment" parent="Lulu/Rig/Skeleton3D" index="3" unique_id=1033860488]
+transform = Transform3D(-0.24395248, 0.050371557, 0.9684781, 0.9238382, 0.3158237, 0.21628165, -0.29497406, 0.9474795, -0.123581246, -0.14669654, 0.88117707, 0.023462355)
+
+[node name="RapidGunAttachment" parent="Lulu/Rig/Skeleton3D" index="4"]
+transform = Transform3D(-0.24395248, 0.050371557, 0.9684781, 0.9238382, 0.3158237, 0.21628165, -0.29497406, 0.9474795, -0.123581246, -0.14669654, 0.88117707, 0.023462355)
+
+[node name="RapidGun" parent="Lulu/Rig/Skeleton3D/RapidGunAttachment" index="0"]
+transform = Transform3D(0.0016111862, 0.005611098, -0.001385533, -0.005730488, 0.0017380733, 0.00037504436, 0.0007520925, 0.0012225863, 0.005825776, 0.031157762, 0.25163466, 0.00079739094)
+visible = true
+
+[node name="Hooded" parent="." unique_id=1162719236 instance=ExtResource("9_hooded")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.8, -0.9, 0)
+starting_animation = &"standing"
+show_weapon = false
+
+[node name="Skeleton3D" parent="Hooded/Rig" parent_id_path=PackedInt32Array(1162719236, 326026655) index="0" unique_id=1909643672]
+bones/0/position = Vector3(0.0062996587, 0.5622207, -0.0032911561)
+bones/0/rotation = Quaternion(-0.108737394, -0.45329878, -0.098039255, 0.8792524)
+bones/1/rotation = Quaternion(0.079877526, 0.0010001125, 0.04504961, 0.9957858)
+bones/2/rotation = Quaternion(0.09827142, 0.0067288294, 0.04452181, 0.9941405)
+bones/3/rotation = Quaternion(0.12958933, 0.010548949, 0.039607476, 0.9907203)
+bones/7/rotation = Quaternion(-0.6670895, -0.3899375, 0.3744381, -0.5125783)
+bones/8/rotation = Quaternion(0.40124714, -0.35251528, -0.012701068, 0.8453239)
+bones/9/rotation = Quaternion(0.73411995, -0.3911063, 0.4768295, 0.28414342)
+bones/10/rotation = Quaternion(-0.21451177, -0.31675676, 0.18382405, 0.90546054)
+bones/15/rotation = Quaternion(0.59661704, -0.48899415, 0.3573642, 0.5265203)
+bones/16/rotation = Quaternion(0.23347233, -0.036632545, -0.33235016, 0.91306746)
+bones/17/rotation = Quaternion(0.18644805, 0.17432396, -0.8798167, 0.40096244)
+bones/18/rotation = Quaternion(0.15115082, -0.10856323, -0.08939218, -0.9784562)
+bones/23/rotation = Quaternion(0.13016056, 0.11233613, 0.96857226, -0.17974035)
+bones/24/rotation = Quaternion(-0.31718725, -0.09961295, 0.05562482, 0.94147515)
+bones/25/rotation = Quaternion(0.44391307, -0.1624175, -0.028717922, 0.8807595)
+bones/28/rotation = Quaternion(-0.21482319, -0.0068959356, 0.96970725, 0.116066195)
+bones/29/rotation = Quaternion(-0.2902739, 0.0028468966, -0.044067405, 0.9559242)
+bones/30/rotation = Quaternion(0.5094196, 0.15965505, 0.04362903, 0.84445155)
+
+[node name="WeaponAttachment" parent="Hooded/Rig/Skeleton3D" index="1" unique_id=1280635627]
+transform = Transform3D(-0.24395263, 0.050371528, 0.9684779, 0.9238381, 0.31582385, 0.21628177, -0.2949739, 0.9474796, -0.12358129, -0.23059417, 0.89461815, -0.011997774)
+
+[node name="Weapon" parent="Hooded/Rig/Skeleton3D/WeaponAttachment" index="0" unique_id=428583017]
+visible = false
+
+[node name="ShieldAttachment" parent="Hooded/Rig/Skeleton3D" index="2" unique_id=1369567991]
+transform = Transform3D(-0.39503708, -0.84901154, 0.3508915, -0.32467777, 0.48633742, 0.81120884, -0.8593775, 0.20653097, -0.4677766, 0.15576184, 0.8280424, 0.3260074)
+
+[node name="Shield" parent="Hooded/Rig/Skeleton3D/ShieldAttachment" index="0" unique_id=1742798311]
+visible = false
+
+[node name="HammerAttachment" parent="Hooded/Rig/Skeleton3D" index="3"]
+transform = Transform3D(-0.24395263, 0.050371528, 0.9684779, 0.9238381, 0.31582385, 0.21628177, -0.2949739, 0.9474796, -0.12358129, -0.23059417, 0.89461815, -0.011997774)
+
+[node name="RapidGunAttachment" parent="Hooded/Rig/Skeleton3D" index="4"]
+transform = Transform3D(-0.24395263, 0.050371528, 0.9684779, 0.9238381, 0.31582385, 0.21628177, -0.2949739, 0.9474796, -0.12358129, -0.23059417, 0.89461815, -0.011997774)
+
+[node name="RapidGun" parent="Hooded/Rig/Skeleton3D/RapidGunAttachment" index="0"]
+transform = Transform3D(0.001316233, 0.0056547546, -0.0015136969, -0.005626446, 0.0016503081, 0.0012726443, 0.0016157601, 0.0011402677, 0.005664726, -0.0097203255, 0.36788213, 0.12079716)
+visible = true
+
+[node name="RuneMageLabel" type="Label3D" parent="." unique_id=839859196]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.8, 1.75, 0)
+billboard = 1
+text = "符文法师"
+outline_size = 8
+
+[node name="HappyStudentLabel" type="Label3D" parent="." unique_id=1810778018]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.6, 1.75, 0)
+billboard = 1
+text = "快乐的大学生"
+outline_size = 8
+
+[node name="LuluLabel" type="Label3D" parent="." unique_id=631522843]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.6, 1.75, 0)
+billboard = 1
+text = "LULU"
+outline_size = 8
+
+[node name="HoodedLabel" type="Label3D" parent="." unique_id=1834840948]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.8, 1.75, 0)
+billboard = 1
+text = "神秘兜帽人"
+outline_size = 8
+
+[node name="KeyLight" type="DirectionalLight3D" parent="." unique_id=1858632368]
+transform = Transform3D(0.8480481, 0.3545852, -0.39380676, 0, 0.7431448, 0.6691306, 0.52991927, -0.56745493, 0.63022256, 0, 0, 0)
+light_energy = 2.2
+shadow_enabled = true
+
+[node name="FillLight" type="OmniLight3D" parent="." unique_id=902342281]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.5, 4)
+light_color = Color(0.55, 0.68, 1, 1)
+light_energy = 3.0
+omni_range = 14.0
+
+[node name="Camera3D" type="Camera3D" parent="." unique_id=770316319]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 12.5)
+current = true
+fov = 48.0
+
+[editable path="RuneMage"]
+[editable path="RuneMage/Rig"]
+[editable path="HappyStudent"]
+[editable path="HappyStudent/Rig"]
+[editable path="Lulu"]
+[editable path="Lulu/Rig"]
+[editable path="Hooded"]
+[editable path="Hooded/Rig"]

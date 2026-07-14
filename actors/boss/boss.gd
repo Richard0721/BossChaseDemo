@@ -43,9 +43,9 @@ enum Difficulty { EASY, NORMAL, HARD }
 @export_range(0.5, 5.0, 0.1) var jump_cooldown_multiplier := 2.0
 
 @export_category("Movement")
-@export var wander_speed := 3.2
-@export var combat_move_speed := 5.0
-@export var retreat_speed := 12.0
+@export var wander_speed := 2.9
+@export var combat_move_speed := 4.5
+@export var retreat_speed := 10.8
 @export var jump_speed := 32.0
 @export var charge_speed := 38.0
 @export var arena_radius := 112.0

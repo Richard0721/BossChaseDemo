@@ -1,0 +1,7 @@
+[gd_resource type="Resource" script_class="RuneModelSettings" format=3 uid="uid://ba5gfv20amne6"]
+
+[ext_resource type="Script" uid="uid://cj8nimifo87rw" path="res://assets/items/runes/rune_model_settings.gd" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+model_scale = 0.5

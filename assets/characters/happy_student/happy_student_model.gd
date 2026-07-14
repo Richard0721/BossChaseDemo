@@ -9,8 +9,12 @@ const ANIMATION_SOURCES := {
 	"walk_rifle": "res://assets/characters/happy_student/source/Happy Student Walk With Rifle.fbx",
 	"jump_down": "res://assets/characters/happy_student/source/Happy Student Jump Down.fbx",
 	"death": "res://assets/characters/happy_student/source/Happy Student Death From Right.fbx",
+	"hammer_attack": "res://assets/items/hammer/animations/Chuzi Attack.fbx",
+	"hammer_walk": "res://assets/items/hammer/animations/Chuzi walk.fbx",
+	"hammer_standing": "res://assets/items/hammer/animations/Chuizi Standing Idle.fbx",
+	"hammer_throw": "res://assets/items/hammer/animations/Chuizi Throw.fbx",
 }
-const LOOPING_ANIMATIONS := [&"idle", &"standing", &"pointing", &"walk_rifle"]
+const LOOPING_ANIMATIONS := [&"idle", &"standing", &"pointing", &"walk_rifle", &"hammer_walk", &"hammer_standing"]
 @export var starting_animation: StringName = &"idle"
 @export var show_weapon := true
 @export var editor_preview_animation: StringName = &"standing"
@@ -68,6 +72,24 @@ func set_weapon_visible(is_visible: bool) -> void:
 	show_weapon = is_visible
 	if is_instance_valid(_weapon):
 		_weapon.visible = is_visible
+
+
+func set_shield_visible(is_visible: bool) -> void:
+	var shield := get_node_or_null("Rig/Skeleton3D/ShieldAttachment/Shield") as Node3D
+	if shield != null:
+		shield.visible = is_visible
+
+
+func set_hammer_visible(is_visible: bool) -> void:
+	var hammer := get_node_or_null("Rig/Skeleton3D/HammerAttachment/Hammer") as Node3D
+	if hammer != null:
+		hammer.visible = is_visible
+
+
+func set_rapid_gun_visible(is_visible: bool) -> void:
+	var rapid_gun := get_node_or_null("Rig/Skeleton3D/RapidGunAttachment/RapidGun") as Node3D
+	if rapid_gun != null:
+		rapid_gun.visible = is_visible
 
 
 func play_shot_sound() -> void:

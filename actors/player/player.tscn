@@ -1,18 +1,15 @@
-[gd_scene load_steps=12 format=3]
+[gd_scene format=3 uid="uid://bllq7su7ig5as"]
 
-[ext_resource type="Script" path="res://actors/player/player.gd" id="1_player"]
-[ext_resource type="Script" path="res://characters/character_special.gd" id="2_character"]
-[ext_resource type="Script" path="res://runes/buff_component.gd" id="3_buff"]
-[ext_resource type="PackedScene" path="res://assets/characters/happy_student/happy_student_model.tscn" id="4_happy_student"]
-[ext_resource type="PackedScene" path="res://assets/characters/fashi/fashi_model.tscn" id="5_fashi"]
-[ext_resource type="PackedScene" path="res://assets/characters/lulu/lulu_model.tscn" id="6_lulu"]
-[ext_resource type="PackedScene" path="res://assets/characters/doumaoren/doumaoren_model.tscn" id="7_doumaoren"]
+[ext_resource type="Script" uid="uid://b67ccojnplyg8" path="res://actors/player/player.gd" id="1_player"]
+[ext_resource type="Script" uid="uid://bmclmeavdtytx" path="res://characters/character_special.gd" id="2_character"]
+[ext_resource type="Script" uid="uid://dcemyptyu11u6" path="res://runes/buff_component.gd" id="3_buff"]
+[ext_resource type="PackedScene" uid="uid://blciu2a8g6l5w" path="res://assets/characters/happy_student/happy_student_model.tscn" id="4_happy_student"]
+[ext_resource type="PackedScene" uid="uid://8sgriayytilc" path="res://assets/characters/fashi/fashi_model.tscn" id="5_fashi"]
+[ext_resource type="PackedScene" uid="uid://g0xrhxxwbo4t" path="res://assets/characters/lulu/lulu_model.tscn" id="6_lulu"]
+[ext_resource type="PackedScene" uid="uid://b610t4tb0qim" path="res://assets/characters/doumaoren/doumaoren_model.tscn" id="7_doumaoren"]
+[ext_resource type="PackedScene" path="res://assets/items/propeller/propeller_backpack.tscn" id="8_propeller"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape_player"]
-radius = 0.45
-height = 1.8
-
-[sub_resource type="CapsuleMesh" id="CapsuleMesh_player"]
 radius = 0.45
 height = 1.8
 
@@ -21,95 +18,98 @@ albedo_color = Color(0.15, 0.55, 1, 1)
 metallic = 0.15
 roughness = 0.45
 
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_player"]
+radius = 0.45
+height = 1.8
+
 [sub_resource type="SphereMesh" id="HeadMesh"]
 radius = 0.34
 height = 0.68
-
-[sub_resource type="BoxMesh" id="GunMesh"]
-size = Vector3(0.16, 0.18, 0.9)
 
 [sub_resource type="StandardMaterial3D" id="GunMaterial"]
 albedo_color = Color(0.07, 0.09, 0.12, 1)
 metallic = 0.75
 roughness = 0.28
 
+[sub_resource type="BoxMesh" id="GunMesh"]
+size = Vector3(0.16, 0.18, 0.9)
+
 [sub_resource type="BoxMesh" id="HeldItemMesh"]
 size = Vector3(0.85, 0.55, 0.7)
 
-[node name="Player" type="CharacterBody3D"]
+[node name="Player" type="CharacterBody3D" unique_id=1909788368]
 script = ExtResource("1_player")
 
-[node name="CharacterSpecial" type="Node" parent="."]
+[node name="CharacterSpecial" type="Node" parent="." unique_id=1943756206]
 script = ExtResource("2_character")
 
-[node name="BuffComponent" type="Node" parent="."]
+[node name="BuffComponent" type="Node" parent="." unique_id=1252492566]
 script = ExtResource("3_buff")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1340266862]
 shape = SubResource("CapsuleShape_player")
 
-[node name="Visuals" type="Node3D" parent="."]
+[node name="Visuals" type="Node3D" parent="." unique_id=1893009174]
 
-[node name="HappyStudent" parent="Visuals" instance=ExtResource("4_happy_student")]
+[node name="HappyStudent" parent="Visuals" unique_id=2017860601 instance=ExtResource("4_happy_student")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.9, 0)
 visible = false
-position = Vector3(0, -0.9, 0)
 
-[node name="Fashi" parent="Visuals" instance=ExtResource("5_fashi")]
+[node name="Fashi" parent="Visuals" unique_id=995311231 instance=ExtResource("5_fashi")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.9, 0)
 visible = false
-position = Vector3(0, -0.9, 0)
 
-[node name="Lulu" parent="Visuals" instance=ExtResource("6_lulu")]
+[node name="Lulu" parent="Visuals" unique_id=800309092 instance=ExtResource("6_lulu")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.9, 0)
 visible = false
-position = Vector3(0, -0.9, 0)
 
-[node name="Doumaoren" parent="Visuals" instance=ExtResource("7_doumaoren")]
+[node name="Doumaoren" parent="Visuals" unique_id=366478110 instance=ExtResource("7_doumaoren")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.9, 0)
 visible = false
-position = Vector3(0, -0.9, 0)
 
-[node name="Body" type="MeshInstance3D" parent="Visuals"]
+[node name="Body" type="MeshInstance3D" parent="Visuals" unique_id=1273736269]
+material_override = SubResource("PlayerMaterial")
 mesh = SubResource("CapsuleMesh_player")
-material_override = SubResource("PlayerMaterial")
 
-[node name="Head" type="MeshInstance3D" parent="Visuals"]
-position = Vector3(0, 0.82, 0)
+[node name="Head" type="MeshInstance3D" parent="Visuals" unique_id=998512717]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.82, 0)
+material_override = SubResource("PlayerMaterial")
 mesh = SubResource("HeadMesh")
-material_override = SubResource("PlayerMaterial")
 
-[node name="Gun" type="MeshInstance3D" parent="Visuals"]
-position = Vector3(0.48, 0.28, 0.42)
-mesh = SubResource("GunMesh")
+[node name="Gun" type="MeshInstance3D" parent="Visuals" unique_id=391480267]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.48, 0.28, 0.42)
 material_override = SubResource("GunMaterial")
+mesh = SubResource("GunMesh")
 
-[node name="Muzzle" type="Marker3D" parent="Visuals"]
-position = Vector3(0.48, 0.28, 0.92)
+[node name="Muzzle" type="Marker3D" parent="Visuals" unique_id=296376810]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.48, 0.28, 0.92)
 
-[node name="HeldItem" type="MeshInstance3D" parent="Visuals"]
+[node name="HeldItem" type="MeshInstance3D" parent="Visuals" unique_id=1862341978]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.62, 0.72)
 visible = false
-position = Vector3(0, 0.62, 0.72)
 mesh = SubResource("HeldItemMesh")
 
-[node name="LeftHand" type="MeshInstance3D" parent="Visuals"]
+[node name="LeftHand" type="MeshInstance3D" parent="Visuals" unique_id=212289470]
+transform = Transform3D(0.36, 0, 0, 0, 0.36, 0, 0, 0, 0.36, -0.48, 0.52, 0.55)
 visible = false
-position = Vector3(-0.48, 0.52, 0.55)
-scale = Vector3(0.36, 0.36, 0.36)
-mesh = SubResource("HeadMesh")
 material_override = SubResource("PlayerMaterial")
+mesh = SubResource("HeadMesh")
 
-[node name="RightHand" type="MeshInstance3D" parent="Visuals"]
+[node name="RightHand" type="MeshInstance3D" parent="Visuals" unique_id=1099677342]
+transform = Transform3D(0.36, 0, 0, 0, 0.36, 0, 0, 0, 0.36, 0.48, 0.52, 0.55)
 visible = false
-position = Vector3(0.48, 0.52, 0.55)
-scale = Vector3(0.36, 0.36, 0.36)
-mesh = SubResource("HeadMesh")
 material_override = SubResource("PlayerMaterial")
+mesh = SubResource("HeadMesh")
 
-[node name="CameraPivot" type="Node3D" parent="."]
-position = Vector3(0, 0.65, 0)
+[node name="PropellerBackMount__在这里调整" parent="Visuals" unique_id=38709544 instance=ExtResource("8_propeller")]
 
-[node name="SpringArm3D" type="SpringArm3D" parent="CameraPivot"]
+[node name="CameraPivot" type="Node3D" parent="." unique_id=793118463]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.65, 0)
+
+[node name="SpringArm3D" type="SpringArm3D" parent="CameraPivot" unique_id=2094230792]
 spring_length = 5.2
 margin = 0.15
-collision_mask = 1
 
-[node name="Camera3D" type="Camera3D" parent="CameraPivot/SpringArm3D"]
+[node name="Camera3D" type="Camera3D" parent="CameraPivot/SpringArm3D" unique_id=961720643]
 current = true
 fov = 72.0

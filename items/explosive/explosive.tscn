@@ -1,21 +1,40 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene format=3 uid="uid://cedvu5gcwgwev"]
 
-[ext_resource type="Script" path="res://items/explosive/explosive.gd" id="1_explosive"]
+[ext_resource type="Script" uid="uid://d2osss7q4w1ja" path="res://items/explosive/explosive.gd" id="1_explosive"]
+[ext_resource type="PackedScene" uid="uid://bv7gyrejv8hdl" path="res://assets/items/explosive/source/Boom.fbx" id="2_model"]
 
-[sub_resource type="SphereMesh" id="BombMesh"]
-radius = 0.48
-height = 0.96
+[sub_resource type="StandardMaterial3D" id="WarningGlowMaterial"]
+resource_local_to_scene = true
+transparency = 1
+shading_mode = 0
+albedo_color = Color(1, 0.01, 0, 0.21914358)
 
-[node name="Explosive" type="Node3D"]
+[sub_resource type="SphereMesh" id="WarningGlowMesh"]
+radius = 0.72
+height = 1.44
+
+[node name="Explosive" type="Node3D" unique_id=1048257321]
 script = ExtResource("1_explosive")
 
-[node name="Body" type="MeshInstance3D" parent="."]
-mesh = SubResource("BombMesh")
+[node name="ModelAdjustment__在这里调模型" type="Node3D" parent="." unique_id=114149906]
+transform = Transform3D(0.54071444, 0, 0, 0, 0.54071444, 0, 0, 0, 0.54071444, 0, 0, 0)
 
-[node name="Countdown" type="Label3D" parent="."]
-position = Vector3(0, 0.9, 0)
-text = "2.0"
-font_size = 34
-outline_size = 8
+[node name="Boom" parent="ModelAdjustment__在这里调模型" unique_id=214747734 instance=ExtResource("2_model")]
+
+[node name="WarningGlow" type="MeshInstance3D" parent="." unique_id=1284930357]
+material_override = SubResource("WarningGlowMaterial")
+mesh = SubResource("WarningGlowMesh")
+
+[node name="WarningLight" type="OmniLight3D" parent="." unique_id=1647920961]
+light_color = Color(1, 0.015, 0.005, 1)
+light_energy = 9.957179
+omni_range = 4.0
+
+[node name="Countdown" type="Label3D" parent="." unique_id=1021196912]
+transform = Transform3D(1.1221434, 0, 0, 0, 1.1221434, 0, 0, 0, 1.1221434, 0, 1.2, 0)
+pixel_size = 0.006
 billboard = 1
-
+modulate = Color(1, 0.23142657, 0.04, 1)
+text = "0.8"
+font_size = 72
+outline_size = 16

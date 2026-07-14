@@ -3,6 +3,12 @@
 [ext_resource type="Script" uid="uid://djatlv2hx5rrc" path="res://assets/characters/fashi/fashi_model.gd" id="1_script"]
 [ext_resource type="PackedScene" uid="uid://bbr4fxr1bqk8s" path="res://assets/characters/fashi/source/Person/Fashi Idle.fbx" id="2_rig"]
 [ext_resource type="PackedScene" uid="uid://deb3s4ltc8sl2" path="res://assets/characters/fashi/source/Weapon/Weapon2.fbx" id="3_weapon"]
+[ext_resource type="PackedScene" path="res://assets/items/shield/shield_visual.tscn" id="4_shield"]
+[ext_resource type="Resource" path="res://assets/items/shield/fashi_shield_settings.tres" id="5_shield_settings"]
+[ext_resource type="PackedScene" path="res://assets/items/hammer/hammer_visual.tscn" id="6_hammer"]
+[ext_resource type="Resource" path="res://assets/items/hammer/fashi_hammer_settings.tres" id="7_hammer_settings"]
+[ext_resource type="PackedScene" path="res://assets/items/rapid_gun/rapid_gun_visual.tscn" id="8_rapid_gun"]
+[ext_resource type="Resource" path="res://assets/items/rapid_gun/fashi_rapid_gun_settings.tres" id="9_rapid_gun_settings"]
 
 [node name="FashiModel" type="Node3D" unique_id=1198768263]
 script = ExtResource("1_script")
@@ -10,42 +16,72 @@ script = ExtResource("1_script")
 [node name="Rig" parent="." unique_id=608788730 instance=ExtResource("2_rig")]
 
 [node name="Skeleton3D" parent="Rig" index="0" unique_id=1334056349]
-bones/0/position = Vector3(0.004704103, 0.56236804, -0.0020625293)
-bones/0/rotation = Quaternion(-0.10002245, -0.4533129, -0.09344292, 0.8807789)
-bones/1/rotation = Quaternion(0.0696226, 0.0004836708, 0.04567106, 0.9965274)
-bones/2/rotation = Quaternion(0.09500609, 0.0068090707, 0.04212502, 0.99456173)
-bones/3/rotation = Quaternion(0.12397729, 0.010292197, 0.041174658, 0.99137706)
+bones/0/position = Vector3(0.006632461, 0.5622121, -0.0035507232)
+bones/0/rotation = Quaternion(-0.11200835, -0.45322657, -0.099770576, 0.8786841)
+bones/1/rotation = Quaternion(0.0868723, 0.0032113984, 0.043738954, 0.9952536)
+bones/2/rotation = Quaternion(0.1040904, 0.009993081, 0.048214395, 0.99334824)
+bones/3/rotation = Quaternion(0.14617664, 0.016655313, 0.034356494, 0.98852146)
 bones/4/rotation = Quaternion(0.055924766, 0.04863411, 0.0010856097, 0.9972492)
 bones/5/rotation = Quaternion(-0.00081233855, 0.31937853, -0.05402865, 0.9460854)
-bones/7/rotation = Quaternion(-0.6656113, -0.39369106, 0.3798206, -0.5076469)
-bones/8/rotation = Quaternion(0.40746158, -0.34112436, -0.009409781, 0.847066)
-bones/9/rotation = Quaternion(0.7338495, -0.38700932, 0.4789116, 0.2869363)
-bones/10/rotation = Quaternion(-0.21318574, -0.31774876, 0.18620308, 0.9049399)
+bones/7/rotation = Quaternion(-0.6849462, -0.37658617, 0.380542, -0.49418554)
+bones/8/rotation = Quaternion(0.36655974, -0.40051472, 0.023249004, 0.83945304)
+bones/9/rotation = Quaternion(0.73715025, -0.38693112, 0.46911058, 0.29466793)
+bones/10/rotation = Quaternion(-0.23717383, -0.3158593, 0.1772603, 0.90142125)
 bones/11/rotation = Quaternion(0.18015136, 0.07849743, -0.014368774, 0.98039645)
 bones/12/rotation = Quaternion(0.24054651, 0.031479944, -0.16533455, 0.9559346)
 bones/13/rotation = Quaternion(0.14631255, 0.04330394, -0.042507578, 0.98737556)
-bones/15/rotation = Quaternion(0.5955675, -0.48747334, 0.3501442, 0.5339177)
-bones/16/rotation = Quaternion(0.25814524, -0.040953673, -0.3162876, 0.9119463)
-bones/17/rotation = Quaternion(0.186391, 0.16604726, -0.8837478, 0.395824)
-bones/18/rotation = Quaternion(0.14639339, -0.10551072, -0.09257579, -0.9792171)
+bones/15/rotation = Quaternion(0.6049395, -0.5011037, 0.36982778, 0.4961559)
+bones/16/rotation = Quaternion(0.21823686, -0.010668872, -0.35364544, 0.9095019)
+bones/17/rotation = Quaternion(0.20041066, 0.18320239, -0.8773233, 0.39569744)
+bones/18/rotation = Quaternion(0.1415707, -0.07526721, -0.096811265, -0.9823035)
 bones/19/rotation = Quaternion(0.06721633, -0.872844, -0.009935435, 0.48324603)
 bones/20/rotation = Quaternion(0.20077485, -0.021291329, -0.06479617, 0.97726035)
 bones/21/rotation = Quaternion(-0.024383204, -0.13830645, -0.21133672, 0.9672712)
-bones/23/rotation = Quaternion(0.13014372, 0.12148184, 0.9677224, -0.17837629)
-bones/24/rotation = Quaternion(-0.31887758, -0.10001454, 0.05576925, 0.9408528)
-bones/25/rotation = Quaternion(0.44548535, -0.16302578, -0.029816663, 0.8798162)
+bones/23/rotation = Quaternion(0.13016607, 0.10867963, 0.9689035, -0.18019865)
+bones/24/rotation = Quaternion(-0.3167337, -0.09958315, 0.055614114, 0.9416317)
+bones/25/rotation = Quaternion(0.44306678, -0.16211046, -0.028149152, 0.8812604)
 bones/26/rotation = Quaternion(0.3257391, -0.10856606, 0.038379125, 0.9384213)
-bones/28/rotation = Quaternion(-0.2143066, 0.00055720285, 0.97012585, 0.11370252)
-bones/29/rotation = Quaternion(-0.2899168, 0.0053154575, -0.045263175, 0.9559661)
-bones/30/rotation = Quaternion(0.51011074, 0.1605448, 0.045559585, 0.8437635)
+bones/28/rotation = Quaternion(-0.2149883, -0.009429102, 0.96955454, 0.11685509)
+bones/29/rotation = Quaternion(-0.2904226, 0.002461405, -0.043884363, 0.95588857)
+bones/30/rotation = Quaternion(0.5093288, 0.1596551, 0.043630403, 0.8445063)
 bones/31/rotation = Quaternion(0.30815306, 0.11026333, -0.014301488, 0.944817)
 
 [node name="WeaponAttachment" type="BoneAttachment3D" parent="Rig/Skeleton3D" index="1" unique_id=262761761]
-transform = Transform3D(-0.24140397, 0.051346183, 0.96906555, 0.92464966, 0.31525046, 0.21363589, -0.29452914, 0.94761837, -0.1235801, -0.14856634, 0.9577751, 0.05544816)
+transform = Transform3D(-0.24874038, 0.046079397, 0.9674732, 0.92201376, 0.31722492, 0.22194359, -0.29667994, 0.9472297, -0.12139258, -0.15120637, 0.9513939, 0.05597037)
 bone_name = "mixamorig_RightHand"
 bone_idx = 18
 
 [node name="Weapon" parent="Rig/Skeleton3D/WeaponAttachment" unique_id=1344329189 instance=ExtResource("3_weapon")]
 transform = Transform3D(0.070854075, 0.2611113, -0.07211603, -0.27028844, 0.07309855, -0.0008901851, 0.017996643, 0.06984004, 0.2705524, 0.007459879, 0.326068, -0.038459983)
+
+[node name="ShieldAttachment" type="BoneAttachment3D" parent="Rig/Skeleton3D" index="2" unique_id=922030034]
+transform = Transform3D(-0.41666362, -0.828134, 0.37494642, -0.3251534, 0.5209339, 0.7892418, -0.8489206, 0.2069332, -0.48632497, 0.11669677, 0.8475032, 0.23197348)
+bone_name = "mixamorig_LeftForeArm"
+bone_idx = 9
+
+[node name="Shield" parent="Rig/Skeleton3D/ShieldAttachment" unique_id=1669459643 instance=ExtResource("4_shield")]
+transform = Transform3D(0.24765675, -0.056307346, -0.543595, -0.47569737, 0.2715846, -0.24485452, 0.2690318, 0.53204453, 0.06745763, -0.029708624, 0.007706374, -0.057017446)
+visible = false
+mount_settings = ExtResource("5_shield_settings")
+
+[node name="HammerAttachment" type="BoneAttachment3D" parent="Rig/Skeleton3D" index="3" unique_id=872103643]
+transform = Transform3D(-0.24874038, 0.046079397, 0.9674732, 0.92201376, 0.31722492, 0.22194359, -0.29667994, 0.9472297, -0.12139258, -0.15120637, 0.9513939, 0.05597037)
+bone_name = "mixamorig_RightHand"
+bone_idx = 18
+
+[node name="Hammer" parent="Rig/Skeleton3D/HammerAttachment" unique_id=2093496093 instance=ExtResource("6_hammer")]
+transform = Transform3D(0.01, 0, 0, 0, 0.01, 0, 0, 0, 0.01, 0, 0, 0)
+visible = false
+mount_settings = ExtResource("7_hammer_settings")
+
+[node name="RapidGunAttachment" type="BoneAttachment3D" parent="Rig/Skeleton3D" index="4" unique_id=620603362]
+transform = Transform3D(-0.24874038, 0.046079397, 0.9674732, 0.92201376, 0.31722492, 0.22194359, -0.29667994, 0.9472297, -0.12139258, -0.15120637, 0.9513939, 0.05597037)
+bone_name = "mixamorig_RightHand"
+bone_idx = 18
+
+[node name="RapidGun" parent="Rig/Skeleton3D/RapidGunAttachment" unique_id=723943427 instance=ExtResource("8_rapid_gun")]
+transform = Transform3D(0.0019705605, 0.005360211, -0.0018398522, -0.005639402, 0.0020473069, -7.5439195e-05, 0.0005603931, 0.0017540575, 0.005710451, 0.029422045, 0.23996338, -0.006665617)
+visible = false
+mount_settings = ExtResource("9_rapid_gun_settings")
 
 [editable path="Rig"]

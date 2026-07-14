@@ -1,0 +1,104 @@
+[gd_scene load_steps=14 format=3]
+
+[ext_resource type="Script" path="res://assets/items/shield/shield_four_character_preview.gd" id="1_script"]
+[ext_resource type="Resource" path="res://assets/items/shield/fashi_shield_settings.tres" id="2_fashi_settings"]
+[ext_resource type="Resource" path="res://assets/items/shield/happy_student_shield_settings.tres" id="3_student_settings"]
+[ext_resource type="Resource" path="res://assets/items/shield/lulu_shield_settings.tres" id="4_lulu_settings"]
+[ext_resource type="Resource" path="res://assets/items/shield/doumaoren_shield_settings.tres" id="5_hooded_settings"]
+[ext_resource type="PackedScene" path="res://assets/characters/fashi/fashi_model.tscn" id="6_fashi"]
+[ext_resource type="PackedScene" path="res://assets/characters/happy_student/happy_student_model.tscn" id="7_student"]
+[ext_resource type="PackedScene" path="res://assets/characters/lulu/lulu_model.tscn" id="8_lulu"]
+[ext_resource type="PackedScene" path="res://assets/characters/doumaoren/doumaoren_model.tscn" id="9_hooded"]
+
+[sub_resource type="Environment" id="PreviewEnvironment"]
+background_mode = 1
+background_color = Color(0.035, 0.05, 0.08, 1)
+ambient_light_source = 3
+ambient_light_color = Color(0.72, 0.8, 1, 1)
+ambient_light_energy = 1.15
+
+[sub_resource type="StandardMaterial3D" id="FloorMaterial"]
+albedo_color = Color(0.11, 0.15, 0.21, 1)
+roughness = 0.82
+
+[sub_resource type="BoxMesh" id="FloorMesh"]
+material = SubResource("FloorMaterial")
+size = Vector3(15, 0.12, 5)
+
+[node name="ShieldFourCharacterPreview" type="Node3D"]
+script = ExtResource("1_script")
+rune_mage_settings = ExtResource("2_fashi_settings")
+happy_student_settings = ExtResource("3_student_settings")
+lulu_settings = ExtResource("4_lulu_settings")
+hooded_settings = ExtResource("5_hooded_settings")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("PreviewEnvironment")
+
+[node name="Floor" type="MeshInstance3D" parent="."]
+position = Vector3(0, -0.96, 0)
+mesh = SubResource("FloorMesh")
+
+[node name="RuneMage" parent="." instance=ExtResource("6_fashi")]
+position = Vector3(-4.8, -0.9, 0)
+starting_animation = &"standing"
+show_weapon = false
+
+[node name="HappyStudent" parent="." instance=ExtResource("7_student")]
+position = Vector3(-1.6, -0.9, 0)
+starting_animation = &"standing"
+show_weapon = false
+
+[node name="Lulu" parent="." instance=ExtResource("8_lulu")]
+position = Vector3(1.6, -0.9, 0)
+starting_animation = &"standing"
+show_weapon = false
+
+[node name="Hooded" parent="." instance=ExtResource("9_hooded")]
+position = Vector3(4.8, -0.9, 0)
+starting_animation = &"standing"
+show_weapon = false
+
+[node name="RuneMageLabel" type="Label3D" parent="."]
+position = Vector3(-4.8, 1.75, 0)
+billboard = 1
+text = "RUNE MAGE"
+font_size = 32
+outline_size = 8
+
+[node name="HappyStudentLabel" type="Label3D" parent="."]
+position = Vector3(-1.6, 1.75, 0)
+billboard = 1
+text = "HAPPY STUDENT"
+font_size = 32
+outline_size = 8
+
+[node name="LuluLabel" type="Label3D" parent="."]
+position = Vector3(1.6, 1.75, 0)
+billboard = 1
+text = "LULU"
+font_size = 32
+outline_size = 8
+
+[node name="HoodedLabel" type="Label3D" parent="."]
+position = Vector3(4.8, 1.75, 0)
+billboard = 1
+text = "HOODED"
+font_size = 32
+outline_size = 8
+
+[node name="KeyLight" type="DirectionalLight3D" parent="."]
+rotation_degrees = Vector3(-42, -32, 0)
+light_energy = 2.2
+shadow_enabled = true
+
+[node name="FillLight" type="OmniLight3D" parent="."]
+position = Vector3(0, 3.5, 4)
+light_color = Color(0.55, 0.68, 1, 1)
+light_energy = 3.0
+omni_range = 14.0
+
+[node name="Camera3D" type="Camera3D" parent="."]
+position = Vector3(0, 0.5, 12.5)
+current = true
+fov = 48.0

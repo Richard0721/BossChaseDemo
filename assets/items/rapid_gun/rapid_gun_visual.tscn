@@ -1,0 +1,12 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://assets/items/rapid_gun/rapid_gun_visual.gd" id="1_script"]
+[ext_resource type="PackedScene" path="res://assets/items/rapid_gun/source/Jiasuqiang.fbx" id="2_model"]
+
+[node name="RapidGunVisual" type="Node3D"]
+script = ExtResource("1_script")
+
+[node name="ModelAdjustment__在这里调整" type="Node3D" parent="."]
+
+[node name="Jiasuqiang" parent="ModelAdjustment__在这里调整" instance=ExtResource("2_model")]
+

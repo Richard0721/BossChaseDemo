@@ -28,7 +28,7 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	if character_id == CharacterId.RUNE_MASTER and is_instance_valid(player) and player.health > 0.0:
-		player.apply_health_drain(player.max_health * 0.02 * delta)
+		player.apply_health_drain(player.max_health * 0.005 * delta)
 
 
 func configure(character_name: String) -> void:
@@ -107,4 +107,3 @@ func has_infinite_items() -> bool:
 
 func is_hammer_specialist() -> bool:
 	return character_id == CharacterId.HAMMER_STUDENT
-

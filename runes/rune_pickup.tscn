@@ -1,21 +1,15 @@
-[gd_scene load_steps=5 format=3]
+[gd_scene load_steps=4 format=3]
 
 [ext_resource type="Script" path="res://runes/rune_pickup.gd" id="1_rune"]
 
 [sub_resource type="SphereShape3D" id="RuneShape"]
 radius = 1.15
 
-[sub_resource type="SphereMesh" id="RuneOrb"]
-radius = 0.58
-height = 1.16
-radial_segments = 18
-rings = 10
-
-[sub_resource type="TorusMesh" id="RuneRing"]
-inner_radius = 1.0
-outer_radius = 1.14
-rings = 24
-ring_segments = 10
+[sub_resource type="SphereMesh" id="HaloMesh"]
+radius = 0.9
+height = 1.8
+radial_segments = 24
+rings = 12
 
 [node name="RunePickup" type="Area3D"]
 collision_layer = 4
@@ -26,23 +20,22 @@ script = ExtResource("1_rune")
 position = Vector3(0, 0.9, 0)
 shape = SubResource("RuneShape")
 
-[node name="Orb" type="MeshInstance3D" parent="."]
-position = Vector3(0, 1, 0)
-mesh = SubResource("RuneOrb")
+[node name="ModelPivot" type="Node3D" parent="."]
 
-[node name="Ring" type="MeshInstance3D" parent="."]
-position = Vector3(0, 0.08, 0)
-mesh = SubResource("RuneRing")
+[node name="Halo" type="MeshInstance3D" parent="."]
+position = Vector3(0, 1, 0)
+cast_shadow = 0
+mesh = SubResource("HaloMesh")
 
 [node name="OmniLight3D" type="OmniLight3D" parent="."]
 position = Vector3(0, 1, 0)
-light_energy = 3.0
-omni_range = 5.0
+light_energy = 1.25
+omni_range = 4.5
+shadow_enabled = false
 
 [node name="Label3D" type="Label3D" parent="."]
-position = Vector3(0, 2.0, 0)
+position = Vector3(0, 2.25, 0)
 text = "RUNE"
 font_size = 34
 outline_size = 8
 billboard = 1
-

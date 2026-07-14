@@ -11,6 +11,10 @@ signal died(member: ThirdPersonPlayer)
 const PROJECTILE_SCENE := preload("res://combat/projectile.tscn")
 const HAMMER_PROJECTILE_SCENE := preload("res://items/hammer/hammer_projectile.tscn")
 const LANDMINE_SCENE := preload("res://items/landmine/landmine.tscn")
+const FASHI_PROPELLER_SETTINGS := preload("res://assets/items/propeller/fashi_propeller_settings.tres")
+const HAPPY_STUDENT_PROPELLER_SETTINGS := preload("res://assets/items/propeller/happy_student_propeller_settings.tres")
+const LULU_PROPELLER_SETTINGS := preload("res://assets/items/propeller/lulu_propeller_settings.tres")
+const DOUMAOREN_PROPELLER_SETTINGS := preload("res://assets/items/propeller/doumaoren_propeller_settings.tres")
 
 @export_category("Movement")
 @export var walk_speed := 7.0
@@ -58,6 +62,7 @@ const LANDMINE_SCENE := preload("res://items/landmine/landmine.tscn")
 @onready var fashi: FashiModel = $Visuals/Fashi
 @onready var lulu: LuluModel = $Visuals/Lulu
 @onready var doumaoren: DoumaorenModel = $Visuals/Doumaoren
+@onready var propeller_backpack: PropellerBackpack = $Visuals/PropellerBackMount__在这里调整
 
 var health := 100.0
 var _pitch := -0.18
@@ -134,6 +139,15 @@ func _apply_selected_character_appearance() -> void:
 	fashi.visible = is_fashi
 	lulu.visible = is_lulu
 	doumaoren.visible = is_doumaoren
+	if is_fashi:
+		propeller_backpack.mount_settings = FASHI_PROPELLER_SETTINGS
+	elif is_happy_student:
+		propeller_backpack.mount_settings = HAPPY_STUDENT_PROPELLER_SETTINGS
+	elif is_lulu:
+		propeller_backpack.mount_settings = LULU_PROPELLER_SETTINGS
+	elif is_doumaoren:
+		propeller_backpack.mount_settings = DOUMAOREN_PROPELLER_SETTINGS
+	propeller_backpack._apply_mount_settings()
 	if is_happy_student:
 		happy_student.play_animation(&"standing")
 	elif is_fashi:
@@ -198,6 +212,10 @@ func _update_aim_camera(delta: float) -> void:
 
 
 func _update_movement(delta: float) -> void:
+	if is_on_floor():
+		_jumps_remaining = get_allowed_jump_count()
+		third_jump_airborne = false
+		propeller_fall_active = false
 	if propeller_time > 0.0:
 		if Input.is_action_pressed("jump"):
 			velocity.y = move_toward(velocity.y, 8.0, 22.0 * delta)
@@ -208,10 +226,6 @@ func _update_movement(delta: float) -> void:
 	elif not is_on_floor():
 		var slow_fall := Input.is_action_pressed("aim") and (third_jump_airborne or propeller_fall_active)
 		velocity.y -= gravity * (0.25 if slow_fall else 1.0) * delta
-	else:
-		_jumps_remaining = get_allowed_jump_count()
-		third_jump_airborne = false
-		propeller_fall_active = false
 	if Input.is_action_just_pressed("jump"):
 		if is_on_floor():
 			velocity.y = jump_velocity
@@ -258,7 +272,9 @@ func _update_combat() -> void:
 			if Input.is_action_pressed("aim"):
 				_throw_hammer()
 			else:
-				_hammer_charge_remaining = 1.0 / get_total_attack_speed(true)
+				var charge_duration := 1.0 / get_total_attack_speed(true)
+				_hammer_charge_remaining = charge_duration
+				_play_hammer_character_animation(&"hammer_attack", charge_duration + 0.2)
 	elif active_mode == "RapidGun":
 		if Input.is_action_pressed("aim") and Input.is_action_pressed("ranged_attack") and _ranged_cooldown <= 0.0 and rapid_ammo > 0:
 			_ranged_cooldown = ranged_interval / 3.0 / get_total_attack_speed(false)
@@ -278,7 +294,7 @@ func _update_combat() -> void:
 		elif not Input.is_action_pressed("aim") and Input.is_action_pressed("ranged_attack") and _melee_cooldown <= 0.0:
 			_melee_cooldown = melee_interval / get_total_attack_speed(true)
 			_perform_basic_melee()
-	elif active_mode in ["Propeller", "Shield", "Landmine"]:
+	elif active_mode in ["Propeller", "Landmine"]:
 		if Input.is_action_just_pressed("ranged_attack"):
 			_use_inventory_item(active_mode)
 
@@ -306,20 +322,16 @@ func _fire_projectile(base_damage: float) -> void:
 		_spawn_muzzle_flash(shot_color)
 	if happy_student.visible:
 		_happy_action_time = 0.38
-		happy_student.set_weapon_visible(true)
 		happy_student.play_animation(&"standing")
 		happy_student.play_shot_sound()
 	elif fashi.visible:
 		_fashi_action_time = 0.38
-		fashi.set_weapon_visible(true)
 		fashi.play_animation(&"standing")
 	elif lulu.visible:
 		_lulu_action_time = 0.38
-		lulu.set_weapon_visible(true)
 		lulu.play_animation(&"standing")
 	elif doumaoren.visible:
 		_doumaoren_action_time = 0.38
-		doumaoren.set_weapon_visible(true)
 		doumaoren.play_animation(&"standing")
 	_pitch = clampf(_pitch - 0.018, -1.15, 0.65)
 	camera_pivot.rotation.x = _pitch
@@ -424,11 +436,59 @@ func _spawn_hammer_slam_feedback(radius: float) -> void:
 
 func _throw_hammer() -> void:
 	var throw_direction := -camera.global_basis.z
+	_play_hammer_character_animation(&"hammer_throw", 0.9)
+	var hand_hammer := _get_active_hand_hammer()
+	var hand_hammer_transform := Transform3D.IDENTITY
+	var hand_model_adjustment_transform := Transform3D.IDENTITY
+	var has_hand_visual_transform := hand_hammer != null
+	if hand_hammer != null:
+		hand_hammer_transform = hand_hammer.transform
+		var model_adjustment := hand_hammer.get_child(0) as Node3D
+		if model_adjustment != null:
+			hand_model_adjustment_transform = model_adjustment.transform
 	var hammer: ThrownHammer = HAMMER_PROJECTILE_SCENE.instantiate()
-	hammer.configure(throw_direction, self, 0.0)
+	var throw_damage := hammer_damage * character_special.get_melee_damage_multiplier() * buff_component.get_attack_multiplier()
+	hammer.configure(
+		throw_direction,
+		self,
+		throw_damage,
+		hand_hammer_transform,
+		hand_model_adjustment_transform,
+		has_hand_visual_transform
+	)
 	(get_tree().current_scene if get_tree().current_scene != null else get_tree().root).add_child(hammer)
 	hammer.global_position = global_position + Vector3.UP * 0.65 + throw_direction * 1.1
 	_remove_hammer()
+
+
+func _get_active_hand_hammer() -> Node3D:
+	var active_character: Node3D = null
+	if happy_student.visible:
+		active_character = happy_student
+	elif fashi.visible:
+		active_character = fashi
+	elif lulu.visible:
+		active_character = lulu
+	elif doumaoren.visible:
+		active_character = doumaoren
+	if active_character == null:
+		return null
+	return active_character.get_node_or_null("Rig/Skeleton3D/HammerAttachment/Hammer") as Node3D
+
+
+func _play_hammer_character_animation(animation_name: StringName, action_time: float) -> void:
+	if happy_student.visible:
+		_happy_action_time = action_time
+		happy_student.play_animation(animation_name, 0.1, 1.0, true)
+	elif fashi.visible:
+		_fashi_action_time = action_time
+		fashi.play_animation(animation_name, 0.1, 1.0, true)
+	elif lulu.visible:
+		_lulu_action_time = action_time
+		lulu.play_animation(animation_name, 0.1, 1.0, true)
+	elif doumaoren.visible:
+		_doumaoren_action_time = action_time
+		doumaoren.play_animation(animation_name, 0.1, 1.0, true)
 
 
 func _try_interact() -> void:
@@ -450,6 +510,13 @@ func add_hammer() -> void:
 
 
 func receive_item(item_type: StringName) -> bool:
+	# Shield is passive equipment. It coexists with the current weapon/item and
+	# is never added to the mouse-wheel slots.
+	if item_type == &"Shield":
+		shield_durability = 100.0
+		character_special.record_item(item_type)
+		_update_equipment_visual()
+		return true
 	if not inventory_item.is_empty():
 		return false
 	inventory_item = item_type
@@ -457,8 +524,6 @@ func receive_item(item_type: StringName) -> bool:
 	match item_type:
 		&"RapidGun":
 			rapid_ammo = 100
-		&"Shield":
-			shield_durability = 100.0
 	_rebuild_item_slots()
 	return true
 
@@ -469,7 +534,7 @@ func has_inventory_item() -> bool:
 
 func _rebuild_item_slots() -> void:
 	_item_slots = [&"Ranged"]
-	if not inventory_item.is_empty():
+	if not inventory_item.is_empty() and inventory_item != &"Shield":
 		_item_slots.append(inventory_item)
 	_active_item_index = _item_slots.size() - 1
 	reload_remaining = -1.0
@@ -493,7 +558,6 @@ func _discard_inventory_item() -> void:
 func _remove_inventory_item() -> void:
 	inventory_item = &""
 	rapid_ammo = 0
-	shield_durability = 0.0
 	propeller_time = 0.0
 	_rebuild_item_slots()
 
@@ -522,6 +586,8 @@ func _use_inventory_item(active_mode: String) -> void:
 		"Propeller":
 			if propeller_time <= 0.0:
 				propeller_time = 10.0
+				_jumps_remaining = maxi(_jumps_remaining, 2)
+				_update_equipment_visual()
 		"Landmine":
 			var mine := LANDMINE_SCENE.instantiate()
 			var forward := -camera.global_basis.z
@@ -531,10 +597,6 @@ func _use_inventory_item(active_mode: String) -> void:
 			(get_tree().current_scene if get_tree().current_scene != null else get_tree().root).add_child(mine)
 			mine.global_position = global_position + forward.normalized() * 1.8 + Vector3.UP * 0.15
 			_remove_inventory_item()
-		"Shield":
-			pass
-
-
 func _update_propeller(delta: float) -> void:
 	if propeller_time <= 0.0:
 		return
@@ -545,8 +607,9 @@ func _update_propeller(delta: float) -> void:
 
 
 func reset_shield_durability() -> void:
-	if inventory_item == &"Shield":
+	if shield_durability > 0.0:
 		shield_durability = 100.0
+		_update_equipment_visual()
 
 
 func _emit_current_ammo() -> void:
@@ -595,12 +658,29 @@ func _update_equipment_visual() -> void:
 	var using_fashi := fashi.visible
 	var using_lulu := lulu.visible
 	var using_doumaoren := doumaoren.visible
+	var propeller_deployed := active_mode == "Propeller" and propeller_time > 0.0
+	var shield_equipped := shield_durability > 0.0
+	var hammer_equipped := active_mode == "Hammer"
+	var rapid_gun_equipped := active_mode == "RapidGun"
 	gun_visual.visible = active_mode in ["Ranged", "RapidGun"] and not using_happy_student and not using_fashi and not using_lulu and not using_doumaoren
-	happy_student.set_weapon_visible(using_happy_student and active_mode in ["Ranged", "RapidGun"])
-	fashi.set_weapon_visible(using_fashi and active_mode in ["Ranged", "RapidGun"])
-	lulu.set_weapon_visible(using_lulu and active_mode in ["Ranged", "RapidGun"])
-	doumaoren.set_weapon_visible(using_doumaoren and active_mode in ["Ranged", "RapidGun"])
-	var holding_item := active_mode not in ["Ranged", "RapidGun"]
+	happy_student.set_weapon_visible(using_happy_student and active_mode == "Ranged")
+	fashi.set_weapon_visible(using_fashi and active_mode == "Ranged")
+	lulu.set_weapon_visible(using_lulu and active_mode == "Ranged")
+	doumaoren.set_weapon_visible(using_doumaoren and active_mode == "Ranged")
+	happy_student.set_shield_visible(using_happy_student and shield_equipped)
+	fashi.set_shield_visible(using_fashi and shield_equipped)
+	lulu.set_shield_visible(using_lulu and shield_equipped)
+	doumaoren.set_shield_visible(using_doumaoren and shield_equipped)
+	happy_student.set_hammer_visible(using_happy_student and hammer_equipped)
+	fashi.set_hammer_visible(using_fashi and hammer_equipped)
+	lulu.set_hammer_visible(using_lulu and hammer_equipped)
+	doumaoren.set_hammer_visible(using_doumaoren and hammer_equipped)
+	happy_student.set_rapid_gun_visible(using_happy_student and rapid_gun_equipped)
+	fashi.set_rapid_gun_visible(using_fashi and rapid_gun_equipped)
+	lulu.set_rapid_gun_visible(using_lulu and rapid_gun_equipped)
+	doumaoren.set_rapid_gun_visible(using_doumaoren and rapid_gun_equipped)
+	propeller_backpack.visible = propeller_deployed
+	var holding_item := active_mode not in ["Ranged", "RapidGun", "Hammer"] and not propeller_deployed and not shield_equipped
 	held_item_visual.visible = holding_item
 	left_hand_visual.visible = holding_item
 	right_hand_visual.visible = holding_item
@@ -627,9 +707,11 @@ func _update_happy_student_animation(delta: float) -> void:
 	if not is_on_floor():
 		happy_student.play_animation(&"jump_down")
 	elif horizontal_speed > 0.35:
-		happy_student.play_animation(&"walk_rifle", 0.14, clampf(horizontal_speed / walk_speed, 0.75, 2.0))
+		var walk_animation: StringName = &"hammer_walk" if get_active_item_name() == "Hammer" else &"walk_rifle"
+		happy_student.play_animation(walk_animation, 0.14, clampf(horizontal_speed / walk_speed, 0.75, 2.0))
 	else:
-		happy_student.play_animation(&"standing")
+		var idle_animation: StringName = &"hammer_standing" if get_active_item_name() == "Hammer" else &"standing"
+		happy_student.play_animation(idle_animation)
 
 
 func _update_fashi_animation(delta: float) -> void:
@@ -642,9 +724,11 @@ func _update_fashi_animation(delta: float) -> void:
 	if not is_on_floor():
 		fashi.play_animation(&"jump_down")
 	elif horizontal_speed > 0.35:
-		fashi.play_animation(&"walk_rifle", 0.14, clampf(horizontal_speed / walk_speed, 0.75, 2.0))
+		var walk_animation: StringName = &"hammer_walk" if get_active_item_name() == "Hammer" else &"walk_rifle"
+		fashi.play_animation(walk_animation, 0.14, clampf(horizontal_speed / walk_speed, 0.75, 2.0))
 	else:
-		fashi.play_animation(&"standing")
+		var idle_animation: StringName = &"hammer_standing" if get_active_item_name() == "Hammer" else &"standing"
+		fashi.play_animation(idle_animation)
 
 
 func _update_lulu_animation(delta: float) -> void:
@@ -657,9 +741,11 @@ func _update_lulu_animation(delta: float) -> void:
 	if not is_on_floor():
 		lulu.play_animation(&"jump_down")
 	elif horizontal_speed > 0.35:
-		lulu.play_animation(&"walk_rifle", 0.14, clampf(horizontal_speed / walk_speed, 0.75, 2.0))
+		var walk_animation: StringName = &"hammer_walk" if get_active_item_name() == "Hammer" else &"walk_rifle"
+		lulu.play_animation(walk_animation, 0.14, clampf(horizontal_speed / walk_speed, 0.75, 2.0))
 	else:
-		lulu.play_animation(&"standing")
+		var idle_animation: StringName = &"hammer_standing" if get_active_item_name() == "Hammer" else &"standing"
+		lulu.play_animation(idle_animation)
 
 
 func _update_doumaoren_animation(delta: float) -> void:
@@ -672,9 +758,11 @@ func _update_doumaoren_animation(delta: float) -> void:
 	if not is_on_floor():
 		doumaoren.play_animation(&"jump_down")
 	elif horizontal_speed > 0.35:
-		doumaoren.play_animation(&"walk_rifle", 0.14, clampf(horizontal_speed / walk_speed, 0.75, 2.0))
+		var walk_animation: StringName = &"hammer_walk" if get_active_item_name() == "Hammer" else &"walk_rifle"
+		doumaoren.play_animation(walk_animation, 0.14, clampf(horizontal_speed / walk_speed, 0.75, 2.0))
 	else:
-		doumaoren.play_animation(&"standing")
+		var idle_animation: StringName = &"hammer_standing" if get_active_item_name() == "Hammer" else &"standing"
+		doumaoren.play_animation(idle_animation)
 
 
 func get_active_item_name() -> String:
@@ -722,12 +810,13 @@ func apply_damage(amount: float, _source: Node = null) -> void:
 	if propeller_time > 0.0:
 		propeller_fall_active = true
 		_remove_inventory_item()
-	if inventory_item == &"Shield" and get_active_item_name() == "Shield" and shield_durability > 0.0:
+	if shield_durability > 0.0:
 		var absorbed := minf(shield_durability, amount)
 		shield_durability -= absorbed
 		amount -= absorbed
 		if shield_durability <= 0.0:
-			_remove_inventory_item()
+			shield_durability = 0.0
+			_update_equipment_visual()
 		if amount <= 0.0:
 			return
 	amount *= buff_component.get_damage_taken_multiplier()
@@ -787,7 +876,8 @@ func get_character_special() -> CharacterSpecial:
 
 
 func get_allowed_jump_count() -> int:
-	return character_special.get_jump_count_with_speed_rune(buff_component.has_speed_rune())
+	var base_jump_count := character_special.get_jump_count_with_speed_rune(buff_component.has_speed_rune())
+	return maxi(base_jump_count, 3) if propeller_time > 0.0 else base_jump_count
 
 
 func get_total_attack_speed(melee: bool) -> float:

@@ -1,0 +1,36 @@
+[gd_scene load_steps=10 format=3]
+
+[ext_resource type="PackedScene" path="res://assets/items/propeller/source/Sanxuanyi.fbx" id="1_model"]
+[ext_resource type="Shader" path="res://assets/items/propeller/propeller_rotor.gdshader" id="2_shader"]
+[ext_resource type="Texture2D" path="res://assets/items/propeller/source/Sanxuanyi_texture.png" id="3_albedo"]
+[ext_resource type="Texture2D" path="res://assets/items/propeller/source/Sanxuanyi_texture_metallic.png" id="4_metallic"]
+[ext_resource type="Texture2D" path="res://assets/items/propeller/source/Sanxuanyi_texture_roughness.png" id="5_roughness"]
+[ext_resource type="Texture2D" path="res://assets/items/propeller/source/Sanxuanyi_texture_normal.png" id="6_normal"]
+[ext_resource type="Texture2D" path="res://assets/items/propeller/source/Sanxuanyi_texture_emit.png" id="7_emission"]
+[ext_resource type="Script" path="res://assets/items/propeller/propeller_backpack.gd" id="8_script"]
+[ext_resource type="Resource" path="res://assets/items/propeller/propeller_mount_settings.tres" id="9_settings"]
+
+[sub_resource type="ShaderMaterial" id="PropellerMaterial"]
+shader = ExtResource("2_shader")
+shader_parameter/albedo_texture = ExtResource("3_albedo")
+shader_parameter/metallic_texture = ExtResource("4_metallic")
+shader_parameter/roughness_texture = ExtResource("5_roughness")
+shader_parameter/normal_texture = ExtResource("6_normal")
+shader_parameter/emission_texture = ExtResource("7_emission")
+shader_parameter/rotor_speed = 13.0
+shader_parameter/rotor_start_height = 0.00345
+shader_parameter/emission_strength = 1.4
+
+[node name="PropellerBackpack" type="Node3D"]
+script = ExtResource("8_script")
+mount_settings = ExtResource("9_settings")
+
+[node name="ModelAdjustment__四角色共用" type="Node3D" parent="."]
+transform = Transform3D(-0.9994676, 0, 0.03262621, 0, 1, 0, -0.03262621, 0, -0.9994676, -0.017996073, 0.866889, -0.73625773)
+
+[node name="Sanxuanyi" parent="ModelAdjustment__四角色共用" instance=ExtResource("1_model")]
+
+[node name="Mesh1_0" parent="ModelAdjustment__四角色共用/Sanxuanyi" index="0"]
+material_override = SubResource("PropellerMaterial")
+
+[editable path="ModelAdjustment__四角色共用/Sanxuanyi"]
