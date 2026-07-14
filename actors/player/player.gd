@@ -300,6 +300,7 @@ func _update_combat() -> void:
 
 
 func _fire_projectile(base_damage: float) -> void:
+	AudioManager.play_player_shoot()
 	var ray_from := camera.global_position
 	var ray_to := ray_from + -camera.global_basis.z * 160.0
 	var query := PhysicsRayQueryParameters3D.create(ray_from, ray_to)
@@ -400,6 +401,7 @@ func _update_hammer_charge(delta: float) -> void:
 
 
 func _release_hammer_slam() -> void:
+	AudioManager.play_hammer_attack()
 	var attack_radius := 6.0
 	for target in get_tree().get_nodes_in_group("lock_targets"):
 		if target is Node3D and global_position.distance_to(target.global_position) <= attack_radius:
@@ -435,6 +437,7 @@ func _spawn_hammer_slam_feedback(radius: float) -> void:
 
 
 func _throw_hammer() -> void:
+	AudioManager.play_hammer_attack()
 	var throw_direction := -camera.global_basis.z
 	_play_hammer_character_animation(&"hammer_throw", 0.9)
 	var hand_hammer := _get_active_hand_hammer()
@@ -556,6 +559,8 @@ func _discard_inventory_item() -> void:
 
 
 func _remove_inventory_item() -> void:
+	if propeller_time > 0.0:
+		AudioManager.stop_propeller_loop()
 	inventory_item = &""
 	rapid_ammo = 0
 	propeller_time = 0.0
@@ -588,7 +593,9 @@ func _use_inventory_item(active_mode: String) -> void:
 				propeller_time = 10.0
 				_jumps_remaining = maxi(_jumps_remaining, 2)
 				_update_equipment_visual()
+				AudioManager.play_propeller_loop()
 		"Landmine":
+			AudioManager.play_landmine_place()
 			var mine := LANDMINE_SCENE.instantiate()
 			var forward := -camera.global_basis.z
 			forward.y = 0.0

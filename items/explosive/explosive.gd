@@ -118,6 +118,7 @@ func explode() -> void:
 	if _exploded:
 		return
 	_exploded = true
+	AudioManager.play_explosion()
 	model_adjustment.visible = false
 	warning_glow.visible = false
 	warning_light.visible = false
