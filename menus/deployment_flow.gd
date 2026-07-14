@@ -292,6 +292,7 @@ func _on_character_hovered(index: int, hovered: bool) -> void:
 	if hovered:
 		AudioManager.play_ui_hover()
 	_character_spotlights[index].visible = hovered
+	_play_character_hover_animation(index, hovered)
 
 
 func _on_preview_hovered(hovered: bool) -> void:
@@ -412,6 +413,9 @@ func _create_character_showcase() -> void:
 		spotlight.visible = false
 		actor.add_child(spotlight)
 		_character_spotlights.append(spotlight)
+	for index in _character_models.size():
+		_hide_showcase_equipment.call_deferred(index)
+		_play_character_hover_animation.call_deferred(index, false)
 
 
 func _create_happy_student_actor(parent: Node3D, actor_position: Vector3, size_scale: float) -> Node3D:
@@ -426,6 +430,8 @@ func _create_happy_student_actor(parent: Node3D, actor_position: Vector3, size_s
 	model.name = "HappyStudentModel"
 	model.scale = Vector3.ONE * 2.2
 	model.show_weapon = false
+	model.set_shield_visible(false)
+	model.set_hammer_visible(false)
 	actor.add_child(model)
 	return actor
 
@@ -442,6 +448,8 @@ func _create_fashi_actor(parent: Node3D, actor_position: Vector3, size_scale: fl
 	model.name = "FashiModel"
 	model.scale = Vector3.ONE * 2.2
 	model.show_weapon = false
+	model.set_shield_visible(false)
+	model.set_hammer_visible(false)
 	actor.add_child(model)
 	return actor
 
@@ -458,6 +466,8 @@ func _create_lulu_actor(parent: Node3D, actor_position: Vector3, size_scale: flo
 	model.name = "LuluModel"
 	model.scale = Vector3.ONE * 2.2
 	model.show_weapon = false
+	model.set_shield_visible(false)
+	model.set_hammer_visible(false)
 	actor.add_child(model)
 	return actor
 
@@ -474,6 +484,8 @@ func _create_doumaoren_actor(parent: Node3D, actor_position: Vector3, size_scale
 	model.name = "DoumaorenModel"
 	model.scale = Vector3.ONE * 2.2
 	model.show_weapon = false
+	model.set_shield_visible(false)
+	model.set_hammer_visible(false)
 	actor.add_child(model)
 	return actor
 
@@ -557,6 +569,34 @@ func _show_selected_character_pose() -> void:
 			doumaoren_model.play_animation(&"pointing")
 
 
+func _play_character_hover_animation(index: int, hovered: bool) -> void:
+	if index >= _character_models.size():
+		return
+	var animation_name: StringName = &"pointing" if hovered else &"standing"
+	var actor := _character_models[index]
+	if index == 0:
+		var fashi_model := actor.get_node_or_null("FashiModel") as FashiModel
+		if fashi_model != null:
+			fashi_model.play_animation(animation_name, 0.12, 1.0, true)
+	elif index == 1:
+		var model := actor.get_node_or_null("HappyStudentModel") as HappyStudentModel
+		if model != null:
+			model.play_animation(animation_name, 0.12, 1.0, true)
+	elif index == 2:
+		var doumaoren_model := actor.get_node_or_null("DoumaorenModel") as DoumaorenModel
+		if doumaoren_model != null:
+			doumaoren_model.play_animation(animation_name, 0.12, 1.0, true)
+	elif index == 3:
+		var lulu_model := actor.get_node_or_null("LuluModel") as LuluModel
+		if lulu_model != null:
+			lulu_model.play_animation(animation_name, 0.12, 1.0, true)
+	else:
+		var head := actor.get_node_or_null("HeadPivot") as Node3D
+		if head != null:
+			head.rotation.z = 0.16 if hovered else 0.0
+	_hide_showcase_equipment(index)
+
+
 func _restore_character_showcase() -> void:
 	for index in _character_models.size():
 		_character_models[index].visible = true
@@ -564,15 +604,34 @@ func _restore_character_showcase() -> void:
 		_character_models[index].rotation = Vector3.ZERO
 		_character_models[index].get_node("HeadPivot").rotation = Vector3.ZERO
 		_character_spotlights[index].visible = false
-		if index == 0:
-			var fashi_model := _character_models[index].get_node("FashiModel") as FashiModel
-			fashi_model.play_animation(&"idle")
-		elif index == 1:
-			var model := _character_models[index].get_node("HappyStudentModel") as HappyStudentModel
-			model.play_animation(&"idle")
-		elif index == 3:
-			var lulu_model := _character_models[index].get_node("LuluModel") as LuluModel
-			lulu_model.play_animation(&"idle")
-		elif index == 2:
-			var doumaoren_model := _character_models[index].get_node("DoumaorenModel") as DoumaorenModel
-			doumaoren_model.play_animation(&"idle")
+		_play_character_hover_animation(index, false)
+
+
+func _hide_showcase_equipment(index: int) -> void:
+	if index >= _character_models.size():
+		return
+	var actor := _character_models[index]
+	if index == 0:
+		var fashi_model := actor.get_node_or_null("FashiModel") as FashiModel
+		if fashi_model != null:
+			fashi_model.set_weapon_visible(false)
+			fashi_model.set_shield_visible(false)
+			fashi_model.set_hammer_visible(false)
+	elif index == 1:
+		var model := actor.get_node_or_null("HappyStudentModel") as HappyStudentModel
+		if model != null:
+			model.set_weapon_visible(false)
+			model.set_shield_visible(false)
+			model.set_hammer_visible(false)
+	elif index == 2:
+		var doumaoren_model := actor.get_node_or_null("DoumaorenModel") as DoumaorenModel
+		if doumaoren_model != null:
+			doumaoren_model.set_weapon_visible(false)
+			doumaoren_model.set_shield_visible(false)
+			doumaoren_model.set_hammer_visible(false)
+	elif index == 3:
+		var lulu_model := actor.get_node_or_null("LuluModel") as LuluModel
+		if lulu_model != null:
+			lulu_model.set_weapon_visible(false)
+			lulu_model.set_shield_visible(false)
+			lulu_model.set_hammer_visible(false)

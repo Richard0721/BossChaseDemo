@@ -91,9 +91,7 @@ func _process(delta: float) -> void:
 	if not match_finished:
 		match_time = maxf(0.0, match_time - delta)
 		if match_time <= 0.0:
-			match_finished = true
-			status_label.text = "TIME UP - DEFEAT"
-			AudioManager.play_defeat_music()
+			_finish_defeat("TIME UP - DEFEAT")
 	if is_instance_valid(boss) and not match_finished:
 		status_label.text = "追猎者：%s | HP %.0f / %.0f" % [boss.get_state_name(), boss.health, boss.max_health]
 	var minutes := int(match_time) / 60
@@ -389,6 +387,26 @@ func _leader_name() -> String:
 	return "NO SCORE"
 
 
+func _finish_defeat(reason: String) -> void:
+	if match_finished:
+		return
+	match_finished = true
+	victory_sequence_active = false
+	status_label.text = reason
+	AudioManager.play_defeat_music()
+	result_ui.visible = true
+	death_ui.visible = false
+	player.set_camera_active(false)
+	spectator_camera.current = true
+	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+	var sorted_ids := _get_sorted_score_ids()
+	var lines: Array[String] = [reason, "", "MISSION FAILED", "", "FINAL SCORE"]
+	for rank in sorted_ids.size():
+		var actor_id := sorted_ids[rank]
+		lines.append("%d. %s  %d" % [rank + 1, String(name_by_id[actor_id]), roundi(float(score_by_id[actor_id]))])
+	result_label.text = "\n".join(lines)
+
+
 func _spawn_ai_party() -> void:
 	var ui_manager := get_node_or_null("/root/UIManager")
 	var requested_party_size := clampi(int(ui_manager.party_size), 1, 4) if ui_manager != null else 1
@@ -408,6 +426,8 @@ func _on_party_member_died(_member: Node3D) -> void:
 	if match_finished:
 		return
 	if _all_party_members_dead():
+		_finish_defeat("ALL TEAM MEMBERS DOWN - DEFEAT")
+		return
 		match_finished = true
 		status_label.text = "ALL TEAM MEMBERS DOWN - DEFEAT"
 		AudioManager.play_defeat_music()

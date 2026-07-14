@@ -6,4 +6,4 @@
 script = ExtResource("1_script")
 model_position = Vector3(0, 0, 0)
 model_rotation_degrees = Vector3(0, 0, 0)
-model_scale = 55.0
+model_scale = 0.9

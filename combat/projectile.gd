@@ -86,6 +86,9 @@ func _physics_process(delta: float) -> void:
 	if is_instance_valid(owner_body):
 		excluded_rids.append(owner_body.get_rid())
 	var hit := _intersect_projectile_path(from, to, excluded_rids)
+	var near_player_hit := _find_nearby_player_on_path(from, to, excluded_rids)
+	if use_boss_visual and not near_player_hit.is_empty():
+		hit = near_player_hit
 	if not hit.is_empty():
 		var collider: Object = hit["collider"]
 		_spawn_impact(hit["position"], collider != null and collider.has_method("apply_damage"))
@@ -103,12 +106,48 @@ func _physics_process(delta: float) -> void:
 	global_position = to
 
 
+func _find_nearby_player_on_path(from: Vector3, to: Vector3, excluded_rids: Array[RID]) -> Dictionary:
+	if not use_boss_visual:
+		return {}
+	var best_target: CollisionObject3D
+	var best_position := Vector3.ZERO
+	var best_distance := INF
+	var hit_radius := maxf(1.35, size_multiplier * 0.28)
+	var segment := to - from
+	var segment_len_sq := segment.length_squared()
+	if segment_len_sq <= 0.0001:
+		return {}
+	for group_name in ["players", "ai_teammates"]:
+		for candidate in get_tree().get_nodes_in_group(group_name):
+			if not candidate is CollisionObject3D:
+				continue
+			var target := candidate as CollisionObject3D
+			if excluded_rids.has(target.get_rid()):
+				continue
+			if target.has_method("is_alive") and not target.is_alive():
+				continue
+			var target_position := target.global_position + Vector3.UP * 0.75
+			var t := clampf((target_position - from).dot(segment) / segment_len_sq, 0.0, 1.0)
+			var closest := from + segment * t
+			var distance := closest.distance_to(target_position)
+			if distance <= hit_radius and distance < best_distance:
+				best_distance = distance
+				best_target = target
+				best_position = closest
+	if best_target == null:
+		return {}
+	return {
+		"collider": best_target,
+		"position": best_position,
+	}
+
+
 func _intersect_projectile_path(from: Vector3, to: Vector3, excluded_rids: Array[RID]) -> Dictionary:
 	var offsets: Array[Vector3] = [Vector3.ZERO]
 	if use_happy_student_visual or use_fashi_visual or use_lulu_visual or use_doumaoren_visual or use_boss_visual:
 		# Match the slightly wider imported projectile without turning it into a
 		# large area attack. The center ray remains authoritative for walls.
-		var hit_radius := 0.16
+		var hit_radius := maxf(0.16, size_multiplier * 0.12) if use_boss_visual else 0.16
 		var side := direction.cross(Vector3.UP)
 		if side.length_squared() < 0.001:
 			side = direction.cross(Vector3.RIGHT)

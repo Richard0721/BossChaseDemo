@@ -63,6 +63,10 @@ func _process(delta: float) -> void:
 	)
 	character_head.rotation = character_head.rotation.lerp(target_head_rotation, 7.0 * delta)
 	display_character.rotation.y = lerp_angle(display_character.rotation.y, normalized_mouse.x * 0.08, 2.5 * delta)
+	var active_model := _get_active_display_model()
+	if active_model != null:
+		_apply_model_head_look(active_model, target_head_rotation)
+		active_model.rotation.y = lerp_angle(active_model.rotation.y, clampf(normalized_mouse.x * 0.12, -0.12, 0.12), 6.0 * delta)
 	camera.position.x = lerpf(camera.position.x, normalized_mouse.x * 0.28, 1.8 * delta)
 	camera.position.y = lerpf(camera.position.y, 3.1 - normalized_mouse.y * 0.12, 1.8 * delta)
 
@@ -91,16 +95,19 @@ func _load_character_showcase(character_index: int) -> void:
 	doumaoren.visible = is_doumaoren
 	if is_happy_student:
 		happy_student.set_weapon_visible(false)
-		happy_student.play_animation(&"idle")
+		happy_student.play_animation(&"standing", 0.0, 1.0, true)
 	elif is_fashi:
 		fashi.set_weapon_visible(false)
-		fashi.play_animation(&"idle")
+		fashi.play_animation(&"standing", 0.0, 1.0, true)
 	elif is_lulu:
 		lulu.set_weapon_visible(false)
-		lulu.play_animation(&"idle")
+		lulu.play_animation(&"standing", 0.0, 1.0, true)
 	elif is_doumaoren:
 		doumaoren.set_weapon_visible(false)
-		doumaoren.play_animation(&"idle")
+		doumaoren.play_animation(&"standing", 0.0, 1.0, true)
+	for model in [happy_student, fashi, lulu, doumaoren]:
+		model.rotation = Vector3.ZERO
+		_freeze_display_model(model)
 	var character_colors := [
 		Color(0.1, 0.85, 0.65, 1),
 		Color(1.0, 0.58, 0.12, 1),
@@ -185,3 +192,45 @@ func _on_fullscreen_toggled(enabled: bool) -> void:
 func _on_volume_changed(value: float) -> void:
 	var master_bus := AudioServer.get_bus_index("Master")
 	AudioServer.set_bus_volume_db(master_bus, linear_to_db(maxf(value / 100.0, 0.001)))
+
+
+func _get_active_display_model() -> Node3D:
+	if happy_student.visible:
+		return happy_student
+	if fashi.visible:
+		return fashi
+	if lulu.visible:
+		return lulu
+	if doumaoren.visible:
+		return doumaoren
+	return null
+
+
+func _freeze_display_model(model: Node3D) -> void:
+	var animation_player := model.get_node_or_null("Rig/AnimationPlayer") as AnimationPlayer
+	if animation_player == null:
+		return
+	animation_player.advance(0.0)
+	animation_player.pause()
+
+
+func _apply_model_head_look(model: Node3D, target_rotation: Vector3) -> void:
+	var skeleton := model.get_node_or_null("Rig/Skeleton3D") as Skeleton3D
+	if skeleton == null:
+		return
+	var head_bone := _find_bone_by_suffix(skeleton, "Head")
+	if head_bone < 0:
+		head_bone = _find_bone_by_suffix(skeleton, "Neck")
+	if head_bone < 0:
+		return
+	var current_pose := skeleton.get_bone_pose_rotation(head_bone)
+	var target_pose := Quaternion.from_euler(Vector3(target_rotation.x * 0.55, target_rotation.y * 0.7, 0.0))
+	skeleton.set_bone_pose_rotation(head_bone, current_pose.slerp(target_pose, 0.18))
+
+
+func _find_bone_by_suffix(skeleton: Skeleton3D, suffix: String) -> int:
+	for bone_index in skeleton.get_bone_count():
+		var bone_name := skeleton.get_bone_name(bone_index)
+		if bone_name == suffix or bone_name.ends_with("_" + suffix) or bone_name.ends_with(suffix):
+			return bone_index
+	return -1

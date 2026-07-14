@@ -14,6 +14,9 @@ var _finished := false
 var _hammer_transform := Transform3D.IDENTITY
 var _model_adjustment_transform := Transform3D.IDENTITY
 var _use_hand_visual_transform := false
+var _return_to_owner := false
+var _returning := false
+var _return_speed := 34.0
 
 
 func configure(
@@ -22,7 +25,8 @@ func configure(
 	new_damage := 0.0,
 	hand_hammer_transform := Transform3D.IDENTITY,
 	hand_model_adjustment_transform := Transform3D.IDENTITY,
-	use_hand_visual_transform := false
+	use_hand_visual_transform := false,
+	return_to_owner := false
 ) -> void:
 	direction = new_direction.normalized()
 	owner_body = new_owner
@@ -30,12 +34,15 @@ func configure(
 	_hammer_transform = hand_hammer_transform
 	_model_adjustment_transform = hand_model_adjustment_transform
 	_use_hand_visual_transform = use_hand_visual_transform
+	_return_to_owner = return_to_owner
 
 
 func _ready() -> void:
+	var hammer_visual := get_node_or_null("Hammer") as HammerVisual
+	if hammer_visual != null:
+		hammer_visual._apply_mount_settings()
 	if not _use_hand_visual_transform:
 		return
-	var hammer_visual := get_node_or_null("Hammer") as Node3D
 	if hammer_visual == null:
 		return
 	# The hand attachment's position is bone-local and should not offset the projectile.
@@ -51,7 +58,10 @@ func _physics_process(delta: float) -> void:
 		return
 	lifetime -= delta
 	if lifetime <= 0.0:
-		_disappear()
+		_finish_flight()
+		return
+	if _returning:
+		_update_return(delta)
 		return
 	rotate_x(delta * 10.0)
 	vertical_velocity -= gravity * delta
@@ -63,7 +73,7 @@ func _physics_process(delta: float) -> void:
 		var collider: Object = hit["collider"]
 		if collider != null and collider.has_method("apply_stun_damage"):
 			collider.apply_stun_damage(damage, stun_duration, owner_body)
-		_disappear()
+		_finish_flight()
 		return
 	global_position = to
 
@@ -110,3 +120,28 @@ func _disappear() -> void:
 		return
 	_finished = true
 	queue_free()
+
+
+func _finish_flight() -> void:
+	if _return_to_owner and is_instance_valid(owner_body):
+		_returning = true
+		lifetime = 4.0
+		vertical_velocity = 0.0
+		return
+	_disappear()
+
+
+func _update_return(delta: float) -> void:
+	if not is_instance_valid(owner_body):
+		_disappear()
+		return
+	var target_position := owner_body.global_position + Vector3.UP * 0.85
+	var to_owner := target_position - global_position
+	if to_owner.length() <= 0.75:
+		if owner_body.has_method("recover_returned_hammer"):
+			owner_body.recover_returned_hammer()
+		_disappear()
+		return
+	direction = to_owner.normalized()
+	global_position += direction * _return_speed * delta
+	rotate_x(delta * 14.0)

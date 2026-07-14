@@ -59,13 +59,37 @@ func interact(player: Node3D) -> void:
 		return
 	if rolled_reward.is_empty():
 		rolled_reward = RANDOM_REWARDS.pick_random()
-	var reward := rolled_reward
+	var reward := _select_reward_for_player(player)
+	if reward.is_empty():
+		return
+	rolled_reward = reward
 	if reward == &"Bomb":
 		_spawn_bomb()
 		queue_free()
 		return
 	if player.has_method("receive_item") and player.receive_item(reward):
 		queue_free()
+
+
+func _select_reward_for_player(player: Node3D) -> StringName:
+	if _can_player_receive_reward(player, rolled_reward):
+		return rolled_reward
+	if player.has_method("has_inventory_item") and player.has_inventory_item():
+		return &""
+	var candidates: Array[StringName] = RANDOM_REWARDS.duplicate()
+	candidates.shuffle()
+	for candidate in candidates:
+		if _can_player_receive_reward(player, candidate):
+			return candidate
+	return &""
+
+
+func _can_player_receive_reward(player: Node3D, reward: StringName) -> bool:
+	if reward == &"Bomb":
+		return true
+	if player.has_method("can_receive_item"):
+		return player.can_receive_item(reward)
+	return player.has_method("receive_item")
 
 
 func _spawn_bomb() -> void:

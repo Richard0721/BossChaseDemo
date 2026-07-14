@@ -74,8 +74,11 @@ func set_shield_visible(is_visible: bool) -> void:
 
 
 func set_hammer_visible(is_visible: bool) -> void:
-	var hammer := get_node_or_null("Rig/Skeleton3D/HammerAttachment/Hammer") as Node3D
+	var hammer := get_node_or_null("Rig/Skeleton3D/HammerAttachment/Hammer") as HammerVisual
 	if hammer != null:
+		if is_visible:
+			hammer.scale = Vector3.ONE
+			hammer._apply_mount_settings()
 		hammer.visible = is_visible
 
 

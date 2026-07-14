@@ -32,9 +32,10 @@ const DOUMAOREN_PROPELLER_SETTINGS := preload("res://assets/items/propeller/doum
 @export var ranged_damage := 1.0
 @export var melee_damage := 1.0
 @export var ranged_interval := 0.25
-@export var melee_interval := 1.0 / 3.0
+@export var melee_interval := 1.0
 @export var projectile_speed := 48.0
-@export var hammer_damage := 20.0
+@export var hammer_damage := 5.0
+@export var hammer_max_uses := 3
 @export var magazine_size := 50
 @export var starting_reserve_ammo := 300
 
@@ -80,6 +81,8 @@ var ammo := 50
 var reserve_ammo := 300
 var inventory_item: StringName = &""
 var rapid_ammo := 0
+var hammer_uses_left := 0
+var hammer_return_pending := false
 var shield_durability := 0.0
 var reload_remaining := -1.0
 var propeller_time := 0.0
@@ -245,7 +248,8 @@ func _update_movement(delta: float) -> void:
 	camera_forward.y = 0.0
 	camera_right.y = 0.0
 	var direction := (camera_right.normalized() * input_vector.x + camera_forward.normalized() * -input_vector.y).normalized()
-	var sprinting := Input.is_action_pressed("sprint") and direction.length_squared() > 0.01 and not _stamina_exhausted and stamina > 0.0
+	var has_infinite_stamina := character_special.has_infinite_stamina()
+	var sprinting := Input.is_action_pressed("sprint") and direction.length_squared() > 0.01 and (has_infinite_stamina or (not _stamina_exhausted and stamina > 0.0))
 	_update_stamina(delta, sprinting)
 	var move_multiplier := character_special.get_move_multiplier() * buff_component.get_move_multiplier()
 	var target_speed := (sprint_speed if sprinting else walk_speed) * move_multiplier
@@ -278,10 +282,11 @@ func _update_combat() -> void:
 	elif active_mode == "RapidGun":
 		if Input.is_action_pressed("aim") and Input.is_action_pressed("ranged_attack") and _ranged_cooldown <= 0.0 and rapid_ammo > 0:
 			_ranged_cooldown = ranged_interval / 3.0 / get_total_attack_speed(false)
-			rapid_ammo -= 1
+			if not character_special.has_infinite_items():
+				rapid_ammo -= 1
 			ammo_changed.emit(rapid_ammo, 0)
-			_fire_projectile(ranged_damage * 2.0)
-			if rapid_ammo <= 0:
+			_fire_projectile(ranged_damage * 2.0 * character_special.get_ranged_damage_multiplier())
+			if rapid_ammo <= 0 and not character_special.has_infinite_items():
 				_remove_inventory_item()
 	elif active_mode == "Ranged":
 		if Input.is_action_just_pressed("reload"):
@@ -290,7 +295,7 @@ func _update_combat() -> void:
 			_ranged_cooldown = ranged_interval / get_total_attack_speed(false)
 			ammo -= 1
 			ammo_changed.emit(ammo, reserve_ammo)
-			_fire_projectile(ranged_damage)
+			_fire_projectile(ranged_damage * character_special.get_ranged_damage_multiplier())
 		elif not Input.is_action_pressed("aim") and Input.is_action_pressed("ranged_attack") and _melee_cooldown <= 0.0:
 			_melee_cooldown = melee_interval / get_total_attack_speed(true)
 			_perform_basic_melee()
@@ -416,6 +421,8 @@ func _release_hammer_slam() -> void:
 			if teammate.has_method("apply_knockback"):
 				teammate.apply_knockback(global_position, 17.0, 7.5)
 	_spawn_hammer_slam_feedback(attack_radius)
+	character_special.record_hammer_melee_use()
+	_consume_hammer_use(false)
 
 
 func _spawn_hammer_slam_feedback(radius: float) -> void:
@@ -440,28 +447,25 @@ func _throw_hammer() -> void:
 	AudioManager.play_hammer_attack()
 	var throw_direction := -camera.global_basis.z
 	_play_hammer_character_animation(&"hammer_throw", 0.9)
-	var hand_hammer := _get_active_hand_hammer()
-	var hand_hammer_transform := Transform3D.IDENTITY
-	var hand_model_adjustment_transform := Transform3D.IDENTITY
-	var has_hand_visual_transform := hand_hammer != null
-	if hand_hammer != null:
-		hand_hammer_transform = hand_hammer.transform
-		var model_adjustment := hand_hammer.get_child(0) as Node3D
-		if model_adjustment != null:
-			hand_model_adjustment_transform = model_adjustment.transform
 	var hammer: ThrownHammer = HAMMER_PROJECTILE_SCENE.instantiate()
 	var throw_damage := hammer_damage * character_special.get_melee_damage_multiplier() * buff_component.get_attack_multiplier()
+	var should_return := character_special.is_hammer_specialist()
 	hammer.configure(
 		throw_direction,
 		self,
 		throw_damage,
-		hand_hammer_transform,
-		hand_model_adjustment_transform,
-		has_hand_visual_transform
+		Transform3D.IDENTITY,
+		Transform3D.IDENTITY,
+		false,
+		should_return
 	)
 	(get_tree().current_scene if get_tree().current_scene != null else get_tree().root).add_child(hammer)
 	hammer.global_position = global_position + Vector3.UP * 0.65 + throw_direction * 1.1
-	_remove_hammer()
+	_consume_hammer_use(true)
+	if should_return and inventory_item == &"Hammer":
+		hammer_return_pending = true
+		inventory_item = &""
+		_rebuild_item_slots()
 
 
 func _get_active_hand_hammer() -> Node3D:
@@ -517,18 +521,26 @@ func receive_item(item_type: StringName) -> bool:
 	# is never added to the mouse-wheel slots.
 	if item_type == &"Shield":
 		shield_durability = 100.0
-		character_special.record_item(item_type)
+		character_special.record_item_use(item_type)
 		_update_equipment_visual()
 		return true
 	if not inventory_item.is_empty():
 		return false
 	inventory_item = item_type
-	character_special.record_item(item_type)
 	match item_type:
 		&"RapidGun":
 			rapid_ammo = 100
+			character_special.record_item_use(item_type)
+		&"Hammer":
+			hammer_uses_left = hammer_max_uses
 	_rebuild_item_slots()
 	return true
+
+
+func can_receive_item(item_type: StringName) -> bool:
+	if item_type == &"Shield":
+		return shield_durability <= 0.0
+	return inventory_item.is_empty()
 
 
 func has_inventory_item() -> bool:
@@ -561,9 +573,31 @@ func _discard_inventory_item() -> void:
 func _remove_inventory_item() -> void:
 	if propeller_time > 0.0:
 		AudioManager.stop_propeller_loop()
+	if inventory_item == &"Hammer":
+		hammer_uses_left = 0
+		hammer_return_pending = false
 	inventory_item = &""
 	rapid_ammo = 0
 	propeller_time = 0.0
+	_rebuild_item_slots()
+
+
+func _consume_hammer_use(remove_after_use: bool) -> void:
+	if character_special.is_hammer_specialist():
+		return
+	hammer_uses_left -= 1
+	if hammer_uses_left <= 0 or remove_after_use:
+		_remove_hammer()
+
+
+func recover_returned_hammer() -> void:
+	if not character_special.is_hammer_specialist():
+		return
+	hammer_return_pending = false
+	if is_dead or not inventory_item.is_empty():
+		return
+	inventory_item = &"Hammer"
+	hammer_uses_left = hammer_max_uses
 	_rebuild_item_slots()
 
 
@@ -590,11 +624,14 @@ func _use_inventory_item(active_mode: String) -> void:
 	match active_mode:
 		"Propeller":
 			if propeller_time <= 0.0:
+				character_special.record_item_use(&"Propeller")
+				_jumps_remaining = get_allowed_jump_count()
 				propeller_time = 10.0
 				_jumps_remaining = maxi(_jumps_remaining, 2)
 				_update_equipment_visual()
 				AudioManager.play_propeller_loop()
 		"Landmine":
+			character_special.record_item_use(&"Landmine")
 			AudioManager.play_landmine_place()
 			var mine := LANDMINE_SCENE.instantiate()
 			var forward := -camera.global_basis.z
@@ -629,6 +666,13 @@ func _emit_current_ammo() -> void:
 func _update_stamina(delta: float, sprinting: bool) -> void:
 	var previous_stamina := stamina
 	var previous_exhausted := _stamina_exhausted
+	if character_special.has_infinite_stamina():
+		stamina = max_stamina
+		_stamina_exhausted = false
+		_stamina_recovery_delay = 0.0
+		if not is_equal_approx(previous_stamina, stamina) or previous_exhausted != _stamina_exhausted:
+			stamina_changed.emit(stamina, max_stamina, _stamina_exhausted)
+		return
 	if sprinting:
 		stamina = maxf(0.0, stamina - stamina_drain_per_second * delta)
 		_stamina_recovery_delay = 0.5
