@@ -12,6 +12,11 @@ const BACKGROUND_SCENES: Array[PackedScene] = [
 	preload("res://menus/backgrounds/hooded_ruins.tscn"),
 	preload("res://menus/backgrounds/lulu_skyway.tscn"),
 ]
+const UI_BACKGROUND_PATH := "res://assets/ui/main_menu/main_menu_background.png"
+const UI_BUTTON_START_PATH := "res://assets/ui/main_menu/button_start_transparent.png"
+const UI_BUTTON_RULES_PATH := "res://assets/ui/main_menu/button_rules_transparent.png"
+const UI_BUTTON_SETTINGS_PATH := "res://assets/ui/main_menu/button_settings_transparent.png"
+const UI_BUTTON_QUIT_PATH := "res://assets/ui/main_menu/button_quit_transparent.png"
 
 @onready var camera: Camera3D = $MenuCamera
 @onready var display_character: Node3D = $DisplayCharacter
@@ -41,6 +46,7 @@ func _ready() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	AudioManager.play_menu_music()
 	AudioManager.connect_button_tree(self)
+	_apply_main_menu_art_direction()
 	_display_character_index = randi_range(0, CHARACTER_NAMES.size() - 1)
 	_load_character_showcase(_display_character_index)
 	_populate_selection_options()
@@ -48,6 +54,109 @@ func _ready() -> void:
 	fullscreen_toggle.button_pressed = DisplayServer.window_get_mode() == DisplayServer.WINDOW_MODE_FULLSCREEN
 	var master_bus := AudioServer.get_bus_index("Master")
 	volume_slider.value = db_to_linear(AudioServer.get_bus_volume_db(master_bus)) * 100.0
+
+
+func _apply_main_menu_art_direction() -> void:
+	background_slot.visible = false
+	$Sun.light_energy = 0.55
+	$RimLight.light_energy = 4.5
+	camera.fov = 48.0
+	display_character.position = Vector3(3.35, 1.45, 0.0)
+	display_character.scale = Vector3.ONE * 0.92
+	var ui_layer := $MainMenuUI
+	var background := TextureRect.new()
+	background.name = "ImportedBackground"
+	background.texture = load(UI_BACKGROUND_PATH)
+	background.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	background.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	background.anchors_preset = Control.PRESET_FULL_RECT
+	background.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	ui_layer.add_child(background)
+	ui_layer.move_child(background, 0)
+	var shade := $MainMenuUI/Shade
+	var shade_style := StyleBoxFlat.new()
+	shade_style.bg_color = Color(0.005, 0.012, 0.03, 0.34)
+	shade.add_theme_stylebox_override("panel", shade_style)
+	_style_main_title()
+	_style_main_panel_buttons()
+	_style_character_name()
+
+
+func _style_main_title() -> void:
+	var title := $MainMenuUI/GameTitle as Label
+	title.offset_left = 62.0
+	title.offset_top = 52.0
+	title.offset_right = 760.0
+	title.offset_bottom = 118.0
+	title.text = "BOSS CHASE //\n追击协议"
+	title.add_theme_font_size_override("font_size", 42)
+	title.add_theme_color_override("font_color", Color(0.92, 0.98, 1.0, 1.0))
+	title.add_theme_color_override("font_shadow_color", Color(0.0, 0.08, 0.18, 0.95))
+	title.add_theme_constant_override("shadow_offset_x", 4)
+	title.add_theme_constant_override("shadow_offset_y", 4)
+	var subtitle := $MainMenuUI/SubTitle as Label
+	subtitle.offset_left = 66.0
+	subtitle.offset_top = 158.0
+	subtitle.offset_right = 560.0
+	subtitle.offset_bottom = 190.0
+	subtitle.text = "LAN THIRD-PERSON ACTION DEMO"
+	subtitle.add_theme_font_size_override("font_size", 19)
+	subtitle.add_theme_color_override("font_color", Color(0.12, 0.72, 1.0, 1.0))
+
+
+func _style_main_panel_buttons() -> void:
+	main_panel.offset_left = 50.0
+	main_panel.offset_top = 230.0
+	main_panel.offset_right = 550.0
+	main_panel.offset_bottom = 680.0
+	main_panel.add_theme_stylebox_override("panel", StyleBoxEmpty.new())
+	var content := $MainMenuUI/MainPanel/Content as VBoxContainer
+	content.offset_left = 0.0
+	content.offset_top = 0.0
+	content.offset_right = 0.0
+	content.offset_bottom = 0.0
+	content.add_theme_constant_override("separation", 8)
+	$MainMenuUI/MainPanel/Content/MenuLabel.visible = false
+	$MainMenuUI/MainPanel/Content/Spacer.custom_minimum_size = Vector2(0, 0)
+	_apply_image_button($MainMenuUI/MainPanel/Content/Start, load(UI_BUTTON_START_PATH), Vector2(500, 112))
+	_apply_image_button($MainMenuUI/MainPanel/Content/Rules, load(UI_BUTTON_RULES_PATH), Vector2(500, 88))
+	_apply_image_button($MainMenuUI/MainPanel/Content/Settings, load(UI_BUTTON_SETTINGS_PATH), Vector2(500, 88))
+	_apply_image_button($MainMenuUI/MainPanel/Content/Quit, load(UI_BUTTON_QUIT_PATH), Vector2(500, 88))
+
+
+func _apply_image_button(button: Button, texture: Texture2D, minimum_size: Vector2) -> void:
+	button.text = ""
+	button.icon = texture
+	button.expand_icon = true
+	button.custom_minimum_size = minimum_size
+	button.focus_mode = Control.FOCUS_ALL
+	button.flat = true
+	var empty := StyleBoxEmpty.new()
+	button.add_theme_stylebox_override("normal", empty)
+	button.add_theme_stylebox_override("hover", empty)
+	button.add_theme_stylebox_override("pressed", empty)
+	button.add_theme_stylebox_override("focus", empty)
+	button.mouse_entered.connect(_on_menu_button_hovered.bind(button))
+	button.mouse_exited.connect(_on_menu_button_unhovered.bind(button))
+
+
+func _on_menu_button_hovered(button: Button) -> void:
+	var tween := create_tween()
+	tween.tween_property(button, "scale", Vector2(1.035, 1.035), 0.08)
+
+
+func _on_menu_button_unhovered(button: Button) -> void:
+	var tween := create_tween()
+	tween.tween_property(button, "scale", Vector2.ONE, 0.08)
+
+
+func _style_character_name() -> void:
+	character_name_label.offset_left = -430.0
+	character_name_label.offset_top = -88.0
+	character_name_label.offset_right = -54.0
+	character_name_label.offset_bottom = -44.0
+	character_name_label.add_theme_font_size_override("font_size", 25)
+	character_name_label.add_theme_color_override("font_color", Color(0.35, 0.72, 1.0, 1.0))
 
 
 func _process(delta: float) -> void:
