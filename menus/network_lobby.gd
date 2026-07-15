@@ -9,6 +9,8 @@ extends Control
 
 func _ready() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+	AudioManager.play_menu_music()
+	AudioManager.connect_button_tree(self)
 	$Panel/Content/Offline.pressed.connect(_start_offline)
 	$Panel/Content/Host.pressed.connect(_host)
 	$Panel/Content/Join.pressed.connect(_join)
@@ -22,6 +24,7 @@ func _ready() -> void:
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_cancel") or event.is_action_pressed("controller_back"):
+		AudioManager.play_ui_back()
 		_back()
 
 
@@ -54,4 +57,3 @@ func _on_lobby_changed(players: Dictionary) -> void:
 	for peer_id in players:
 		lines.append("• %s  [Peer %s]" % [players[peer_id].get("name", "Player"), peer_id])
 	player_list.text = "房间成员 %d / 4\n%s" % [players.size(), "\n".join(lines)]
-

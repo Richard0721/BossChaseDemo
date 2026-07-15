@@ -1,40 +1,31 @@
-[gd_scene load_steps=5 format=3]
+[gd_scene format=3 uid="uid://cx7x0yf48uvk4"]
 
-[ext_resource type="Script" path="res://items/item_box/item_box.gd" id="1_box"]
+[ext_resource type="Script" uid="uid://bdqaqyas318kx" path="res://items/item_box/item_box.gd" id="1_box"]
+[ext_resource type="PackedScene" uid="uid://f0adg0o30oj5" path="res://assets/items/item_box/source/Daojuxiang.fbx" id="2_model"]
 
 [sub_resource type="BoxShape3D" id="BoxShape"]
 size = Vector3(1.6, 1.6, 1.6)
 
-[sub_resource type="BoxMesh" id="BoxMesh"]
-size = Vector3(1.45, 1.45, 1.45)
-
-[sub_resource type="StandardMaterial3D" id="BoxMaterial"]
-albedo_color = Color(0.08, 0.55, 0.95, 1)
-metallic = 0.45
-roughness = 0.3
-emission_enabled = true
-emission = Color(0.02, 0.16, 0.34, 1)
-
-[node name="ItemBox" type="Area3D"]
+[node name="ItemBox" type="Area3D" unique_id=1163935252]
 collision_layer = 8
-collision_mask = 1
 script = ExtResource("1_box")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
-position = Vector3(0, 0.8, 0)
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=520098593]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 0)
 shape = SubResource("BoxShape")
 
-[node name="Visuals" type="Node3D" parent="."]
-position = Vector3(0, 0.8, 0)
+[node name="Visuals" type="Node3D" parent="." unique_id=1931346592]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 0)
 
-[node name="Box" type="MeshInstance3D" parent="Visuals"]
-mesh = SubResource("BoxMesh")
-material_override = SubResource("BoxMaterial")
+[node name="ModelSizeAdjustment__在这里调大小" type="Node3D" parent="Visuals" unique_id=11281905]
+transform = Transform3D(80, 0, 0, 0, 80, 0, 0, 0, 80, 0, -0.38, 0)
 
-[node name="Label" type="Label3D" parent="Visuals"]
-position = Vector3(0, 1.35, 0)
+[node name="Daojuxiang" parent="Visuals/ModelSizeAdjustment__在这里调大小" unique_id=581549860 instance=ExtResource("2_model")]
+transform = Transform3D(0.01216701, 0, 0, 0, 0.018311858, 0, 0, 0, 0.017738475, 0, 0, 0)
+
+[node name="Label" type="Label3D" parent="Visuals" unique_id=183439499]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.35, 0)
+billboard = 1
 text = "F  OPEN ITEM BOX"
 font_size = 25
 outline_size = 7
-billboard = 1
-

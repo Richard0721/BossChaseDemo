@@ -1,0 +1,61 @@
+[gd_scene format=3 uid="uid://00xt85e4hysc"]
+
+[ext_resource type="Script" uid="uid://dhih33k01fb0x" path="res://assets/items/runes/rune_four_preview.gd" id="1_script"]
+[ext_resource type="PackedScene" path="res://runes/rune_pickup.tscn" id="2_rune"]
+[ext_resource type="Resource" uid="uid://sbrn2xijvfts" path="res://assets/items/runes/heal_rune_settings.tres" id="3_heal"]
+[ext_resource type="Resource" uid="uid://ba5gfv20amne6" path="res://assets/items/runes/speed_rune_settings.tres" id="4_speed"]
+[ext_resource type="Resource" uid="uid://b0n5qshcgv0ap" path="res://assets/items/runes/attack_rune_settings.tres" id="5_attack"]
+[ext_resource type="Resource" uid="uid://c8duqb63xfe5b" path="res://assets/items/runes/defense_rune_settings.tres" id="6_defense"]
+
+[sub_resource type="Environment" id="PreviewEnvironment"]
+background_mode = 1
+background_color = Color(0.025, 0.035, 0.055, 1)
+ambient_light_source = 3
+ambient_light_color = Color(0.55, 0.62, 0.75, 1)
+ambient_light_energy = 0.65
+
+[sub_resource type="StandardMaterial3D" id="FloorMaterial"]
+albedo_color = Color(0.09, 0.12, 0.18, 1)
+roughness = 0.88
+
+[sub_resource type="BoxMesh" id="FloorMesh"]
+material = SubResource("FloorMaterial")
+size = Vector3(15, 0.12, 5)
+
+[node name="RuneFourPreview__选择这里调整大小" type="Node3D" unique_id=1975106512]
+script = ExtResource("1_script")
+heal_rune_scale = 0.06
+speed_rune_scale = 0.06
+attack_rune_scale = 0.06
+defense_rune_scale = 0.06
+heal_settings = ExtResource("3_heal")
+speed_settings = ExtResource("4_speed")
+attack_settings = ExtResource("5_attack")
+defense_settings = ExtResource("6_defense")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1516436017]
+environment = SubResource("PreviewEnvironment")
+
+[node name="Floor" type="MeshInstance3D" parent="." unique_id=1083637741]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.06, 0)
+mesh = SubResource("FloorMesh")
+
+[node name="HealRune_Green" parent="." unique_id=1641305500 instance=ExtResource("2_rune")]
+position = Vector3(-4.8, 0, 0)
+
+[node name="SpeedRune_Blue" parent="." unique_id=932282061 instance=ExtResource("2_rune")]
+position = Vector3(-1.6, 0, 0)
+rune_type = "Speed"
+
+[node name="AttackRune_Red" parent="." unique_id=2130404339 instance=ExtResource("2_rune")]
+position = Vector3(1.6, 0, 0)
+rune_type = "Attack"
+
+[node name="DefenseRune_Yellow" parent="." unique_id=438471589 instance=ExtResource("2_rune")]
+position = Vector3(4.8, 0, 0)
+rune_type = "Defense"
+
+[node name="Camera3D" type="Camera3D" parent="." unique_id=674732340]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1, 13)
+current = true
+fov = 48.0

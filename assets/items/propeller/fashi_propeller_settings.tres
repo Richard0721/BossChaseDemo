@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="PropellerMountSettings" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://assets/items/propeller/propeller_mount_settings.gd" id="1_settings"]
+
+[resource]
+script = ExtResource("1_settings")
+model_position = Vector3(-0.017996073, 0.866889, -0.73625773)
+model_rotation_degrees = Vector3(0, -178.13, 0)
+model_scale = 1.0

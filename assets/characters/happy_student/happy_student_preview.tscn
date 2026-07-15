@@ -1,0 +1,77 @@
+[gd_scene format=3 uid="uid://5dlslcitk1tn"]
+
+[ext_resource type="PackedScene" path="res://assets/characters/happy_student/happy_student_model.tscn" id="1_model"]
+[ext_resource type="Script" uid="uid://bgrhppabeuoxv" path="res://assets/characters/happy_student/happy_student_preview.gd" id="2_script"]
+[ext_resource type="PackedScene" uid="uid://bviis74u6fbe6" path="res://assets/characters/happy_student/source/Zidan/Zidan.fbx" id="3_projectile"]
+
+[sub_resource type="Environment" id="Environment_preview"]
+background_mode = 1
+background_color = Color(0.055, 0.075, 0.11, 1)
+ambient_light_source = 3
+ambient_light_color = Color(0.72, 0.79, 1, 1)
+ambient_light_energy = 1.2
+
+[sub_resource type="StandardMaterial3D" id="FloorMaterial"]
+albedo_color = Color(0.12, 0.16, 0.22, 1)
+roughness = 0.82
+
+[sub_resource type="BoxMesh" id="FloorMesh"]
+material = SubResource("FloorMaterial")
+size = Vector3(12, 0.15, 7)
+
+[node name="HappyStudentPreview" type="Node3D" unique_id=845062590]
+script = ExtResource("2_script")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=289158392]
+environment = SubResource("Environment_preview")
+
+[node name="Floor" type="MeshInstance3D" parent="." unique_id=911789790]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.075, 0)
+mesh = SubResource("FloorMesh")
+
+[node name="IdleModel" parent="." unique_id=965382877 instance=ExtResource("1_model")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.6, 0, 0)
+show_weapon = false
+
+[node name="PointingModel" parent="." unique_id=2008606371 instance=ExtResource("1_model")]
+starting_animation = &"pointing"
+show_weapon = false
+
+[node name="GameplayModel" parent="." unique_id=1013068846 instance=ExtResource("1_model")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.6, 0, 0)
+starting_animation = &"standing"
+
+[node name="Projectile" parent="." unique_id=974533217 instance=ExtResource("3_projectile")]
+transform = Transform3D(-6.993822e-09, 0, 0.16, 0, 0.16, 0, -0.16, 0, -6.993822e-09, 1.35, 1.15, 0)
+
+[node name="IdleLabel" type="Label3D" parent="." unique_id=1911344399]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.6, 2.4, 0)
+billboard = 1
+text = "大厅 Idle"
+
+[node name="PointingLabel" type="Label3D" parent="." unique_id=2136462848]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.4, 0)
+billboard = 1
+text = "选角 pointing"
+
+[node name="GameplayLabel" type="Label3D" parent="." unique_id=705102600]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.6, 2.4, 0)
+billboard = 1
+text = "游戏静止 standing + 枪/子弹"
+
+[node name="KeyLight" type="DirectionalLight3D" parent="." unique_id=1087505341]
+transform = Transform3D(0.88294756, 0.33196652, -0.33196652, 0, 0.70710677, 0.70710677, 0.46947157, -0.6243382, 0.6243382, 0, 0, 0)
+light_color = Color(1, 0.92, 0.82, 1)
+light_energy = 2.2
+shadow_enabled = true
+
+[node name="FillLight" type="OmniLight3D" parent="." unique_id=1263607765]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.5, 3.5)
+light_color = Color(0.5889485, 0.5510769, 0.98593503, 1)
+light_energy = 2.614
+omni_range = 10.0
+
+[node name="Camera3D" type="Camera3D" parent="." unique_id=319080625]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.35, 8.2)
+current = true
+fov = 48.0

@@ -1,0 +1,116 @@
+[gd_scene format=3 uid="uid://cgdfe8qc3lgxq"]
+
+[ext_resource type="Script" uid="uid://bx733tmqfcml5" path="res://assets/items/runes/rune_runtime_scale_handle.gd" id="1_handle"]
+[ext_resource type="PackedScene" uid="uid://byt8vbsmqcnid" path="res://assets/items/runes/source/Fuwen1/Fuwengreen.fbx" id="2_green"]
+[ext_resource type="PackedScene" uid="uid://ohcty0gh2uy3" path="res://assets/items/runes/source/Fuwen2/FuwenBlue.fbx" id="3_blue"]
+[ext_resource type="PackedScene" uid="uid://sqixyogdvehk" path="res://assets/items/runes/source/Fuwen3/FuwenRed.fbx" id="4_red"]
+[ext_resource type="PackedScene" uid="uid://calks5m8vepae" path="res://assets/items/runes/source/Fuwen4/Fuwenyellow.fbx" id="5_yellow"]
+[ext_resource type="Resource" uid="uid://sbrn2xijvfts" path="res://assets/items/runes/heal_rune_settings.tres" id="6_heal"]
+[ext_resource type="Resource" uid="uid://ba5gfv20amne6" path="res://assets/items/runes/speed_rune_settings.tres" id="7_speed"]
+[ext_resource type="Resource" uid="uid://b0n5qshcgv0ap" path="res://assets/items/runes/attack_rune_settings.tres" id="8_attack"]
+[ext_resource type="Resource" uid="uid://c8duqb63xfe5b" path="res://assets/items/runes/defense_rune_settings.tres" id="9_defense"]
+
+[sub_resource type="Environment" id="PreviewEnvironment"]
+background_mode = 1
+background_color = Color(0.025, 0.035, 0.055, 1)
+ambient_light_source = 3
+ambient_light_color = Color(0.55, 0.62, 0.75, 1)
+ambient_light_energy = 0.7
+
+[sub_resource type="StandardMaterial3D" id="FloorMaterial"]
+albedo_color = Color(0.09, 0.12, 0.18, 1)
+roughness = 0.88
+
+[sub_resource type="BoxMesh" id="FloorMesh"]
+material = SubResource("FloorMaterial")
+size = Vector3(13, 0.1, 4)
+
+[node name="RuneRuntimeSizeAdjust__选择下面单个符文调整Scale" type="Node3D" unique_id=864002915]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1359979240]
+environment = SubResource("PreviewEnvironment")
+
+[node name="Floor" type="MeshInstance3D" parent="." unique_id=134763926]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.05, 0)
+mesh = SubResource("FloorMesh")
+
+[node name="HealRune_Green__调整Transform_Scale" type="Node3D" parent="." unique_id=823229806]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, -4.5, 0.8, 0)
+script = ExtResource("1_handle")
+runtime_settings = ExtResource("6_heal")
+
+[node name="Model" parent="HealRune_Green__调整Transform_Scale" unique_id=1417473925 instance=ExtResource("2_green")]
+
+[node name="SpeedRune_Blue__调整Transform_Scale" type="Node3D" parent="." unique_id=2103775652]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, -1.5, 0.8, 0)
+script = ExtResource("1_handle")
+runtime_settings = ExtResource("7_speed")
+
+[node name="Model" parent="SpeedRune_Blue__调整Transform_Scale" unique_id=1634768798 instance=ExtResource("3_blue")]
+
+[node name="AttackRune_Red__调整Transform_Scale" type="Node3D" parent="." unique_id=1531696199]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 1.5, 0.8, 0)
+script = ExtResource("1_handle")
+runtime_settings = ExtResource("8_attack")
+
+[node name="Model" parent="AttackRune_Red__调整Transform_Scale" unique_id=517819851 instance=ExtResource("4_red")]
+
+[node name="DefenseRune_Yellow__调整Transform_Scale" type="Node3D" parent="." unique_id=249516201]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 4.5, 0.8, 0)
+script = ExtResource("1_handle")
+runtime_settings = ExtResource("9_defense")
+
+[node name="Model" parent="DefenseRune_Yellow__调整Transform_Scale" unique_id=537982931 instance=ExtResource("5_yellow")]
+
+[node name="HealLabel" type="Label3D" parent="." unique_id=1778799672]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.5, 1.65, 0)
+billboard = 1
+text = "绿色治疗符文"
+outline_size = 8
+
+[node name="SpeedLabel" type="Label3D" parent="." unique_id=1073492003]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 1.65, 0)
+billboard = 1
+text = "蓝色速度符文"
+outline_size = 8
+
+[node name="AttackLabel" type="Label3D" parent="." unique_id=1098363036]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, 1.65, 0)
+billboard = 1
+text = "红色攻击符文"
+outline_size = 8
+
+[node name="DefenseLabel" type="Label3D" parent="." unique_id=590606864]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.5, 1.65, 0)
+billboard = 1
+text = "黄色防御符文"
+outline_size = 8
+
+[node name="GreenLight" type="OmniLight3D" parent="." unique_id=2002842697]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.5, 0.8, 0)
+light_color = Color(0.08, 1, 0.35, 1)
+light_energy = 1.25
+omni_range = 3.5
+
+[node name="BlueLight" type="OmniLight3D" parent="." unique_id=552427814]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 0.8, 0)
+light_color = Color(0.05, 0.42, 1, 1)
+light_energy = 1.25
+omni_range = 3.5
+
+[node name="RedLight" type="OmniLight3D" parent="." unique_id=2044749876]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, 0.8, 0)
+light_color = Color(1, 0.08, 0.06, 1)
+light_energy = 1.25
+omni_range = 3.5
+
+[node name="YellowLight" type="OmniLight3D" parent="." unique_id=49315309]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.5, 0.8, 0)
+light_color = Color(1, 0.92, 0.58, 1)
+light_energy = 1.25
+omni_range = 3.5
+
+[node name="Camera3D" type="Camera3D" parent="." unique_id=901463334]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1, 11)
+current = true
+fov = 48.0

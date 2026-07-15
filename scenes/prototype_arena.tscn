@@ -305,7 +305,7 @@ offset_bottom = -24.0
 grow_horizontal = 2
 grow_vertical = 0
 theme_override_font_sizes/font_size = 19
-text = "Boss: Taunt | HP 200 / 200"
+text = "追猎者：Taunt | HP 200 / 200"
 horizontal_alignment = 1
 
 [node name="Crosshair" type="Label" parent="HUD" unique_id=64792622]

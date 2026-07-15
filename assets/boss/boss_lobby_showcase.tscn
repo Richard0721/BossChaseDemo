@@ -1,0 +1,18 @@
+[gd_scene format=3 uid="uid://wqhpamv6yo3e"]
+
+[ext_resource type="PackedScene" uid="uid://cffoa8o1prj74" path="res://assets/boss/boss_model.tscn" id="1_boss_model"]
+
+[node name="BossLobbyShowcase" type="Node3D" unique_id=1395346688]
+
+[node name="BossModel" parent="." unique_id=1363528187 instance=ExtResource("1_boss_model")]
+transform = Transform3D(2.6, 0, 0, 0, 2.6, 0, 0, 0, 2.6, 0.3, 0, 0)
+starting_animation = &"lobby"
+editor_preview_animation = &"lobby"
+
+[node name="BossName" type="Label3D" parent="." unique_id=861074190]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6.1, 0)
+visible = false
+billboard = 1
+text = "追猎者"
+font_size = 80
+outline_size = 10

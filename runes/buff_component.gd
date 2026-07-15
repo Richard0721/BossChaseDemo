@@ -9,8 +9,8 @@ var attack_time := 0.0
 var defense_time := 0.0
 var defense_hit_available := false
 var _speed_visual: MeshInstance3D
-var _attack_left_visual: MeshInstance3D
-var _attack_right_visual: MeshInstance3D
+var _attack_overlay_material: StandardMaterial3D
+var _attack_overlay_originals: Dictionary = {}
 var _defense_visual: MeshInstance3D
 
 
@@ -101,10 +101,15 @@ func _ensure_speed_visual() -> void:
 
 
 func _ensure_attack_visuals() -> void:
-	if not is_instance_valid(_attack_left_visual):
-		_attack_left_visual = _create_sphere_visual(Color(1.0, 0.05, 0.04, 0.5), 0.28, Vector3(-0.62, 0.25, 0))
-	if not is_instance_valid(_attack_right_visual):
-		_attack_right_visual = _create_sphere_visual(Color(1.0, 0.05, 0.04, 0.5), 0.28, Vector3(0.62, 0.25, 0))
+	if _attack_overlay_material != null:
+		return
+	_attack_overlay_material = StandardMaterial3D.new()
+	_attack_overlay_material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	_attack_overlay_material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	_attack_overlay_material.albedo_color = Color(1.0, 0.02, 0.0, 0.28)
+	_attack_overlay_material.emission_enabled = true
+	_attack_overlay_material.emission = Color(1.0, 0.0, 0.0, 1.0)
+	_attack_overlay_material.emission_energy_multiplier = 2.2
 
 
 func _ensure_defense_visual() -> void:
@@ -116,12 +121,34 @@ func _ensure_defense_visual() -> void:
 func _update_visual_state() -> void:
 	if is_instance_valid(_speed_visual):
 		_speed_visual.visible = speed_time > 0.0
-	if is_instance_valid(_attack_left_visual):
-		_attack_left_visual.visible = attack_time > 0.0
-	if is_instance_valid(_attack_right_visual):
-		_attack_right_visual.visible = attack_time > 0.0
+	if attack_time > 0.0:
+		_apply_attack_model_glow()
+	else:
+		_clear_attack_model_glow()
 	if is_instance_valid(_defense_visual):
 		_defense_visual.visible = defense_time > 0.0 and defense_hit_available
+
+
+func _apply_attack_model_glow() -> void:
+	_ensure_attack_visuals()
+	for child in player.find_children("*", "MeshInstance3D", true, false):
+		var mesh_instance := child as MeshInstance3D
+		if mesh_instance == null or not mesh_instance.visible:
+			continue
+		if mesh_instance == _speed_visual or mesh_instance == _defense_visual:
+			continue
+		if mesh_instance.get_parent() == player:
+			continue
+		if not _attack_overlay_originals.has(mesh_instance):
+			_attack_overlay_originals[mesh_instance] = mesh_instance.material_overlay
+		mesh_instance.material_overlay = _attack_overlay_material
+
+
+func _clear_attack_model_glow() -> void:
+	for mesh_instance in _attack_overlay_originals.keys():
+		if is_instance_valid(mesh_instance):
+			mesh_instance.material_overlay = _attack_overlay_originals[mesh_instance]
+	_attack_overlay_originals.clear()
 
 
 func _create_sphere_visual(color: Color, radius: float, offset := Vector3.ZERO) -> MeshInstance3D:

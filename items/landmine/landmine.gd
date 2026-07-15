@@ -39,6 +39,7 @@ func _trigger() -> void:
 	if triggered:
 		return
 	triggered = true
+	AudioManager.play_explosion()
 	for target in _collect_targets(blast_radius):
 		if target.has_method("apply_blast_effect"):
 			target.apply_blast_effect(damage, global_position, horizontal_force, vertical_force, tumble_duration, source_owner)
@@ -87,8 +88,9 @@ func _spawn_blast_visual() -> void:
 	var visual := MeshInstance3D.new()
 	visual.mesh = mesh
 	visual.material_override = material
+	var scene_root := get_tree().current_scene if get_tree().current_scene != null else get_tree().root
+	scene_root.add_child(visual)
 	visual.global_position = global_position
-	get_tree().current_scene.add_child(visual)
 	var tween := visual.create_tween()
 	tween.tween_property(visual, "scale", Vector3.ONE * 1.25, 0.18)
 	tween.parallel().tween_property(material, "albedo_color", Color(1.0, 0.32, 0.02, 0.0), 0.18)

@@ -5,7 +5,7 @@ const DEPLOYMENT_SCENE := "res://menus/deployment_flow.tscn"
 const LOBBY_SCENE := "res://menus/network_lobby.tscn"
 const GAME_SCENE := "res://scenes/prototype_arena.tscn"
 
-var selected_boss := "赤色追猎者"
+var selected_boss := "追猎者"
 var selected_map := "高地试验场"
 var selected_character := "头疼的符文大师"
 var party_size := 1
